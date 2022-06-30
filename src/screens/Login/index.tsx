@@ -1,7 +1,12 @@
 import { Button, TextField } from "@mui/material";
+import Link from "next/link";
+
 import { useRouter } from "next/router";
 import react from "react";
+import styled from "styled-components";
 import { BoxForm, Formulario } from "../../components/Formulario";
+import { TituloFom } from "../../components/Formulario/TituloForm";
+import LinkPage from "../../components/Link";
 
 
 
@@ -33,7 +38,7 @@ export function Login() {
                     alert(JSON.stringify(values, null, 2))
                     router.push('/sala')
                 }}>
-                    <h2>Login</h2>
+                    <TituloFom>Login</TituloFom>
                     <TextField
                         id="outlined-basic"
                         label="Nome ou email"
@@ -60,9 +65,18 @@ export function Login() {
                     
                     <Button variant="contained" type="submit">Entrar</Button>
                 </Formulario>
-              
+
+                <Alternativos>
+                    <LinkPage href={"/trocar-senha"} name={"Esqueci minha Senha"} color={"#9097f9"} />
+                    <p>Não tem conta?  <LinkPage href={"/cadastro"} name={"Criar Conta"} color={"#9097f9"} /></p>
+                </Alternativos>
             </BoxForm>
             
         </>
     )
 }
+
+const Alternativos = styled.aside`
+    margin: 1rem auto;
+    text-align: start;
+`

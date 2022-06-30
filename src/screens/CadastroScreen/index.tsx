@@ -2,6 +2,7 @@ import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import react from "react";
 import { BoxForm, Formulario } from "../../components/Formulario";
+import { TituloFom } from "../../components/Formulario/TituloForm";
 
 interface Props{
     senha: string,
@@ -39,7 +40,7 @@ export default function CadastroScreen() {
                     alert(JSON.stringify(values, null, 2))
                     router.push("/sala")
                 }}>
-                    <h2>Cadastro</h2>
+                    <TituloFom>Cadastro</TituloFom>
                     <TextField
                         type="text"
                         id="outlined-basic"
