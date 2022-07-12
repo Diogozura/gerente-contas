@@ -1,11 +1,10 @@
 import { Button } from "@mui/material";
 import { useRouter } from "next/router";
-import nookies from 'nookies'
 import { tokenService } from "../../services/auth/tokenService";
 
-export default function Sair(ctx) {
-    const cookie = nookies.get(ctx)
+export default function Sair() {
     const router = useRouter()
+
     function handleClick() {
         tokenService.delete()
         router.push('/')

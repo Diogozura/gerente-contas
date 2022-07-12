@@ -8,9 +8,9 @@ import Sair from "../../components/Sair";
 export default function Sala(ctx) {
     const router = useRouter()
     const cookie = nookie.get(ctx)
-    React.useEffect(() => {
-        {cookie.ACCESS_TOKEN_KEY ? '' : router.push("/")}
-    })
+    // React.useEffect(() => {
+    //     {cookie.ACCESS_TOKEN_KEY ? '' : router.push("/")}
+    // })
    
     return (
         <>
