@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
 import LinkPage from "../../components/Link";
+import { authService } from "../../services/auth/authService";
 
 
 
@@ -14,8 +15,8 @@ export function Login() {
     const router = useRouter()
 
     const [values, setValues] = react.useState({
-        nome: '' ,
-        senha: ''
+        nome: 'teste@teste.com.br' ,
+        senha: '12345678'
     })
 
     function handleChange(event:any){
@@ -35,8 +36,16 @@ export function Login() {
             <BoxForm>
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()
-                    alert(JSON.stringify(values, null, 2))
-                    router.push('/sala')
+                    // alert(JSON.stringify(values, null, 2))
+                    authService.login({
+                        username: values.nome,
+                        password: values.senha
+                    })
+                        .then((res) => {
+                            // console.log(res)
+                            router.push("/sala")
+                        })
+                   .catch((erro)=> alert('NÂO deu bom' + erro))
                 }}>
                     <TituloFom>Login</TituloFom>
                     <TextField

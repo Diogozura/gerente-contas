@@ -11,7 +11,7 @@ const Conteudo = styled.main`
     text-align: center;
     display: grid;
 
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 700px) {
         width: 80%;
     }
 `
@@ -20,7 +20,7 @@ const Conteudo = styled.main`
 export default function HomeScreen() {
     return (
         <>
-            <HeaderHome children={undefined} />
+            <HeaderHome children={undefined}  />
             <Conteudo>
             <h1>Bem vindo a home</h1>
                 <LinkPage href={'/sala'} name={'Sala'} color={"white"} bg={blue[400]} padding={"10px"} hoverBg={blue[300]} margin={"1em"} />

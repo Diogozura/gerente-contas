@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import react from "react";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
+import { authService } from "../../services/auth/authService";
 
 interface Props{
     senha: string,
@@ -38,7 +39,16 @@ export default function CadastroScreen() {
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()
                     alert(JSON.stringify(values, null, 2))
-                    router.push("/sala")
+                    authService.cadastro({
+                        email: values.email,
+                        name: values.nome,
+                        password: values.senha
+                    })
+                        .then(() => {
+                            router.push("/login")
+                        })
+                    .catch(()=> alert('error'))
+                    
                 }}>
                     <TituloFom>Cadastro</TituloFom>
                     <TextField

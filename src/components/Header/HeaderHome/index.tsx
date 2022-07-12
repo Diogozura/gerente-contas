@@ -83,7 +83,7 @@ export default function HeaderHome({ children }: Props, props:Props) {
         {navItems.map((item) => (
           <ListItem key={item.id} disablePadding>
             <ListItemButton sx={{ textAlign: 'center' }}>
-       <LinkPage href={`{item.path}`} name={item.label} color={''} />
+       <LinkPage href={item.path} name={item.label} color={''} />
             </ListItemButton>
             </ListItem>
             
@@ -129,7 +129,7 @@ export default function HeaderHome({ children }: Props, props:Props) {
                       {navItems.map((item) => (
                           <LinkPage
                               key={item.id}
-                              href={`${item.path}`}
+                              href={item.path}
                               name={item.label}
                               color={"white"}
                               bg={blue[400]}
