@@ -26,8 +26,8 @@ export const authService = {
         },
           redirect: 'follow'
         })
-        .then((response)=> {
-            response.json().then((data)=> {
+        .then(async(response)=> {
+            response.json().then(async(data)=> {
                 console.log(data.token);
                 tokenService.save(data.token);
             });
