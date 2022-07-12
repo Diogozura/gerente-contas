@@ -22,6 +22,8 @@ export const authService = {
         await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/login`, {
           method:'GET',
           headers:  {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
             'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
         },
           redirect: 'follow'
