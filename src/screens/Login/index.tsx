@@ -41,9 +41,9 @@ export function Login() {
                         username: values.nome,
                         password: values.senha
                     })
-                        .then(() => {
-                            // console.log(res)
-                            router.push("/sala")
+                      .then(async(res) => {
+                            console.log(res)
+                            // router.push("/sala")
                         })
                    .catch((erro)=> alert('NÂO deu bom' + erro))
                     }}
