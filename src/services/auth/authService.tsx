@@ -19,7 +19,7 @@ export const authService = {
         // var myHeaders = new Headers();
         // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
     
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/login`, {
+      await fetch('https://gerente1.herokuapp.com/api/login', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
