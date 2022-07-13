@@ -19,17 +19,19 @@ export const authService = {
         // var myHeaders = new Headers();
         // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
     
-        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/login`, {
-          method:'GET',
-          headers:  {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/login`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
         },
-          redirect: 'follow'
-        })
-        .then(async(response)=> {
-          await response.json().then(async(data)=> {
+        redirect: 'follow'
+      })
+        .then(async (response) => {
+           await response.json()
+
+            .then(async (data) => {
                 console.log(data);
                 // tokenService.save(data.token);
             });
