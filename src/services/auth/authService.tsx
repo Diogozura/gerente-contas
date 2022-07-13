@@ -19,7 +19,7 @@ export const authService = {
         // var myHeaders = new Headers();
         // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
     
-        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
+        await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/login`, {
           method:'GET',
           headers:  {
             'Content-Type': 'application/json',
@@ -29,8 +29,8 @@ export const authService = {
           redirect: 'follow'
         })
         .then(async(response)=> {
-            response.text().then(async(data)=> {
-                
+            response.json().then(async(data)=> {
+                console.log(data);
                 // tokenService.save(data.token);
             });
           }).catch((err)=> {
