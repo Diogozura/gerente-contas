@@ -32,8 +32,8 @@ export const authService = {
            await response.json()
 
             .then(async (data) => {
-                console.log(data);
-                // tokenService.save(data.token);
+                // console.log(data);
+                tokenService.save(data.token);
             });
           }).catch((err)=> {
             console.error('Failed retrieving information', err);
