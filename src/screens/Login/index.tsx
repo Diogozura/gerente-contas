@@ -1,6 +1,4 @@
 import { Button, TextField } from "@mui/material";
-import Link from "next/link";
-
 import { useRouter } from "next/router";
 import react from "react";
 import styled from "styled-components";
@@ -30,23 +28,26 @@ export function Login() {
             }
         })
     }
+   
 
     return (
         <>
             <BoxForm>
-                <Formulario onSubmit={(event) => {
+                <Formulario 
+                    onSubmit={(event) => {
                     event.preventDefault()
                     // alert(JSON.stringify(values, null, 2))
                     authService.login({
                         username: values.nome,
                         password: values.senha
                     })
-                        .then((res) => {
+                        .then(() => {
                             // console.log(res)
                             router.push("/sala")
                         })
                    .catch((erro)=> alert('NÂO deu bom' + erro))
-                }}>
+                    }}
+                >
                     <TituloFom>Login</TituloFom>
                     <TextField
                         id="outlined-basic"
