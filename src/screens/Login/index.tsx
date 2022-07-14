@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import react from "react";
+import { toast } from 'react-toastify';
 import styled from "styled-components";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
@@ -9,6 +10,17 @@ import { authService } from "../../services/auth/authService";
 
 
 
+  function error() {
+    toast.error('Error', {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 export function Login() {
     const router = useRouter()
 
@@ -16,6 +28,8 @@ export function Login() {
         nome: 'teste@teste.com.br' ,
         senha: '12345678'
     })
+
+   
 
     function handleChange(event:any){
         const fieldName = event.target.name;
@@ -42,12 +56,13 @@ export function Login() {
                         password: values.senha
                     })
                       .then((res) => {
-                       
-                            router.push("/sala")
+
+                        router.push("/sala")
                         })
-                   .catch((erro)=> alert(erro))
+                   .catch((erro)=> error() )
                     }}
                 >
+
                     <TituloFom>Login</TituloFom>
                     <TextField
                         id="outlined-basic"
@@ -80,7 +95,10 @@ export function Login() {
                     <LinkPage href={"/trocar-senha"} name={"Esqueci minha Senha"} color={"#9097f9"} />
                     <p>Não tem conta?  <LinkPage href={"/cadastro"} name={"Criar Conta"} color={"#9097f9"} /></p>
                 </Alternativos>
+
+              
             </BoxForm>
+           
             
         </>
     )

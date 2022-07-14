@@ -1,6 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import react from "react";
+import { toast } from "react-toastify";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
 import { authService } from "../../services/auth/authService";
@@ -10,7 +11,17 @@ interface Props{
     nome: string,
     email:string
 }
-
+const error= () => {
+    toast.error('Error', {
+      position: "top-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  }
 
 export default function CadastroScreen() {
     const router = useRouter()
@@ -49,8 +60,7 @@ export default function CadastroScreen() {
                             router.push("/login")
                         })
                         .catch((err) => {
-                            alert(err)
-                            
+                            error()     
                     } )
                     
                 }}>
