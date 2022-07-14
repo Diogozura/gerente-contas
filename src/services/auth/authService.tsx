@@ -33,8 +33,9 @@ export const authService = {
            await response.json()
             
             .then(async (data) => {
-           
-                tokenService.save(data.token);
+               alert(data.message)
+              tokenService.save(data.token);
+              
             });
           })
         //     .then(res => {
