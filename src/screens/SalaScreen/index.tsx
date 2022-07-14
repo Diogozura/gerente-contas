@@ -3,8 +3,7 @@ import LinkPage from "../../components/Link";
 import nookie from 'nookies'
 import { useRouter } from "next/router";
 import React from "react";
-import Sair from "../../components/Sair";
-import { Button } from "@mui/material";
+
 
 export default function Sala(ctx) {
     const router = useRouter()

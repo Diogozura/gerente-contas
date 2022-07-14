@@ -44,10 +44,14 @@ export default function CadastroScreen() {
                         name: values.nome,
                         password: values.senha
                     })
-                        .then(() => {
+                        .then((res) => {
+                           
                             router.push("/login")
                         })
-                    .catch(()=> alert('error'))
+                        .catch((err) => {
+                            alert(err)
+                            
+                    } )
                     
                 }}>
                     <TituloFom>Cadastro</TituloFom>

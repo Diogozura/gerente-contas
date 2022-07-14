@@ -41,11 +41,11 @@ export function Login() {
                         username: values.nome,
                         password: values.senha
                     })
-                      .then(async(res) => {
-                            // console.log(res)
+                      .then((res) => {
+                            
                             router.push("/sala")
                         })
-                   .catch((erro)=> alert('NÂO deu bom' + erro))
+                   .catch((erro)=> alert(erro))
                     }}
                 >
                     <TituloFom>Login</TituloFom>

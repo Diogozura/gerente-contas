@@ -1,16 +1,16 @@
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
-interface Props{
-    token: string
-}
 
 export const authService = {
     async cadastro({ name, email, password }) {
-        return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/cadastro`, {
+        return HttpClient(`https://gerente1.herokuapp.com/api/cadastro`, {
             method: 'POST',
             body: { name, email, password },
         })
+          .then((res) => {
+            if (!res.ok) throw new Error(res.body.txt)
+    }) 
     },
 
 
@@ -29,15 +29,14 @@ export const authService = {
         redirect: 'follow'
       })
         .then(async (response) => {
+          if (!response.ok) throw new Error('Erro ao fazer o login')
            await response.json()
-
+            
             .then(async (data) => {
-                // console.log(data);
+           
                 tokenService.save(data.token);
             });
-          }).catch((err)=> {
-            console.error('Failed retrieving information', err);
-          });
+          })
         //     .then(res => {
         //     console.log(res)
         //     if (!res.ok) throw new Error('algo deu errado');
