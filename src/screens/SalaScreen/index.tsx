@@ -1,8 +1,11 @@
+/* eslint-disable react/no-children-prop */
 import { blue } from "@mui/material/colors";
 import LinkPage from "../../components/Link";
 import nookie from 'nookies'
 import { useRouter } from "next/router";
 import React from "react";
+import MenuAppBar from "../../components/Header/HeaderDentro";
+
 
 
 export default function Sala(ctx) {
@@ -14,8 +17,8 @@ export default function Sala(ctx) {
    
     return (
         <>
-             <LinkPage href={'/'} name={'home'}   color={"white"} bg={blue[400]} padding={"10px"} hoverBg={blue[300]} margin={"1em"} />
-             <LinkPage href={"/logout"} name={"Sair"} color={"red"}/>
+            <MenuAppBar children={undefined} />
+             <h1>Bem vindo a home</h1>
         </>
     )
 }

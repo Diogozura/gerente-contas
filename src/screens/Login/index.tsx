@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import react from "react";
 import { toast } from 'react-toastify';
@@ -42,6 +42,13 @@ export function Login() {
             }
         })
     }
+    const [open, setOpen] = react.useState(false);
+    const handleClose = () => {
+      setOpen(false);
+    };
+    const handleToggle = () => {
+      setOpen(!open);
+    };
    
 
     return (
@@ -88,7 +95,14 @@ export function Login() {
                         required
                         variant="standard" />
                     
-                    <Button variant="contained" type="submit">Entrar</Button>
+                    <Button variant="contained" onClick={handleToggle} type="submit"> Entrar</Button>
+                    <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={open}
+        onClick={handleClose}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
                 </Formulario>
 
                 <Alternativos>
