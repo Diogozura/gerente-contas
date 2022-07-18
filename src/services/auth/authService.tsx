@@ -4,7 +4,7 @@ import { tokenService } from './tokenService';
 
 export const authService = {
     async cadastro({ name, email, password }) {
-        return HttpClient(`https://gerente1.herokuapp.com/api/cadastro`, {
+        return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cadastro`, {
             method: 'POST',
             body: { name, email, password },
         })
@@ -19,7 +19,7 @@ export const authService = {
         // var myHeaders = new Headers();
         // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
     
-      await fetch('https://gerente1.herokuapp.com/api/login', {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
