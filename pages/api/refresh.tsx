@@ -6,7 +6,7 @@ const REFRESH_TOKEN_NAME = 'REFRESH_TOKEN_NAME'
 
 const controllers = {
   async stroreRefreshToken(req, res) {
-    console.log('request', req.body);
+    // console.log('request', req.body);
     const ctx = { req, res }
     nookies.set(ctx, REFRESH_TOKEN_NAME, req.body.refreshToken, {
       httpOnly: true,
@@ -20,23 +20,26 @@ const controllers = {
       }
     })
   },
-  async displayCookies(req, res) {
-    const ctx = {req, res}
-    res.json({
-      data: {
-        cookies: nookies.get(ctx)
-      }
-    });
+  // async displayCookies(req, res) {
+  //   const ctx = {req, res}
+  //   res.json({
+  //     data: {
+  //       cookies: nookies.get(ctx)
+  //     }
+  //   });
     
-  },
+  // },
   async regenerateTokens(req, res) {
     const ctx = { req, res }
     const cookies = nookies.get(ctx);
-    const refresh_token = cookies[REFRESH_TOKEN_NAME]
-    // console.log("/api/refresh [regenerateTokens]", refresh_token)
+    const refresh_token = cookies[REFRESH_TOKEN_NAME] || req.body.refreshToken
+    console.log("/api/refresh [regenerateTokens]", refresh_token)
 
-   const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/refreshLogin?refreshToken=${refresh_token}`, {
+   const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/refreshLogin`, {
      method: 'GET',
+     headers: {
+      'Authorization': `Bearer ${refresh_token}`
+    },
  })
     
     
@@ -67,6 +70,8 @@ const controllers = {
 const controllersBy = {
   POST: controllers.stroreRefreshToken,
   GET: controllers.regenerateTokens,
+  PUT: controllers.regenerateTokens,
+  // DELETE: controllers.regenerateTokens,
 }
 
 export default function handler(request, response) {

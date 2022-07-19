@@ -1,3 +1,4 @@
+import refresh from '../../../pages/api/refresh';
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
@@ -50,7 +51,8 @@ export const authService = {
                 method: 'POST',
                 body: {
                   refreshToken
-                }
+                },
+              
               })
              
               return response
@@ -61,13 +63,19 @@ export const authService = {
   async getSession(ctx) {
     const token = tokenService.get(ctx);
 
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro?token=${token}`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro`, {
       method: 'GET',
-      // refresh: true
-    })
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      ctx,
+      refresh: true,
+    }
+       
+    )
     .then((response) => {
       if(!response.ok) throw new Error('Não autorizado');
-      console.log(response)
+      // console.log(response)
       return response.body;
     });
   }
