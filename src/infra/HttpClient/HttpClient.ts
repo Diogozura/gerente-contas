@@ -36,7 +36,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       
       // tentar rodar o request anterior 
       try {
-        const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
+        const refreshResponse = await HttpClient('/api/refresh', {
           method: isServer ? 'PUT' : 'GET',
           body: isServer? {refreshToken : currentRefreshToken} : undefined
         });
