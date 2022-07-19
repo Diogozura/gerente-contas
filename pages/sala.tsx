@@ -1,2 +1,1 @@
-import Sala from "../src/screens/SalaScreen";
-export default Sala
+export { default, getServerSideProps } from "../src/screens/SalaScreen";

@@ -1,6 +1,7 @@
 export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
   method?: string;
-  body: any; headers?: any 
+  body?: any;
+  headers?: any 
 }) {
   const options = {
     ...fetchOptions,
@@ -22,4 +23,5 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
         body: await respostaDoServidor.json(),
       }
     })
+  
 }

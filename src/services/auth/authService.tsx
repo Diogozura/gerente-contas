@@ -1,6 +1,13 @@
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
+interface Props{
+  data:{
+    refreshToken: string;
+    token: string
+  }
+  
+}
 
 export const authService = {
     async cadastro({ name, email, password }) {
@@ -32,37 +39,36 @@ export const authService = {
           if (!response.ok) throw new Error('Erro ao fazer o login')
            await response.json()
             
-            .then(async (data) => {
+            .then(async(data) => {
               tokenService.save(data.token);
               
-            });
+             return data
+            })
+            .then(async({refreshToken}) => {
+             
+              const response = await HttpClient('/api/refresh', {
+                method: 'POST',
+                body: {
+                  refreshToken
+                }
+              })
+             
+              return response
           })
-        //     .then(res => {
-        //     console.log(res)
-        //     if (!res.ok) throw new Error('algo deu errado');
-            
-        //     // tokenService.save()
-        //     return res.json();
-        // })
-
-    }
-}
+        })
+    },
     // Session 
-    
-//   async getSession(ctx = null) {
-//     const token = tokenService.get(ctx);
+  async getSession(ctx) {
+    const token = tokenService.get(ctx);
 
-//     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/session`, {
-//       method: 'GET',
-//       headers: {
-//         'Authorization': `Bearer ${token}`
-//       },
-//       refresh: true
-//     })
-//     .then((response) => {
-//       if(!response.ok) throw new Error('Não autorizado');
-
-//       return response.body.data;
-//     });
-//   }
-// };
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro?token=${token}`, {
+      method: 'GET',
+      // refresh: true
+    })
+    .then((response) => {
+      if(!response.ok) throw new Error('Não autorizado');
+      console.log(response)
+      return response.body;
+    });
+  }
+};

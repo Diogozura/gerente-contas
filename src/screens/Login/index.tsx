@@ -63,10 +63,13 @@ export function Login() {
                         password: values.senha
                     })
                       .then((res) => {
-
+                        
                         router.push("/sala")
                         })
-                   .catch((erro)=> error() )
+                      .catch((erro) => {
+                        error()
+                        console.log(erro)
+                      } )
                     }}
                 >
 
