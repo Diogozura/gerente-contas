@@ -3,10 +3,6 @@ import React from "react";
 import MenuAppBar from "../../components/Header/HeaderDentro";
 import { withSession } from "../../services/auth/session";
 
-
-
-
-
 export const getServerSideProps = withSession((ctx) => {
   return {
     props: {
@@ -16,7 +12,7 @@ export const getServerSideProps = withSession((ctx) => {
 })
 
 
-function Sala( props) {
+function Sala() {
     return (
         <>
             <MenuAppBar children={undefined} />
