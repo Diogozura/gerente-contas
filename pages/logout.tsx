@@ -14,8 +14,8 @@ export default function LougoutPage() {
     (async function anyNameFunction() {
       try {
         await HttpClient('/api/refresh', {
-          method: 'DELETE'
-        })
+          method:'DELETE',
+        });
         tokenService.delete()
         router.push('/')
       }

@@ -6,7 +6,7 @@ const REFRESH_TOKEN_NAME = 'REFRESH_TOKEN_NAME'
 
 const controllers = {
   async stroreRefreshToken(req, res) {
-    // console.log('request', req.body);
+    
     const ctx = { req, res }
     nookies.set(ctx, REFRESH_TOKEN_NAME, req.body.refreshToken, {
       httpOnly: true,
@@ -20,15 +20,6 @@ const controllers = {
       }
     })
   },
-  // async displayCookies(req, res) {
-  //   const ctx = {req, res}
-  //   res.json({
-  //     data: {
-  //       cookies: nookies.get(ctx)
-  //     }
-  //   });
-    
-  // },
   async regenerateTokens(req, res) {
     const ctx = { req, res }
     const cookies = nookies.get(ctx);
@@ -71,7 +62,20 @@ const controllersBy = {
   POST: controllers.stroreRefreshToken,
   GET: controllers.regenerateTokens,
   PUT: controllers.regenerateTokens,
-  // DELETE: controllers.regenerateTokens,
+  DELETE: (req, res) => {
+    const ctx = { req, res }
+    nookies.destroy(ctx, REFRESH_TOKEN_NAME, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/', 
+    });
+    
+    res.json({
+      data: {
+        message:'deleted with success!'
+      }
+    })
+  },
 }
 
 export default function handler(request, response) {

@@ -6,12 +6,13 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
   method?: string;
   body?: any;
   headers?: any 
-}) {
+} = {}) {
+  const defaultHeaders = fetchOptions.headers || {}
   const options = {
     ...fetchOptions,
     headers:{
       'Content-Type': 'application/json',
-      ...fetchOptions.headers,
+      ...defaultHeaders,
     },
     body: fetchOptions.body ? JSON.stringify(fetchOptions.body) : null,
   
@@ -32,11 +33,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
 
       const isServer = true
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
-      console.log('Middleware: Rodar código para atualizar o token')
-     
       
-     
-
       // tentar rodar o request anterior 
       try {
         const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
@@ -63,16 +60,12 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
             'Authorization': `Bearer ${newAccessToken}`
           }
         })
-        console.log(retryResponse)
+        
         return retryResponse
       }catch(err){
-        console.error(err)
+        
         return response
       }
       
     });
-}
-
-function ctx( arg1: string, newRefreshToken: any, arg3: { httpOnly: boolean; sameSite: string; path: string; }) {
-  throw new Error('Function not implemented.');
 }

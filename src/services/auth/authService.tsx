@@ -1,4 +1,3 @@
-import refresh from '../../../pages/api/refresh';
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
@@ -75,7 +74,7 @@ export const authService = {
     )
     .then((response) => {
       if(!response.ok) throw new Error('Não autorizado');
-      // console.log(response)
+     
       return response.body;
     });
   }
