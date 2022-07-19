@@ -14,7 +14,7 @@ export function withSession(fucao) {
      }
       return fucao(modifiedCtx)
 
-    }catch (err) {
+    }catch(err){
       return {
               redirect: {
                 permanent: false,
