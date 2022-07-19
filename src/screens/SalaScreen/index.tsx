@@ -3,15 +3,13 @@ import React from "react";
 import MenuAppBar from "../../components/Header/HeaderDentro";
 import { withSession } from "../../services/auth/session";
 
-export function getServerSideProps() {
-  withSession((ctx) => {
-    return {
-      props: {
-        session: ctx.req.session
-      }
+export const getServerSideProps = withSession((ctx) => {
+  return {
+    props: {
+      session: ctx.req.session
     }
-  })
-} 
+  }
+})
 
 
 function Sala() {
