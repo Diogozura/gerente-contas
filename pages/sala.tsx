@@ -1,2 +1,2 @@
-export { default } from "../src/screens/SalaScreen";
+export { default, getServerSideProps } from "../src/screens/SalaScreen";
 
