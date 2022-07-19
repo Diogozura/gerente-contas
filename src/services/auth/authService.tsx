@@ -74,7 +74,6 @@ export const authService = {
     )
     .then((response) => {
       if(!response.ok) throw new Error('Não autorizado');
-     
       return response.body;
     });
   }

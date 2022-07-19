@@ -22,7 +22,7 @@ function Sala( props) {
             <MenuAppBar children={undefined} />
         <h1>Bem vindo</h1>
             <pre>
-        {JSON.stringify(props, null, 2)}
+        {/* {JSON.stringify(props, null, 2)} */}
       </pre> 
         </>
     )
