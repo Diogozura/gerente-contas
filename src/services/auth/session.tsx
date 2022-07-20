@@ -11,7 +11,8 @@ export function withSession(fucao) {
           ...ctx.req,
           session,
         }
-     }
+      }
+     
       return fucao(modifiedCtx)
 
     }catch(err){
