@@ -31,26 +31,26 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
 
       if (response.status !== 401) return response
 
-      const isServer = true
+      
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
       
       // tentar rodar o request anterior 
       try {
         const refreshResponse = await HttpClient('/api/refresh', {
-          method: isServer ? 'PUT' : 'GET',
-          body: isServer? {refreshToken : currentRefreshToken} : undefined
+          method:  'PUT',
+          body: {refreshToken : currentRefreshToken} 
         });
          // Guardar os token 
       const newAccessToken = refreshResponse.body.data.token;
       const newRefreshToken = refreshResponse.body.data.refreshToken;
 
-      if (isServer) {
+     
         nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
           httpOnly: true,
           sameSite: 'lax',
           path: '/',
         })
-      }
+      
         tokenService.save(newAccessToken)
         
         const retryResponse = await HttpClient(fetchUrl, {
