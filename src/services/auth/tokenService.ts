@@ -11,7 +11,7 @@ export const tokenService = {
   save(accessToken: string, ctx = null) {
     
     nookies.set(ctx, ACCESS_TOKEN_KEY, accessToken, {
-      maxAge: ONE_MINUTE,
+      maxAge: ONE_MINUTE * 10,
       path: '/',
     });
   },
