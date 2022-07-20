@@ -62,7 +62,7 @@ export const authService = {
   async getSession(ctx) {
     const token = tokenService.get(ctx);
 
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro`, {
+    return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
