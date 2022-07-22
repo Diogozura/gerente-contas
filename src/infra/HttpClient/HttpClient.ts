@@ -37,16 +37,16 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       // console.log('currentRefreshToken', currentRefreshToken)
       // tentar rodar o request anterior 
       try {
-        const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
+        const refreshResponse = await HttpClient('https://gerente-contas-git-dev-diogozura.vercel.app/api/refresh', {
           method: 'PUT',
           body: {refreshToken : currentRefreshToken} 
         });
-        // console.log('refreshResponse', refreshResponse)
+        console.log('refreshResponse', refreshResponse)
          // Guardar os token 
       const newAccessToken = refreshResponse.body.data.token;
         const newRefreshToken = refreshResponse.body.data.refreshToken;
-        // console.log('novo token ', newAccessToken)
-        // console.log('newRefreshToken', newRefreshToken)
+        console.log('novo token ', newAccessToken)
+        console.log('newRefreshToken', newRefreshToken)
      
         nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
           httpOnly: true,
