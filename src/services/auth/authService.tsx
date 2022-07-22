@@ -1,13 +1,7 @@
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
-interface Props{
-  data:{
-    refreshToken: string;
-    token: string
-  }
-  
-}
+
 
 export const authService = {
     async cadastro({ name, email, password }) {
@@ -68,7 +62,7 @@ export const authService = {
         'Authorization': `Bearer ${token}`
       },
       ctx,
-      refresh: true,
+      refresh: true
     }
        
     )
@@ -76,5 +70,22 @@ export const authService = {
       if(!response.ok) throw new Error('Não autorizado');
       return response.body;
     });
-  }
+  },
+  // async organiza(ctx) {
+  //   const token = tokenService.get(ctx);
+
+  //   return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/orgatization`, {
+  //     method: 'GET',
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`
+  //     },
+  //   }
+       
+  //   )
+  //   .then((response) => {
+  //     // if (!response.ok) throw new Error('Não autorizado');
+  //     // console.log(response)
+  //     return response;
+  //   });
+  // }
 };

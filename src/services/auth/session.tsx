@@ -12,7 +12,7 @@ export function withSession(fucao) {
           session,
         }
       }
-     
+      
       return fucao(modifiedCtx)
 
     }catch(err){

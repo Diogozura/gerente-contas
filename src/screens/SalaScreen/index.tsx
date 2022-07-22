@@ -2,6 +2,8 @@
 import React from "react";
 import MenuAppBar from "../../components/Header/HeaderDentro";
 import { withSession } from "../../services/auth/session";
+import Organizacoes from "./GetOrganização";
+import ResponsiveAppBar from "./headerHome";
 
 export const getServerSideProps = withSession((ctx) => {
   return {
@@ -15,11 +17,12 @@ export const getServerSideProps = withSession((ctx) => {
 function Sala() {
     return (
         <>
-            <MenuAppBar children={undefined} />
+        <ResponsiveAppBar/>
         <h1>Bem vindo</h1>
             <pre>
         {/* {JSON.stringify(props, null, 2)} */}
-      </pre> 
+        </pre> 
+        {/* <Organizacoes/> */}
         </>
     )
 }

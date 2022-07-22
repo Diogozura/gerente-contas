@@ -12,14 +12,14 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import Link from 'next/link';
-import Image from 'next/image';
+import Stack from '@mui/material/Stack';
+import FaceIcon from '@mui/icons-material/Face';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Slide from '@mui/material/Slide';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import LinkPage from '../../Link';
 import { blue } from '@mui/material/colors';
-import { Menu, MenuItem } from '@mui/material';
+import { Chip, Menu, MenuItem } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 
 interface Props {
@@ -73,9 +73,7 @@ export default function HeaderHome({ children }: Props, props:Props) {
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAuth(event.target.checked);
-  };
+ 
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -128,12 +126,14 @@ export default function HeaderHome({ children }: Props, props:Props) {
             edge="start"
             onClick={handleDrawerToggle}
           >
+            
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Photos
-          </Typography>
-        
+              </Typography>
+              
+          <Chip icon={<AccountCircleIcon />}  label="With Icon" onClick={handleMenu}/>
               <IconButton
                 size="large"
                 aria-label="account of current user"
