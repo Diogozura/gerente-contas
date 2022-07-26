@@ -18,6 +18,7 @@ import ResponsiveAppBar from "./headerHome";
   
 // })
 export async function getServerSideProps() {
+ 
   withSession((ctx) => {
       return {
         props: {
@@ -33,10 +34,13 @@ export async function getServerSideProps() {
         }
       }
       
-    })
+  })
+  
+ 
 }
 
- function Sala(props, ctx) {
+function Sala(props) {
+   console.log('props', props)
   
     return (
         <>
