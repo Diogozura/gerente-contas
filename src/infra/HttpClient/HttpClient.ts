@@ -32,7 +32,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       } 
       if (response.status !== 401) return response
 
-      console.log('ATUALIZA TOKEN')
+      // console.log('ATUALIZA TOKEN')
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
       // console.log('currentRefreshToken', currentRefreshToken)
       // tentar rodar o request anterior 
@@ -41,12 +41,12 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
           method: 'PUT',
           body: {refreshToken : currentRefreshToken} 
         });
-        console.log('refreshResponse', refreshResponse)
+        // console.log('refreshResponse', refreshResponse)
          // Guardar os token 
       const newAccessToken = refreshResponse.body.data.token;
         const newRefreshToken = refreshResponse.body.data.refreshToken;
-        console.log('novo token ', newAccessToken)
-        console.log('newRefreshToken', newRefreshToken)
+        // console.log('novo token ', newAccessToken)
+        // console.log('newRefreshToken', newRefreshToken)
      
         nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
           httpOnly: true,

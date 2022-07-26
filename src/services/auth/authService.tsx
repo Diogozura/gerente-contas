@@ -4,55 +4,55 @@ import { tokenService } from './tokenService';
 
 
 export const authService = {
-    async cadastro({ name, email, password }) {
-        return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cadastro`, {
-            method: 'POST',
-            body: { name, email, password },
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error(res.body.txt)
-    }) 
-    },
-
-
-    // Login 
-    async login({ username, password }) {
-        // var myHeaders = new Headers();
-        // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
-    
-      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
-        },
-        redirect: 'follow'
+  async cadastro({ name, email, password }) {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/cadastro`, {
+      method: 'POST',
+      body: { name, email, password },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.body.txt)
       })
-        .then(async (response) => {
-          if (!response.ok) throw new Error('Erro ao fazer o login')
-           await response.json()
+  },
+
+
+  // Login 
+  async login({ username, password }) {
+    // var myHeaders = new Headers();
+    // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
+    
+    await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/login`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
+      },
+      redirect: 'follow'
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Erro ao fazer o login')
+        await response.json()
             
-            .then(async(data) => {
-              tokenService.save(data.token);
+          .then(async (data) => {
+            tokenService.save(data.token);
               
-             return data
-            })
-            .then(async({refreshToken}) => {
-             
-              const response = await HttpClient('/api/refresh', {
-                method: 'POST',
-                body: {
-                  refreshToken
-                },
-              
-              })
-             
-              return response
+            return data
           })
-        })
-    },
-    // Session 
+          .then(async ({ refreshToken }) => {
+             
+            const response = await HttpClient('/api/refresh', {
+              method: 'POST',
+              body: {
+                refreshToken
+              },
+              
+            })
+             
+            return response
+          })
+      })
+  },
+  // Session 
   async getSession(ctx) {
     const token = tokenService.get(ctx);
 
@@ -66,26 +66,42 @@ export const authService = {
     }
        
     )
-    .then((response) => {
-      if(!response.ok) throw new Error('Não autorizado');
-      return response.body;
-    });
+      .then((response) => {
+        if (!response.ok) throw new Error('Não autorizado');
+        return response.body;
+      });
   },
-  // async organiza(ctx) {
-  //   const token = tokenService.get(ctx);
+  async organiza(ctx) {
+    const token = tokenService.get(ctx);
 
-  //   return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/orgatization`, {
+    return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orgatization`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      ctx,
+      refresh: true
+    }
+       
+    )
+      .then((response) => {
+        // if (!response.ok) throw new Error('Não autorizado');
+        return response.body;
+      });
+   
+  }
+  
+  //   await fetch("https://gerente1.herokuapp.com/api/orgatization", {
   //     method: 'GET',
   //     headers: {
   //       'Authorization': `Bearer ${token}`
   //     },
-  //   }
-       
-  //   )
-  //   .then((response) => {
-  //     // if (!response.ok) throw new Error('Não autorizado');
-  //     // console.log(response)
-  //     return response;
-  //   });
+  //     redirect: 'follow'
+  //   })
+  //     .then((response) => {
+  //       // if (!response.ok) throw new Error('Não autorizado');
+  //       console.log(response.)
+  //       return response.body;
+  //     });
   // }
-};
+}
