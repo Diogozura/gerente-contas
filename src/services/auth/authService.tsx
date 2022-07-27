@@ -71,6 +71,22 @@ export const authService = {
         return response.body;
       });
   },
+
+  async neworgatization({nome} ) {
+    const token = tokenService.get(ctx);
+
+    return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orgatization`, {
+      method: 'POST',
+      body:{
+        nameOrganization: nome
+      },
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+     
+    })
+  },
+
   async organiza(ctx) {
     const token = tokenService.get(ctx);
 
@@ -104,4 +120,8 @@ export const authService = {
   //       return response.body;
   //     });
   // }
+}
+
+function ctx(ctx: any) {
+  throw new Error('Function not implemented.');
 }

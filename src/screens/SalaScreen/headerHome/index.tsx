@@ -13,37 +13,53 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Link from 'next/link';
+import { Fade } from '@mui/material';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = [{
+  id: 1,
+    label: 'Criar Organização',
+    path: '/criar-organization',
+}
+// , {
+//   id: 2,
+//     label: 'Organizações',
+//     path: '#Profile',
+// },
+// {
+//     id: 3,
+//     label: 'Profile',
+//     path: '#Profile',
+// }
+ 
+
+];
 const settings = [{
     id: 1,
     label: 'Profile',
     path: '#Profile',
     // icon: HomeIcon
-},
-{
+},{
     id: 2,
     label: 'Account',
     path: '#Account',
     // icon: HomeIcon
-    },
-    {
-        id: 1,
+    },{
+        id: 3,
         label: 'Dashboard',
         path: '#Dashboard',
         // icon: HomeIcon
-    },
-    {
-        id: 2,
+    },{
+        id: 4,
         label: 'Logout',
         path: '/logout',
         // icon: HomeIcon
-        },];
+  }
+];
 
-const ResponsiveAppBar = () => {
+const ResponsiveAppBar = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-
+  const data = props.props.organizacoes
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -57,6 +73,14 @@ const ResponsiveAppBar = () => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -112,10 +136,34 @@ const ResponsiveAppBar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.id} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page.label}</Typography>
                 </MenuItem>
               ))}
+               <Button
+        id="fade-button"
+        aria-controls={open ? 'fade-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        Organizações
+      </Button>
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+       {data?.map((org) => (
+                    
+                    <MenuItem key={org.idOrganization}>{org.nameOrganization}</MenuItem>
+                  ))}   
+      </Menu>
             </Menu>
           </Box>
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
@@ -140,14 +188,44 @@ const ResponsiveAppBar = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.id}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
-              </Button>
-            ))}
+                 <Link href={page.path} passHref replace>
+                  <Typography textAlign="center">{page.label}</Typography>
+                  </Link>
+             </Button>))}
+            <Button
+              variant="text"
+        id="fade-button"
+        aria-controls={open ? 'fade-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        Organizações
+      </Button>
+      <Menu
+        id="fade-menu"
+        MenuListProps={{
+          'aria-labelledby': 'fade-button',
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+            >
+              {data?.map((org) => (
+                    
+                <MenuItem key={org.idOrganization}>{org.nameOrganization}</MenuItem>
+              ))}   
+                    
+       
+      </Menu>
+
           </Box>
+          
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">

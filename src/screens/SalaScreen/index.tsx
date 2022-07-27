@@ -3,6 +3,7 @@ import React from "react";
 import { withSession } from "../../services/auth/session";
 import Organizacoes from "./GetOrganização";
 import ResponsiveAppBar from "./headerHome";
+import LinkOrg from "./org";
 
 
 
@@ -21,7 +22,8 @@ function Sala(props) {
 
     return (
         <>
-        <ResponsiveAppBar/>
+        <ResponsiveAppBar props={props.org}/>
+      
         <h1>Bem vindo</h1>
             <pre>
         {JSON.stringify(props.session , null, 2)}
