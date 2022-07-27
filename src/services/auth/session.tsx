@@ -1,15 +1,18 @@
 import { authService } from "./authService";
 
+
 export function withSession(fucao) {
   
   return async (ctx) => {
     try {
       const session = await authService.getSession(ctx)
+      const org = await authService.organiza(ctx)
       const modifiedCtx = {
         ...ctx,
         req: {
           ...ctx.req,
           session,
+          org,
         }
       }
       

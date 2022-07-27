@@ -79,12 +79,12 @@ export const authService = {
       headers: {
         'Authorization': `Bearer ${token}`
       },
-      ctx,
-      refresh: true
+    
     }
        
     )
       .then((response) => {
+        // console.log(response)
         // if (!response.ok) throw new Error('Não autorizado');
         return response.body;
       });
