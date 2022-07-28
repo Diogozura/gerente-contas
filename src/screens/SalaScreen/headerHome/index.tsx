@@ -142,6 +142,7 @@ const ResponsiveAppBar = (props) => {
               ))}
                <Button
         id="fade-button"
+        
         aria-controls={open ? 'fade-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
@@ -189,15 +190,17 @@ const ResponsiveAppBar = (props) => {
             {pages.map((page) => (
               <Button
                 key={page.id}
+                variant="text"
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                 <Link href={page.path} passHref replace>
-                  <Typography textAlign="center">{page.label}</Typography>
+                 <Link href={page.path} passHref >
+                    <Typography textAlign="center">{page.label}</Typography>
                   </Link>
              </Button>))}
             <Button
               variant="text"
+              sx={{ my: 2, color: 'white', display: 'block' }}
         id="fade-button"
         aria-controls={open ? 'fade-menu' : undefined}
         aria-haspopup="true"
