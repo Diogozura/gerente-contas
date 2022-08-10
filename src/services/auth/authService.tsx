@@ -89,7 +89,8 @@ export const authService = {
 
   async organiza(ctx) {
     const token = tokenService.get(ctx);
-
+   
+    console.log() 
     return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orgatization`, {
       method: 'GET',
       headers: {
@@ -105,7 +106,37 @@ export const authService = {
         return response.body;
       });
    
-  }
+  },
+  async account(ctx, values) {
+    const token = tokenService.get(ctx);
+    // const id = 
+    console.log('idAcconts ', values?.values?.idOrg)
+    const id = () => {
+      if (values?.values?.idOrg)
+        return values?.values?.idOrg
+      else {
+        return 2
+      }
+    }
+    console.log('id', id())
+    return await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/orgatization?idOrganization=${id()}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    
+    }
+       
+    )
+      .then((response) => {
+        // console.log(response)
+        // if (!response.ok) throw new Error('Não autorizado');
+        console.log('resposta dos acconts', response.body)
+        return response.body;
+      });
+   
+  },
+ 
   
   //   await fetch("https://gerente1.herokuapp.com/api/orgatization", {
   //     method: 'GET',

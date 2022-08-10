@@ -1,5 +1,6 @@
+import React from 'react';
 import { authService } from "./authService";
-
+import { useRouter } from 'next/router';
 
 export function withSession(fucao) {
   
@@ -7,24 +8,26 @@ export function withSession(fucao) {
     try {
       const session = await authService.getSession(ctx)
       const org = await authService.organiza(ctx)
+      const acconts = await authService.account(ctx)
       const modifiedCtx = {
         ...ctx,
         req: {
           ...ctx.req,
           session,
           org,
+          acconts,
         }
       }
       
       return fucao(modifiedCtx)
 
-    }catch(err){
+    } catch (err) {
       return {
-              redirect: {
-                permanent: false,
-                destination: '/?error=401 '
-             }
+        redirect: {
+          permanent: false,
+          destination: '/?error=401 '
         }
+      }
     }
   }
     
