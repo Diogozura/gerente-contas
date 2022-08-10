@@ -8,13 +8,21 @@ const ONE_HOUR = ONE_MINUTE * 60;
 // const ONE_YEAR = ONE_DAY * 365;
 
 export const tokenService = {
-  save(accessToken: string, ctx = null) {
+  save(accessToken: string,  ctx = null) {
     
     nookies.set(ctx, ACCESS_TOKEN_KEY, accessToken, {
       maxAge: ONE_HOUR,
       path: '/',
     });
+   
+    
+    nookies.set(ctx, ACCESS_TOKEN_KEY, accessToken, {
+      maxAge: ONE_HOUR,
+      path: '/',
+    });
+   
   },
+ 
   get(ctx = null) {
     const cookies = nookies.get(ctx);
     return cookies[ACCESS_TOKEN_KEY] || '';

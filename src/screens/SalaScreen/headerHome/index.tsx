@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import Link from 'next/link';
-import { Fade } from '@mui/material';
+import { Fade, Input } from '@mui/material';
 
 const pages = [{
   id: 1,
@@ -82,6 +82,29 @@ const ResponsiveAppBar = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+ 
+  // console.log(ultimo)
+  const [values, setValues] = React.useState({
+    idOrg: '',
+  })
+   
+  const handlenChange = (event) => {
+    
+    const fieldValue = event.target.value;
+    const fieldName = event.target.name;
+    
+    
+        
+    setValues((currenetValues) => {
+      return {
+        ...currenetValues,
+        [fieldName]: fieldValue
+      }
+    })
+      
+  }
+  console.log(values)
 
   return (
     <AppBar position="static">
@@ -160,8 +183,12 @@ const ResponsiveAppBar = (props) => {
         TransitionComponent={Fade}
       >
        {data?.map((org) => (
-                    
-                    <MenuItem key={org.idOrganization}>{org.nameOrganization}</MenuItem>
+         <MenuItem key={org.idOrganization}>
+           <Link href='/acconts'>
+            <a> {org.nameOrganization}</a>
+           </Link>
+          
+         </MenuItem>
                   ))}   
       </Menu>
             </Menu>
@@ -210,7 +237,8 @@ const ResponsiveAppBar = (props) => {
         id="fade-menu"
         MenuListProps={{
           'aria-labelledby': 'fade-button',
-        }}
+              }}
+              sx={{ my: 2, color: 'white', display: 'block' }}
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
@@ -218,12 +246,24 @@ const ResponsiveAppBar = (props) => {
             >
               {data?.map((org) => (
                     
-                <MenuItem key={org.idOrganization}>{org.nameOrganization}</MenuItem>
+                <MenuItem key={org.idOrganization}>
+                
+                <Input
+                type="radio"
+                id={org.idOrganization}
+                name="idOrg"
+                onChange={handlenChange}
+                value={org.idOrganization}
+             />
+             <label htmlFor={org.idOrganization}>
+             {org.nameOrganization}
+             </label>
+                </MenuItem>
               ))}   
                     
        
       </Menu>
-
+      <pre> {JSON.stringify(values , null, 2)}</pre> 
           </Box>
           
 
