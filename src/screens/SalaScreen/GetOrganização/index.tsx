@@ -6,7 +6,7 @@ import TemCoxt from "./TemCoxt";
 export default function Organizacoes(props) {
 
     // idOrganization
-  
+    const {  setAccont } = React.useContext(AccontsContext)
 
     return (
         <>
@@ -14,7 +14,7 @@ export default function Organizacoes(props) {
             <ul>
                 {props.props.organizacoes?.map((org) => (
                     <>
-                        <Button >{ org.nameOrganization}</Button>
+                        <Button onClick={()=> setAccont(org.idOrganization)}>{ org.nameOrganization}</Button>
                         <li>{org.nameRole}</li>
                         
                     </>
@@ -23,7 +23,7 @@ export default function Organizacoes(props) {
                 )}
 
             </ul>
-             {/* <TemCoxt/> */}
+             <TemCoxt/>
         <pre>
         {JSON.stringify(props.props, null, 2)}
         </pre> 

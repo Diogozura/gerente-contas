@@ -28,9 +28,9 @@ function Sala(props) {
             <pre>
         {JSON.stringify(props.session , null, 2)}
         </pre> 
-        {/* <AccontsProvider> */}
+        <AccontsProvider>
           <Organizacoes props={props.org} />
-        {/* </AccontsProvider> */}
+        </AccontsProvider>
         
        
        
