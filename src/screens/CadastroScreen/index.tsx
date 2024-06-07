@@ -27,9 +27,11 @@ export default function CadastroScreen() {
     const router = useRouter()
 
     const [values, setValues] = react.useState({
-        nome: '',
+        firstname: '',
+        lastname: '',
         email: '',
-        senha: ''
+        senha: '',
+        cpf: ''
     })
     function handleChange(event: any) {
         const fieldName = event.target.name;
@@ -59,8 +61,10 @@ export default function CadastroScreen() {
                   
                     authService.cadastro({
                         email: values.email,
-                        name: values.nome,
-                        password: values.senha
+                        firstname: values.firstname,
+                        lastname: values.lastname,
+                        password: values.senha,
+                        cpf:values.cpf
                     })
                         .then((res) => {
                             router.push("/login")
@@ -76,10 +80,22 @@ export default function CadastroScreen() {
                         type="text"
                         id="outlined-basic"
                         margin="normal"
-                        name="nome"
+                        name="firstname"
                         label="Nome"
 
-                        value={values.nome}
+                        value={values.firstname}
+                        onChange={handleChange}
+
+                        required 
+                        variant="outlined" />
+                    <TextField
+                        type="text"
+                        id="outlined-basic"
+                        margin="normal"
+                        name="lastname"
+                        label="Nome"
+
+                        value={values.lastname}
                         onChange={handleChange}
 
                         required 
@@ -111,6 +127,18 @@ export default function CadastroScreen() {
                         margin="normal"
                         variant="outlined"
                     />
+                     <TextField
+                        type="text"
+                        id="outlined-basic"
+                        margin="normal"
+                        name="cpf"
+                        label="cpf"
+
+                        value={values.cpf}
+                        onChange={handleChange}
+
+                        required 
+                        variant="outlined" />
 
                     <Button
                         variant="contained"

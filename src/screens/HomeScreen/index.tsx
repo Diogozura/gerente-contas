@@ -1,31 +1,25 @@
 /* eslint-disable react/no-children-prop */
 import { blue } from "@mui/material/colors";
 import styled from "styled-components";
-import HeaderHome from "../../components/Header/HeaderHome";
-import LinkPage from "../../components/Link";
+import HeaderHome from "../../components/base/Header/HeaderHome";
+
+import { Grid } from "@mui/material";
+import Link from "next/link";
 
 
-const Conteudo = styled.main`
-    width: 700px;
-    margin: 1rem auto;
-    text-align: center;
-    display: grid;
 
-    @media only screen and (max-width: 700px) {
-        width: 80%;
-    }
-`
 
 
 export default function HomeScreen() {
     return (
         <>
+            
             <HeaderHome children={undefined}  />
-            <Conteudo>
+            <Grid height={'100vh'}>
             <h1>Bem vindo a home</h1>
-                <LinkPage href={'/sala'} name={'Sala'} color={"white"} bg={blue[400]} padding={"10px"} hoverBg={blue[300]} margin={"1em"} />
+                <Link href={'/sala'}>Sala</Link>
                 
-            </Conteudo>
+            </Grid>
      
         </>
     )

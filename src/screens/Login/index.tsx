@@ -5,8 +5,8 @@ import { toast } from 'react-toastify';
 import styled from "styled-components";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
-import LinkPage from "../../components/Link";
 import { authService } from "../../services/auth/authService";
+import Link from "next/link";
 
 
 
@@ -25,8 +25,8 @@ export function Login() {
     const router = useRouter()
 
     const [values, setValues] = react.useState({
-        nome: 'teste@teste.com.br' ,
-        senha: '12345678'
+        nome: 'danilocxz@gmail.com' ,
+        senha: '1234@klsqA'
     })
 
    
@@ -109,8 +109,8 @@ export function Login() {
                 </Formulario>
 
                 <Alternativos>
-                    <LinkPage href={"/trocar-senha"} name={"Esqueci minha Senha"} color={"#9097f9"} />
-                    <p>Não tem conta?  <LinkPage href={"/cadastro"} name={"Criar Conta"} color={"#9097f9"} /></p>
+                    <Link href={"/trocar-senha"} >Esqueci minha Senha</Link>
+                    <p>Não tem conta?  <Link href={"/cadastro"}   >Criar Conta</Link></p>
                 </Alternativos>
 
               

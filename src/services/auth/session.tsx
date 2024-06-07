@@ -19,7 +19,7 @@ export function withSession(fucao) {
       return {
               redirect: {
                 permanent: false,
-                destination: '/?error=401 '
+                destination: '/?error=403 '
              }
         }
     }

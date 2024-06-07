@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-
+const colorLink = '#000000'
 export default createGlobalStyle`
   * {
     margin: 0;
@@ -14,5 +14,9 @@ export default createGlobalStyle`
 
   button {
     cursor: pointer;
+  }
+  a{
+    text-decoration: none;
+    color: ${colorLink};
   }
 `;
