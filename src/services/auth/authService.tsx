@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/react';
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 
@@ -10,8 +11,9 @@ interface Props {
 }
 
 export const authService = {
+
   async cadastro({ firstname, lastname, email, password, cpf }) {
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/cadastro`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastro`, {
       method: 'POST',
       body: { firstname, lastname, email, password, cpf },
     })
@@ -21,70 +23,105 @@ export const authService = {
   },
 
 
-  // Login 
+  // Login
+  // async login({ username, password }) {
+  //   const response = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     } ,
+  //     body: { username, password }
+  //   });
+  //   if (!response.ok) {
+  //     throw new Error('Erro ao fazer o login');
+  //   }
+
+  //   const data = await response.body;
+  //   console.log('data', data)
+  //   tokenService.save(data.access);
+  //   return data;
+
+
+  // },
   async login({ username, password }) {
-    console.log('name', username, 'senha', password)
-        // var myHeaders = new Headers();
-        // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
+    // var myHeaders = new Headers();
+    // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
 
-      // await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token`, {
-      //   method: 'Post',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     'Accept': 'application/json',
-      //     'Authorization': 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64')
-      //   },
-      //   redirect: 'follow'
-        // })
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token`, {
-        method: 'POST',
-        body: { username, password },
+    const response = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          } ,
+          body: { username, password }
+        })
+      .then(response => {
+        tokenService.save(response.body.access);
+        const body = response.body
+        return body;
+        // if (!response.ok) throw new Error('Erro ao fazer o login')
       })
-        .then((res) => {
-          if (!res.ok) throw new Error(res.body.txt)
+      .then(async({refresh}) => {
+         console.log('refres', refresh)
+        const response = await HttpClient('/api/refresh', {
+          method: 'POST',
+          body: {
+            refresh
+          },
+        
         })
-        .then(async (response) => {
-          if (!response.ok) throw new Error('Erro ao fazer o login')
-          await response.json()
-
-            .then(async (data) => {
-              console.log('data', data)
-              tokenService.save(data.token);
-
-              return data
-            })
-            .then(async ({ refreshToken }) => {
-
-              const response = await HttpClient('/api/refresh', {
-                method: 'POST',
-                body: {
-                  refreshToken
-                },
-
-              })
-
-              return response
-            })
-        })
-
-    },
-    // Session 
+         
+          return response
+      })
+},
+  // Session
   async getSession(ctx) {
-      const token = tokenService.get(ctx);
-
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/dadoscadastro`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        ctx,
-        refresh: true,
-      }
-
-      )
-        .then((response) => {
-          if (!response.ok) throw new Error('Não autorizado');
-          return response.body;
-        });
+    const token = tokenService.get(ctx);
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: { token },
+      // headers: {
+      //   'Authorization': `Bearer ${token}`
+      // },
+      ctx,
+      refresh: true,
     }
-  };
+
+    )
+      .then((response) => {
+        if (!response.ok) throw new Error('Não autorizado');
+        return response.body;
+      });
+  }
+};
+// import { getSession, signIn } from 'next-auth/react';
+
+// export const authService = {
+//   async login({ username, password }) {
+//     try {
+//       await signIn('credentials', {
+//         username,
+//         password,
+//         redirect: false, // Manter o redirecionamento desativado
+//       });
+//       return true; // Retorna true em caso de sucesso no login
+//     } catch (error) {
+//       throw new Error('Erro ao fazer o login');
+//     }
+//   },
+
+//   async getSession(ctx) {
+//     try {
+//       const session = await getSession(ctx);
+//       if (!session) {
+//         throw new Error('Não autorizado');
+//       }
+//       return session;
+//     } catch (error) {
+//       throw new Error('Erro ao recuperar a sessão');
+//     }
+//   }
+// };
+

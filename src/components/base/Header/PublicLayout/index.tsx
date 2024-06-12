@@ -1,4 +1,3 @@
-// /components/HeaderHome.tsx
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -16,7 +15,7 @@ import Link from 'next/link';
 import Slide from '@mui/material/Slide';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 
-import ThemeToggle from '../../../../components/ThemeToggle';
+import ThemeToggle from '../../../ThemeToggle';
 import nookies from 'nookies';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -26,7 +25,7 @@ import lightTheme from '../../../../../styles/themes/light';
 
 interface Props {
   window?: () => Window;
-  children: React.ReactElement;
+  children: React.ReactNode;
 }
 
 const drawerWidth = 240;
@@ -49,7 +48,7 @@ function HideOnScroll(props: Props) {
   );
 }
 
-export default function HeaderHome({ children, window }: Props) {
+const PublicLayout: React.FC<Props> = ({ children, window }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [darkMode, setDarkMode] = React.useState(false);
 
@@ -91,48 +90,51 @@ export default function HeaderHome({ children, window }: Props) {
   return (
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
-      <Box sx={{ display: 'flex' }}>
-        <HideOnScroll {...{ window }}>
-          <AppBar position="static">
-            <Toolbar>
-              <IconButton
-                color="inherit"
-                aria-label="open drawer"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: 'none' } }}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
-              </Typography>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                {navItems.map((item) => (
-                  <Button variant="contained" key={item.id}>
-                    <Link href={item.path}>{item.label}</Link>
-                  </Button>
-                ))}
-              </Box>
-              <ThemeToggle toggleDarkMode={toggleDarkMode} />
-            </Toolbar>
-          </AppBar>
-        </HideOnScroll>
-        <Box component="nav">
-          <Drawer
-            container={container}
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{ keepMounted: true }}
-            sx={{
-              display: { xs: 'block', sm: 'none' },
-              '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Box>
+      <HideOnScroll window={window}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2, display: { sm: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+            </Typography>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              {navItems.map((item) => (
+                <Button variant="contained" key={item.id}>
+                  <Link href={item.path}>{item.label}</Link>
+                </Button>
+              ))}
+            </Box>
+            <ThemeToggle toggleDarkMode={toggleDarkMode} />
+          </Toolbar>
+        </AppBar>
+      </HideOnScroll>
+      <Box component="nav">
+        <Drawer
+          container={container}
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { xs: 'block', sm: 'none' },
+            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+      <Box component="main" sx={{ p: 3 }}>
+        {children}
       </Box>
     </ThemeProvider>
   );
-}
+};
+
+export default PublicLayout;

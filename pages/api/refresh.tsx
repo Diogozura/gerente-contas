@@ -6,9 +6,9 @@ const REFRESH_TOKEN_NAME = 'REFRESH_TOKEN_NAME'
 
 const controllers = {
   async stroreRefreshToken(req, res) {
-    
+    console.log('req', req)
     const ctx = { req, res }
-    nookies.set(ctx, REFRESH_TOKEN_NAME, req.body.refreshToken, {
+    nookies.set(ctx, REFRESH_TOKEN_NAME, req.body.refresh, {
       httpOnly: true,
       sameSite: 'lax',
       path: '/',
@@ -23,26 +23,25 @@ const controllers = {
   async regenerateTokens(req, res) {
     const ctx = { req, res }
     const cookies = nookies.get(ctx);
-    const refresh_token = cookies[REFRESH_TOKEN_NAME] || req.body.refreshToken
-    console.log("/api/refresh [regenerateTokens]", refresh_token)
+    const refresh_token = cookies[REFRESH_TOKEN_NAME] || req.body.refresh
 
-   const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/refreshLogin`, {
-     method: 'GET',
-     headers: {
-      'Authorization': `Bearer ${refresh_token}`
-    },
+
+   const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/refresh/`, {
+     method: 'POST',
+     body:{refresh :refresh_token}
+
  })
     
     
 
     if (refreshResponse.ok) {
-      nookies.set(ctx, REFRESH_TOKEN_NAME, refreshResponse.body.refreshToken, {
+      nookies.set(ctx, REFRESH_TOKEN_NAME, refreshResponse.refresh, {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
       })
 
-      tokenService.save(refreshResponse.body.token ,ctx)
+      tokenService.save(refreshResponse.body ,ctx)
 
       res.status(200).json({
         data: refreshResponse.body

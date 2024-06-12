@@ -1,5 +1,6 @@
 import nookies from 'nookies';
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
+const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY'; // Novo chave para o refresh token
 
 const ONE_SECOND = 1;
 const ONE_MINUTE = ONE_SECOND * 60;
@@ -20,6 +21,10 @@ export const tokenService = {
     return cookies[ACCESS_TOKEN_KEY] || '';
     // return globalThis?.localStorage?.getItem(ACCESS_TOKEN_KEY);
     // return sessionStorage.getItem(ACCESS_TOKEN_KEY);
+  },
+  getRefreshToken(ctx = null) { // Função para obter o refresh token
+    const cookies = nookies.get(ctx);
+    return cookies[REFRESH_TOKEN_KEY] || '';
   },
   delete(ctx = null) {
     nookies.destroy(ctx, ACCESS_TOKEN_KEY);

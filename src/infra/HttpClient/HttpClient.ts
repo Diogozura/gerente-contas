@@ -30,42 +30,37 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       if (!fetchOptions.refresh) return response
 
       if (response.status !== 401) return response
-
       const isServer = true
-      const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
+      const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_KEY'];
       
       // tentar rodar o request anterior 
-      try {
+      if (response.status === 401 && fetchOptions.refresh) {
+        
         const refreshResponse = await HttpClient('/api/refresh', {
           method: isServer ? 'PUT' : 'GET',
-          body: isServer? {refreshToken : currentRefreshToken} : undefined
+          body: isServer ? { refresh: currentRefreshToken } : undefined
         });
-         // Guardar os token 
-      const newAccessToken = refreshResponse.body.data.token;
-      const newRefreshToken = refreshResponse.body.data.refreshToken;
-
-      if (isServer) {
-        nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
-          httpOnly: true,
-          sameSite: 'lax',
-          path: '/',
-        })
-      }
-        tokenService.save(newAccessToken)
+   
+        const newAccessToken = refreshResponse.body.data.access;
+        const newRefreshToken = refreshResponse.body.data.refresh;
         
+        if (isServer) {
+          nookies.set(fetchOptions.ctx, 'REFRESH_TOKEN_NAME', newRefreshToken, {
+            httpOnly: true,
+            sameSite: 'lax',
+            path: '/',
+          });
+        }
+        tokenService.save(newAccessToken);
         const retryResponse = await HttpClient(fetchUrl, {
           ...options,
           refresh: false,
           headers: {
             'Authorization': `Bearer ${newAccessToken}`
           }
-        })
-        
-        return retryResponse
-      }catch(err){
-        
-        return response
-      }
+        });
       
+        return retryResponse;
+      }
     });
 }
