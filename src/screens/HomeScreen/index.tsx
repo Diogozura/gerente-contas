@@ -3,14 +3,20 @@ import { blue } from "@mui/material/colors";
 import styled from "styled-components";
 
 
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import Link from "next/link";
+import { tokenService } from "../../services/auth/tokenService";
+import { HttpClient } from "../../infra/HttpClient/HttpClient";
+import { authService } from "../../services/auth/authService";
 
 
 
 
 
 export default function HomeScreen() {
+    const onClick = async (ctx) => {
+      await authService.getSession(ctx)
+      }
     return (
         <>
             
@@ -18,7 +24,9 @@ export default function HomeScreen() {
             <Grid height={'100vh'}>
             <h1>Bem vindo a home</h1>
                 <Link href={'/sala'}>Sala</Link>
-                <a href="/api/auth/signin">Login</a>
+                <Button onClick={onClick}>
+          Verifica o token
+        </Button>
             </Grid>
      
         </>

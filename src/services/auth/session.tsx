@@ -12,14 +12,14 @@ export function withSession(fucao) {
           session,
         }
       }
-     
+     console.log(session)
       return fucao(modifiedCtx)
 
-    }catch(err){
+    } catch (err) {
       return {
               redirect: {
                 permanent: false,
-                destination: '/?error=403'
+                destination: '/?error=401'
              }
         }
     }

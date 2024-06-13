@@ -61,7 +61,6 @@ export const authService = {
         // if (!response.ok) throw new Error('Erro ao fazer o login')
       })
       .then(async({refresh}) => {
-         console.log('refres', refresh)
         const response = await HttpClient('/api/refresh', {
           method: 'POST',
           body: {
@@ -76,21 +75,19 @@ export const authService = {
   // Session
   async getSession(ctx) {
     const token = tokenService.get(ctx);
+
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: { token },
-      // headers: {
-      //   'Authorization': `Bearer ${token}`
-      // },
       ctx,
       refresh: true,
     }
-
     )
-      .then((response) => {
+      .then(response => {
+
         if (!response.ok) throw new Error('Não autorizado');
         return response.body;
       });

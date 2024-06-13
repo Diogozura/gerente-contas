@@ -1,6 +1,6 @@
 import nookies from 'nookies';
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
-const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY'; // Novo chave para o refresh token
+const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_NAME'; // Novo chave para o refresh token
 
 const ONE_SECOND = 1;
 const ONE_MINUTE = ONE_SECOND * 60;
