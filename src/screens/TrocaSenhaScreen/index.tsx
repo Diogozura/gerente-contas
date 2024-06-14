@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
+import { authService } from "../../services/auth/authService";
 
 
 export default function TrocarSenha() {
@@ -22,6 +23,21 @@ export default function TrocarSenha() {
             }
         })
     }
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        handleToggle();
+        try {
+            const res = await authService.login({
+                username: values.nome,
+                password: values.senha
+            });
+            router.push("/sala");
+        } catch (erro) {
+            error();
+            console.log(erro);
+            handleClose();
+        }
+    };
 
     return (
         <>

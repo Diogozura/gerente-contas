@@ -17,33 +17,33 @@ export const getServerSideProps = withSession((ctx) => {
 function Sala(props) {
 
   const onClick = async (ctx) => {
-    // try {
-    //   const response = await HttpClient('/api/refresh', {
-    //     method: 'PUT',
-    //   });
-    //   // console.log('API response:', response);
-    //   // Faça algo com a resposta, se necessário
-    // } catch (error) {
-    //   console.error('Error refreshing:', error);
-    // }
-    const token = tokenService.get(ctx);
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: { token },
-     
-      ctx,
-      refresh: true,
-    }
-
-    )
-      .then((response) => {
-        console.log('response', response.status)
-        if (!response.ok) throw new Error('Não autorizado');
-        return response.body;
+    try {
+      const response = await HttpClient('/api/refresh', {
+        method: 'PUT',
       });
+      // console.log('API response:', response);
+      // Faça algo com a resposta, se necessário
+    } catch (error) {
+      console.error('Error refreshing:', error);
+    }
+    // const token = tokenService.get(ctx);
+    // return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: { token },
+     
+    //   ctx,
+    //   refresh: true,
+    // }
+
+    // )
+    //   .then((response) => {
+    //     console.log('response', response.status)
+    //     if (!response.ok) throw new Error('Não autorizado');
+    //     return response.body;
+    //   });
   }
     return (
         <>

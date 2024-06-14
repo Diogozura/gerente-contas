@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { BoxForm, Formulario } from "../../components/Formulario";
 import { TituloFom } from "../../components/Formulario/TituloForm";
+import { authService } from "../../services/auth/authService";
 
 export default function NovaSenha() {
     const router = useRouter()
@@ -22,6 +23,21 @@ export default function NovaSenha() {
             }
         })
     }
+        const handleSubmit = async (event) => {
+        event.preventDefault();
+        handleToggle();
+        try {
+            const res = await authService.novaSenha({
+                password: values.password,
+                token : values.token
+            });
+            router.push("/sala");
+        } catch (erro) {
+            error();
+            console.log(erro);
+            handleClose();
+        }
+    };
 
 
     return (

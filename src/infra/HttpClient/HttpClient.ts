@@ -47,6 +47,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       const newRefreshToken = refreshResponse.body.data.refresh;
    
      console.log('refreshResponse', refreshResponse)
+     console.log('newRefreshToken', newRefreshToken)
   if (isServer) {
     nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
       httpOnly: true,
@@ -64,7 +65,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       },
       body: { token: newAccessToken },
     })
-    console.log('retryResponse', retryResponse)
+    console.log('retryResponse', retryResponse) 
     return retryResponse
   }catch(err){
     

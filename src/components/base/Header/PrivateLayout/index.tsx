@@ -224,7 +224,7 @@ export default function PrivateLayout({children}, props:Props) {
                 <MenuItem onClick={handleClose}><Link href={"/logout"} >Sair</Link></MenuItem>
                 <MenuItem onClick={handleClose}><Link href={"/dashboard"} >dashboard</Link></MenuItem>
                 <MenuItem onClick={handleClose}><Link href={"/profile"} >profile</Link></MenuItem>
-                <MenuItem onClick={handleClose}><Link href={"/cadastro-empresas"} >cadastro empresas</Link></MenuItem>
+                <MenuItem onClick={handleClose}><Link href={"/empresas"} >cadastro empresas</Link></MenuItem>
                 <MenuItem onClick={handleClose}><Link href={"/settings"} >settings</Link></MenuItem>
               </Menu>
         </Toolbar>

@@ -54,7 +54,7 @@ export function Login() {
                 username: values.nome,
                 password: values.senha
             });
-            router.push("/sala");
+            router.push("/empresas");
         } catch (erro) {
             error();
             console.log(erro);

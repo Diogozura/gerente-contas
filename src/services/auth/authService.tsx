@@ -1,6 +1,7 @@
 import { getSession } from 'next-auth/react';
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
+import axios from 'axios';
 
 interface Props {
   data: {
@@ -11,38 +12,19 @@ interface Props {
 }
 
 export const authService = {
-
+//Cadastro
   async cadastro({ firstname, lastname, email, password, cpf }) {
+
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastro`, {
       method: 'POST',
       body: { firstname, lastname, email, password, cpf },
     })
       .then((res) => {
-        if (!res.ok) throw new Error(res.body.txt)
+       return res
       })
   },
 
-
   // Login
-  // async login({ username, password }) {
-  //   const response = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     } ,
-  //     body: { username, password }
-  //   });
-  //   if (!response.ok) {
-  //     throw new Error('Erro ao fazer o login');
-  //   }
-
-  //   const data = await response.body;
-  //   console.log('data', data)
-  //   tokenService.save(data.access);
-  //   return data;
-
-
-  // },
   async login({ username, password }) {
     // var myHeaders = new Headers();
     // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
@@ -91,9 +73,43 @@ export const authService = {
         if (!response.ok) throw new Error('Não autorizado');
         return response.body;
       });
-  }
+  },
+
+  /* Troca Senha*/
+  //Email
+  async email({ email}) {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/esqueci_minha_senha`, {
+      method: 'POST',
+      body: { email },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.body.txt)
+      })
+  },
+  //Nova senha
+  async novaSenha({ password, token }) {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/redefinir_senha`, {
+      method: 'POST',
+      body: { password, token },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.body.txt)
+      })
+  },
+  async dadosSala(ctx) {
+    const token = tokenService.get(ctx);
+    return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
+
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
+      .then((res) => {
+        console.log('reere', res)
+      })
+  },
 };
-// import { getSession, signIn } from 'next-auth/react';
+
 
 // export const authService = {
 //   async login({ username, password }) {
