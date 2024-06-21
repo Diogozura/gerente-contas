@@ -31,11 +31,11 @@ interface Props {
 const drawerWidth = 240;
 
 const navItems = [
-  { id: 1, label: 'Login', path: '/login' },
-  { id: 2, label: 'Cadastre-se', path: '/cadastro' },
+  { id: 1, label: 'Login', path: 'auth/login' },
+  { id: 2, label: 'Cadastre-se', path: 'auth/cadastro' },
 ];
 
-function HideOnScroll(props: Props) {
+function HideOnScroll(props: Props, ) {
   const { children, window } = props;
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,

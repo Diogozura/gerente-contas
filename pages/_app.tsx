@@ -13,6 +13,8 @@ import PublicLayout from '../src/components/base/Header/PublicLayout';
 import PrivateLayout from '../src/components/base/Header/PrivateLayout';
 import authenticatedPagesConfig from '../src/config/authenticatedPages.json';
 import { isAuthenticated } from '../src/utils/auth';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -59,7 +61,8 @@ function MyApp(props: MyAppProps,ctx) {
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
         <Layout>
-          <Component {...pageProps} />
+            <Component {...pageProps} />
+            <ToastContainer />
         </Layout>
       </ThemeProvider>
       </CacheProvider>

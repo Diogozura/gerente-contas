@@ -29,7 +29,7 @@ export const authService = {
     // var myHeaders = new Headers();
     // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
 
-    const response = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -39,8 +39,9 @@ export const authService = {
       .then(response => {
         tokenService.save(response.body.access);
         const body = response.body
+        if (!response.ok) throw new Error(response.body.detail)
         return body;
-        // if (!response.ok) throw new Error('Erro ao fazer o login')
+      
       })
       .then(async({refresh}) => {
         const response = await HttpClient('/api/refresh', {
@@ -48,10 +49,8 @@ export const authService = {
           body: {
             refresh
           },
-        
         })
-         
-          return response
+
       })
 },
   // Session

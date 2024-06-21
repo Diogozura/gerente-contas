@@ -51,6 +51,7 @@ function Sala(props) {
             {JSON.stringify(props, null, 2)}
         </pre> 
         <Button onClick={onClick}>
+      
           Refresh
         </Button>
         </>

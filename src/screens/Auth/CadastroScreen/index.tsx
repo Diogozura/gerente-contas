@@ -2,10 +2,10 @@ import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
-import { BoxForm, Formulario } from "../../components/Formulario";
-import { TituloFom } from "../../components/Formulario/TituloForm";
-import { authService } from "../../services/auth/authService";
-
+import { BoxForm, Formulario } from "../../../components/Formulario";
+import { TituloFom } from "../../../components/Formulario/TituloForm";
+import { authService } from "../../../services/auth/authService";
+import { Notification } from "../../../components/AlertToast"
 interface Props {
     senha: string,
     nome: string,
@@ -51,21 +51,14 @@ export default function CadastroScreen() {
             }
         });
     }
-    function processo() {
-        
-    }
 
     const [open, setOpen] = React.useState(false);
-    const handleClose = () => {
-        setOpen(false);
-    };
+  
     const handleToggle = () => {
         setOpen(!open);
     };
     const handleSubmit = (event: React.FormEvent) => {
         event.preventDefault();
-        handleToggle(); // Show loading indicator
-
         authService.cadastro({
             email: values.email,
             firstname: values.firstname,
@@ -74,29 +67,31 @@ export default function CadastroScreen() {
             cpf: values.cpf
         })
         .then((res) => {
-            setOpen(false); // Hide loading indicator
+         
             if (res.status == 200) {
                 console.log('ok')
-                alert(res.body.mensagem)
-                toast.success(res.message, {
-                    position: "top-center",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+                Notification.show(
+                    res.body.mensagem || '',
+                     'success'
+                 );
+         
                 setTimeout(() => {
                     router.push("/login");
                 }, 5000); // Wait for 5 seconds before redirecting
             } else {
-                alert(res.body.mensagem)
+                Notification.show(
+                    res.body.mensagem || 'An error occurred. Please try again.',
+                     'error'
+                 );
+                // alert(res.body.mensagem)
             }
         })
-        .catch((err) => {
-            setOpen(false); // Hide loading indicator
-            // error(err.message);
+            .catch((err) => {
+                Notification.show(
+                    err.response?.data?.message || err.message || 'An error occurred. Please try again.',
+                     'success'
+                 );
+            // showError(erro);  
         });
     };
     return (
@@ -167,13 +162,6 @@ export default function CadastroScreen() {
                         Cadastrar-se
                     </Button>
 
-                    <Backdrop
-                        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                        open={open}
-                        onClick={handleClose}
-                    >
-                        <CircularProgress color="inherit" />
-                    </Backdrop>
                 </Formulario>
             </BoxForm>
         </>

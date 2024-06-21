@@ -3,7 +3,7 @@ import { blue } from "@mui/material/colors";
 import styled from "styled-components";
 
 
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import Link from "next/link";
 import { tokenService } from "../../services/auth/tokenService";
 import { HttpClient } from "../../infra/HttpClient/HttpClient";
@@ -19,14 +19,13 @@ export default function HomeScreen() {
       }
     return (
         <>
-            
-
-            <Grid height={'100vh'}>
-            <h1>Bem vindo a home</h1>
-                <Link href={'/sala'}>Sala</Link>
-                <Button onClick={onClick}>
-          Verifica o token
-        </Button>
+            <Grid container height={'100vh'}>
+                <h1>Bem vindo a Hubeefive</h1>
+                <Grid item>
+                    <Typography>Conheça nossos planos</Typography>
+                    <Typography>Conheça nossos planos</Typography>
+                </Grid>
+               
             </Grid>
      
         </>
