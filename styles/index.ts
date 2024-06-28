@@ -1,5 +1,5 @@
 import { createGlobalStyle } from "styled-components";
-const colorLink = '#000000'
+const colorLink = '#000'
 export default createGlobalStyle`
   * {
     margin: 0;

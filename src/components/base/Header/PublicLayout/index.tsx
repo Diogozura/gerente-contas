@@ -19,7 +19,7 @@ import ThemeToggle from '../../../ThemeToggle';
 import nookies from 'nookies';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+
 import darkTheme from '../../../../../styles/themes/dark';
 import lightTheme from '../../../../../styles/themes/light';
 
@@ -89,7 +89,7 @@ const PublicLayout: React.FC<Props> = ({ children, window }) => {
 
   return (
     <ThemeProvider theme={appliedTheme}>
-      <CssBaseline />
+    
       <HideOnScroll window={window}>
         <AppBar position="static">
           <Toolbar>
