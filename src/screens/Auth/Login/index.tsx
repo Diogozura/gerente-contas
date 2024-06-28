@@ -44,13 +44,10 @@ export function Login() {
             errorMessage: 'An error occurred. Please try again.',
             successCallback: () => {
                 setTimeout(() => {
-                    router.push("/empresas");
-                }, 3000);
+                    router.push("/dashboard");
+                }, 300);
               
             },
-            errorCallback: () => {
-               ;
-            }   
         });
     };
 
@@ -84,8 +81,8 @@ export function Login() {
                 </Formulario>
 
                 <Alternativos>
-                    <Link href={"/trocar-senha"}>Esqueci minha Senha</Link>
-                    <p>Não tem conta? <Link href={"/cadastro"}>Criar Conta</Link></p>
+                    <Link href={"/auth/trocar-senha"}>Esqueci minha Senha</Link>
+                    <p>Não tem conta? <Link href={"/auth/cadastro"}>Criar Conta</Link></p>
                 </Alternativos>
             </BoxForm>
             <ToastContainer />

@@ -76,7 +76,7 @@ export default function CadastroScreen() {
                  );
          
                 setTimeout(() => {
-                    router.push("/login");
+                    router.push("/auth/login");
                 }, 5000); // Wait for 5 seconds before redirecting
             } else {
                 Notification.show(

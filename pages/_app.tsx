@@ -29,11 +29,10 @@ function MyApp(props: MyAppProps,ctx) {
   const authenticatedPages = authenticatedPagesConfig.authenticatedPages;
 
   React.useEffect(() => {
-    const cookies = nookies.get();
+    const cookies = nookies.get(ctx);
     const savedMode = cookies.theme === 'dark';
     setDarkMode(savedMode);
-  }, []);
-
+  }, [ctx]);
   const appliedTheme = React.useMemo(() => (darkMode ? darkTheme : lightTheme), [darkMode]);
 
   const isAuthPage = authenticatedPages.includes(router.pathname);
@@ -41,7 +40,7 @@ function MyApp(props: MyAppProps,ctx) {
 
   React.useEffect(() => {
     if (isAuthPage && !userIsAuthenticated) {
-      router.push('/login');
+      router.push('/auth/login');
     }
   }, [isAuthPage, userIsAuthenticated, router]);
 
@@ -53,7 +52,6 @@ function MyApp(props: MyAppProps,ctx) {
 
   return (
     <>
-  
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={appliedTheme}>
         <CssBaseline />

@@ -31,8 +31,8 @@ interface Props {
 const drawerWidth = 240;
 
 const navItems = [
-  { id: 1, label: 'Login', path: 'auth/login' },
-  { id: 2, label: 'Cadastre-se', path: 'auth/cadastro' },
+  { id: 1, label: 'Login', path: '/auth/login' },
+  { id: 2, label: 'Cadastre-se', path: '/auth/cadastro' },
 ];
 
 function HideOnScroll(props: Props, ) {
