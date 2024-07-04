@@ -114,7 +114,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function PrivateLayout({children}, props:Props) {
+export default function PrivateLayout( props:Props) {
     const { window } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -288,7 +288,7 @@ export default function PrivateLayout({children}, props:Props) {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-      {children}
+     
       </Box>
     </Box>
   );

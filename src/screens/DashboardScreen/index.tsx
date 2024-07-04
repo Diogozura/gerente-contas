@@ -1,15 +1,15 @@
 /* eslint-disable react/no-children-prop */
 import React from "react";
-import MenuAppBar from "../../components/base/Header/PrivateLayout";
+import MenuAppBar from "../../components/layout/Header/PrivateLayout";
 import { withSession } from "../../services/auth/session";
-
-export const getServerSideProps = withSession((ctx) => {
-  return {
-    props: {
-      session: ctx.req.session
-    }
-  }
-})
+import Form from "../../components/forms/formPadrao";
+// export const getServerSideProps = withSession((ctx) => {
+//   return {
+//     props: {
+//       session: ctx.req.session
+//     }
+//   }
+// })
 
 
 export default function Dashboard(props) {
@@ -19,11 +19,13 @@ export default function Dashboard(props) {
             <pre>
             {JSON.stringify(props, null, 2)}
         </pre> 
+        <Form/>
         </>
     )
 }
 
-import { useSession } from 'next-auth/react';
+
+
 
 // export default function Dashboard() {
 //   const { data: session } = useSession();

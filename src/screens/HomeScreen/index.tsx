@@ -2,86 +2,57 @@
 import { blue } from "@mui/material/colors";
 import styled from "styled-components";
 
-import { Button, colors, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, colors, Grid, Paper, Typography, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import { tokenService } from "../../services/auth/tokenService";
 import { HttpClient } from "../../infra/HttpClient/HttpClient";
 import { authService } from "../../services/auth/authService";
 import { themes } from "../../../styles/themes";
-import { Theme } from '@mui/material/styles';
+import { Theme } from "@mui/material/styles";
 import SpacingGrid from "./Cards";
+import CardsPlano from "./Cards";
+import { Plan, plans } from "./planos";
+import { BackgroundBox } from "../../components/layout/backgrouds/comeia";
 
-export default function HomeScreen() {
+
+  export default function HomeScreen(applyHeightRule) {
   const onClick = async (ctx) => {
     await authService.getSession(ctx);
   };
 
-
   const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     ...theme.typography,
     padding: 1,
-    textAlign: 'center',
+    textAlign: "center",
     color: colors.blue,
   }));
+  const isMobile = useMediaQuery("(max-width:600px)");
   return (
-    <>
+    <BackgroundBox>
+      <Box 
+        // height={applyHeightRule && !isMobile ? "100vh" : "auto"}
+       sx={{ flexGrow: 1  }} >
       <Grid container >
-        <h1>Bem vindo a Hubeefive</h1>
-
-       <SpacingGrid >
-      
-            <Grid  item>
-              <Paper
-                sx={{
-                  height: 500,
-                  width: 350,
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-                }}
-              >Item 1</Paper>
-            </Grid>
-      
-            <Grid  item>
-              <Paper
-                sx={{
-                  height: 500,
-                  width: 350,
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-                }}
-              >
-                <Link 
-                  href={{
-                    pathname: '/pedido',
-                    query: { name: 'item 2' },
-                  }}
-                >
-                Pagina de compra
-                </Link>
-                Item 2
-              
-              </Paper>
-            </Grid>
-      
-            <Grid  item>
-              <Paper
-                sx={{
-                  height: 500,
-                  width: 350,
-                  backgroundColor: (theme) =>
-                    theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-                }}
-              >Item 3</Paper>
-            </Grid>
-          
-       </SpacingGrid>
-        
-        <Grid item>
-          <Typography>Conheça nossos planos</Typography>
-          <Typography>Conheça nossos planos</Typography>
+        <Grid item xs={12} textAlign={'center'}>
+          <h1>Bem-vindo a Hubeefive 🐝</h1>
+        </Grid>
+        <Grid item xs={12} textAlign={'center'}>
+          <Typography>🐝Escolha um plano que mais se encaixa com sua operação</Typography>
+        </Grid>
+        <Grid item xs={12} padding={1} display={"flex"} flexWrap={'wrap'} textAlign={"center"} justifyContent={'space-around'} >
+          {plans.map((plan: Plan) => (
+            <CardsPlano
+              key={plan.plano}
+              plano={plan.plano}
+              preco={plan.preco}
+              descricao={plan.descricao}
+            />
+          ))}
         </Grid>
       </Grid>
-    </>
+      </Box>
+      
+    </BackgroundBox>
   );
 }

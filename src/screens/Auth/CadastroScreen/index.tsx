@@ -2,10 +2,11 @@ import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
-import { BoxForm, Formulario } from "../../../components/Formulario";
-import { TituloFom } from "../../../components/Formulario/TituloForm";
+import { BoxForm, Formulario } from "../../../components/forms/Formulario";
+import { TituloFom } from "../../../components/forms/Formulario/TituloForm";
 import { authService } from "../../../services/auth/authService";
-import { Notification } from "../../../components/AlertToast"
+import { Notification } from "../../../components/common/AlertToast"
+import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 interface Props {
     senha: string,
     nome: string,
@@ -95,7 +96,7 @@ export default function CadastroScreen() {
         });
     };
     return (
-        <>
+        <BackgroundBox>
             <BoxForm>
                 <Formulario onSubmit={handleSubmit}>
                     <TituloFom>Cadastro</TituloFom>
@@ -164,6 +165,6 @@ export default function CadastroScreen() {
 
                 </Formulario>
             </BoxForm>
-        </>
+        </BackgroundBox>
     );
 }

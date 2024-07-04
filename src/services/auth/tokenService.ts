@@ -1,5 +1,6 @@
 import nookies from 'nookies';
 const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
+const ACCESS_TOKEN_PAY = 'ACCESS_TOKEN_PAY';
 const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_NAME'; // Novo chave para o refresh token
 
 const ONE_SECOND = 1;
@@ -28,5 +29,18 @@ export const tokenService = {
   },
   delete(ctx = null) {
     nookies.destroy(ctx, ACCESS_TOKEN_KEY);
+  },
+  savePay(accessToken: string, ctx = null) {
+    nookies.set(ctx, ACCESS_TOKEN_PAY, accessToken, {
+      maxAge: ONE_MINUTE * 10,
+      path: '/',
+    });
+  },
+
+  getPay(ctx = null) {
+    const cookies = nookies.get(ctx);
+    return cookies[ACCESS_TOKEN_PAY] || '';
+    // return globalThis?.localStorage?.getItem(ACCESS_TOKEN_KEY);
+    // return sessionStorage.getItem(ACCESS_TOKEN_KEY);
   }
 }

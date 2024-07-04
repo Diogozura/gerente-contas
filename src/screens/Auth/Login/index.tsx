@@ -3,13 +3,14 @@ import { useRouter } from "next/router";
 import React, { FormEvent, useState } from "react";
 import { toast, ToastContainer } from 'react-toastify';
 import styled from "styled-components";
-import { BoxForm, Formulario } from "../../../components/Formulario";
-import { TituloFom } from "../../../components/Formulario/TituloForm";
+import { BoxForm, Formulario } from "../../../components/forms/Formulario";
+import { TituloFom } from "../../../components/forms/Formulario/TituloForm";
 import { authService } from "../../../services/auth/authService";
 import Link from "next/link";
 import 'react-toastify/dist/ReactToastify.css';
-import { Notification } from "../../../components/AlertToast";
-import { PromiseNotification } from "../../../components/PromiseNotification";
+import { Notification } from "../../../components/common/AlertToast";
+import { PromiseNotification } from "../../../components/common/PromiseNotification";
+import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 
 export function Login() {
     const router = useRouter();
@@ -36,7 +37,7 @@ export function Login() {
             username: values.nome,
             password: values.senha
         });
-
+console.log('loginPromise', loginPromise)
         PromiseNotification({
             promise: loginPromise,
             pendingMessage: 'Logging in...',
@@ -52,7 +53,7 @@ export function Login() {
     };
 
     return (
-        <>
+        <BackgroundBox>
             <BoxForm>
                 <Formulario onSubmit={handleSubmit}>
                     <TituloFom>Login</TituloFom>
@@ -86,7 +87,7 @@ export function Login() {
                 </Alternativos>
             </BoxForm>
             <ToastContainer />
-        </>
+        </BackgroundBox>
     );
 }
 

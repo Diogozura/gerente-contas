@@ -1,4 +1,3 @@
-import { getSession } from 'next-auth/react';
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 import axios from 'axios';
@@ -12,6 +11,21 @@ interface Props {
 }
 
 export const authService = {
+
+//Primeiro contato
+async primeiroContato({ email, plano }) {
+
+  return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/primeiro_contato`, {
+    method: 'POST',
+    body: {  email, plano },
+  })
+    .then((response) => {
+      tokenService.savePay(response.body.dados.token);
+      console.log('response', response)
+     return response;
+    })
+},
+  
 //Cadastro
   async cadastro({ firstname, lastname, email, password, cpf }) {
 
@@ -44,7 +58,7 @@ export const authService = {
       
       })
       .then(async({refresh}) => {
-        const response = await HttpClient('/api/refresh', {
+        await HttpClient('/api/refresh', {
           method: 'POST',
           body: {
             refresh
@@ -105,35 +119,7 @@ export const authService = {
     })
       .then((res) => {
         console.log('reere', res)
+        
       })
   },
 };
-
-
-// export const authService = {
-//   async login({ username, password }) {
-//     try {
-//       await signIn('credentials', {
-//         username,
-//         password,
-//         redirect: false, // Manter o redirecionamento desativado
-//       });
-//       return true; // Retorna true em caso de sucesso no login
-//     } catch (error) {
-//       throw new Error('Erro ao fazer o login');
-//     }
-//   },
-
-//   async getSession(ctx) {
-//     try {
-//       const session = await getSession(ctx);
-//       if (!session) {
-//         throw new Error('Não autorizado');
-//       }
-//       return session;
-//     } catch (error) {
-//       throw new Error('Erro ao recuperar a sessão');
-//     }
-//   }
-// };
-

@@ -9,12 +9,13 @@ import createEmotionCache from '../src/utils/createEmotionCache';
 import lightTheme from '../styles/themes/light';
 import darkTheme from '../styles/themes/dark';
 import nookies from 'nookies';
-import PublicLayout from '../src/components/base/Header/PublicLayout';
-import PrivateLayout from '../src/components/base/Header/PrivateLayout';
 import authenticatedPagesConfig from '../src/config/authenticatedPages.json';
 import { isAuthenticated } from '../src/utils/auth';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Header from '../src/components/layout/Header';
+import Footer from '../src/components/layout/Footer';
+import { FormProvider } from '../src/config/FormContext';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -44,7 +45,7 @@ function MyApp(props: MyAppProps,ctx) {
     }
   }, [isAuthPage, userIsAuthenticated, router]);
 
-  const Layout = isAuthPage ? PrivateLayout : PublicLayout;
+
 
   if (isAuthPage && !userIsAuthenticated) {
     return null;
@@ -53,16 +54,22 @@ function MyApp(props: MyAppProps,ctx) {
   return (
     <>
     <CacheProvider value={emotionCache}>
+    <FormProvider>
+
+   
       <ThemeProvider theme={appliedTheme}>
         <CssBaseline />
         <Head>
           <meta name="viewport" content="initial-scale=1, width=device-width" />
         </Head>
-        <Layout>
+       <Header/>
+     
             <Component {...pageProps} />
-            <ToastContainer />
-        </Layout>
+            <ToastContainer />  
+            <Footer/>
+  
       </ThemeProvider>
+      </FormProvider>
       </CacheProvider>
       </>
   );

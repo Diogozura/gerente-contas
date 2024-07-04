@@ -1,6 +1,6 @@
 /* eslint-disable react/no-children-prop */
 import React from "react";
-import MenuAppBar from "../../components/base/Header/PrivateLayout";
+import MenuAppBar from "../../components/layout/Header/PrivateLayout";
 import { withSession } from "../../services/auth/session";
 
 import axios from "axios";
