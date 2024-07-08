@@ -34,7 +34,7 @@ export default function Pedido() {
           minHeight: "100vh",
         }}
       >
-        <Box sx={{ width: "100%", mb: 10 }}>
+        <Box sx={{  mb: 10 }}>
           <Stepper activeStep={1} alternativeLabel>
             {steps.map((label) => (
               <Step key={label}>
@@ -46,7 +46,7 @@ export default function Pedido() {
         {/* <LinearStepper/> */}
         <Grid
           sx={{
-            backgroundColor: "#0000000a",
+            backgroundColor: "#fffffffc",
             borderRadius: 10,
             padding: "2rem",
             position: "relative",

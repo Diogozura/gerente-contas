@@ -3,11 +3,9 @@ import { AppProps } from 'next/app';
 import Head from 'next/head';
 import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from '@mui/material/styles';
+// import { ThemeProvider } from '@mui/material/styles';
 import { useRouter } from 'next/router';
 import createEmotionCache from '../src/utils/createEmotionCache';
-import lightTheme from '../styles/themes/light';
-import darkTheme from '../styles/themes/dark';
 import nookies from 'nookies';
 import authenticatedPagesConfig from '../src/config/authenticatedPages.json';
 import { isAuthenticated } from '../src/utils/auth';
@@ -16,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Header from '../src/components/layout/Header';
 import Footer from '../src/components/layout/Footer';
 import { FormProvider } from '../src/config/FormContext';
-
+import { ThemeProvider } from '../styles/themes/themeContext';
 const clientSideEmotionCache = createEmotionCache();
 
 interface MyAppProps extends AppProps {
@@ -34,10 +32,10 @@ function MyApp(props: MyAppProps,ctx) {
     const savedMode = cookies.theme === 'dark';
     setDarkMode(savedMode);
   }, [ctx]);
-  const appliedTheme = React.useMemo(() => (darkMode ? darkTheme : lightTheme), [darkMode]);
+
 
   const isAuthPage = authenticatedPages.includes(router.pathname);
-  const userIsAuthenticated = isAuthenticated(ctx);
+  const userIsAuthenticated = isAuthenticated();
 
   React.useEffect(() => {
     if (isAuthPage && !userIsAuthenticated) {
@@ -57,7 +55,7 @@ function MyApp(props: MyAppProps,ctx) {
     <FormProvider>
 
    
-      <ThemeProvider theme={appliedTheme}>
+      <ThemeProvider >
         <CssBaseline />
         <Head>
           <meta name="viewport" content="initial-scale=1, width=device-width" />

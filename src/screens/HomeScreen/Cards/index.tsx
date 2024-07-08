@@ -46,13 +46,13 @@ export default function CardsPlano({plano, preco, descricao}) {
   return (
     <>
 
-    <Card sx={{ maxWidth: 345, m:2 }} >
+    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 55px'  , borderRadius:5}}  >
       <CardContent>
       <Typography gutterBottom variant="h5" component="div">
           Plano  {plano} 
           {/* || Meses {timePlano} */}
           </Typography>
-          <Typography variant="h4" fontWeight={'bold'}  color="primary">
+          <Typography variant="h4" fontWeight={'bold'} mb={5} color="primary">
           R${preco}
           </Typography>
           {Array.isArray(descricao) ? (

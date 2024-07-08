@@ -57,6 +57,9 @@ const CustomInput: React.FC<CustomInputProps> = ({ label, type, value, onChange,
       margin="normal"
       error={error}
       helperText={helperText}
+      inputProps={{
+        maxLength: type === 'cpf' ? 14 : type === 'cnpj' ? 18 : undefined,
+      }}
       InputProps={{
         endAdornment: type === 'password' && (
           <InputAdornment position="end">

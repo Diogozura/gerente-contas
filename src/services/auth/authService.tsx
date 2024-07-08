@@ -27,11 +27,11 @@ async primeiroContato({ email, plano }) {
 },
   
 //Cadastro
-  async cadastro({ firstname, lastname, email, password, cpf }) {
+  async cadastro({ body }) {
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastro`, {
       method: 'POST',
-      body: { firstname, lastname, email, password, cpf },
+      body
     })
       .then((res) => {
        return res

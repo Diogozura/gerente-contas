@@ -21,4 +21,6 @@ export const validateEmail = (email: string) => {
   export const validateName = (name: string) => {
     return name.trim().length > 0 ? undefined : 'Nome é obrigatório';
   };
-  
+  export const validateConfirmPassword = (password: string, confirmPassword: string) => {
+    return password === confirmPassword ? undefined : 'As senhas não são iguais';
+  };
