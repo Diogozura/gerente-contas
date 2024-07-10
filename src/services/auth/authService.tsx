@@ -110,12 +110,9 @@ async primeiroContato({ email, plano }) {
       })
   },
   async dadosSala(token) {
-
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+
       headers: {
         'Authorization': `Bearer ${token}`
       }
