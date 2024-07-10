@@ -6,20 +6,17 @@ export default function HubeefivePlano({price}){
     
         <Box sx={{
                    position: 'absolute',
-                   top: -5,
-                   right: -15,
-                   backgroundColor: '#9333ea',
+                   top: 40,
+                   right: -55,
+                   backgroundColor: '#703B8C',
                    color: '#fff',
                    padding: '0.5rem 1rem',
                    borderRadius: '10px',
         }}>
                
-                <Typography>R${price}</Typography>
+                <Typography variant="h5">R${price}</Typography>
             </Box>
-            <Typography color={'primary'} variant="h3" component={'h2'}>Hubeefive</Typography>
-            <Typography color={'inherit'}>Plano Mensal</Typography>
-
-           
+            <Typography color={'primary'} variant="h4" fontWeight={'500'} component={'h2'}>Hubeefive</Typography>
       
         </>
     )

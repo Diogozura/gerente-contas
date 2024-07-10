@@ -72,14 +72,26 @@ const darkTheme2 = createTheme({
 
 // Defina suas paletas de cores para o tema claro
 const lightTheme = createTheme({
+  typography: {
+    fontFamily: [
+      'Quicksand', // Usando Quicksand como a fonte padrão
+      'sans-serif',
+    ].join(','),
+    h4: {
+      fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H2
+    },
+    h5: {
+      fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H3
+    },
+  },
   palette: {
     mode: 'light',
     primary: {
-      main: '#3f51b5', // azul
+      main: '#703B8C', // azul
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#f50057', // rosa
+      main: '#f44336', // rosa
       contrastText: '#ffffff',
     },
     error: {
@@ -95,14 +107,15 @@ const lightTheme = createTheme({
       main: '#4caf50', // verde
     },
     background: {
-      default: '#fafafa', // fundo claro
+      default: '#FBFBFB', // fundo claro
       paper: '#ffffff', // papel branco
     },
     text: {
       primary: '#000000', // texto preto
-      secondary: '#757575', // texto cinza  
+      secondary: '#5E5E5E', // texto cinza  
     },
   },
+
 });
 
 export const themes = {

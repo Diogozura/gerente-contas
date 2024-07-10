@@ -91,7 +91,7 @@ const Form: React.FC = () => {
 
     if (Object.keys(errors).length === 0) {
       // Adicione a lógica de envio do formulário aqui
-      console.log(formValues);
+      
     }
   };
 

@@ -21,7 +21,7 @@ async primeiroContato({ email, plano }) {
   })
     .then((response) => {
       tokenService.savePay(response.body.dados.token);
-      console.log('response', response)
+  
      return response;
     })
 },
@@ -39,7 +39,7 @@ async primeiroContato({ email, plano }) {
   },
 
   // Login
-  async login({ username, password }) {
+  async login({ body }) {
     // var myHeaders = new Headers();
     // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
 
@@ -48,9 +48,10 @@ async primeiroContato({ email, plano }) {
           headers: {
             'Content-Type': 'application/json'
           } ,
-          body: { username, password }
+          body
         })
       .then(response => {
+      
         tokenService.save(response.body.access);
         const body = response.body
         if (!response.ok) throw new Error(response.body.detail)
@@ -70,7 +71,7 @@ async primeiroContato({ email, plano }) {
   // Session
   async getSession(ctx) {
     const token = tokenService.get(ctx);
-
+      console.log('token', token)
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
       method: 'POST',
       headers: {
@@ -82,9 +83,8 @@ async primeiroContato({ email, plano }) {
     }
     )
       .then(response => {
-
         if (!response.ok) throw new Error('Não autorizado');
-        return response.body;
+        return response;
       });
   },
 
@@ -109,17 +109,22 @@ async primeiroContato({ email, plano }) {
         if (!res.ok) throw new Error(res.body.txt)
       })
   },
-  async dadosSala(ctx) {
-    const token = tokenService.get(ctx);
-    return axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
+  async dadosSala(token) {
 
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       headers: {
         'Authorization': `Bearer ${token}`
       }
-    })
-      .then((res) => {
-        console.log('reere', res)
-        
-      })
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error('Não autorizado');
+        return response;
+      });
+
   },
 };

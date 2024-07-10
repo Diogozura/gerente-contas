@@ -7,6 +7,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { maskCPF, maskPhone } from '../../../../utils/mask';
 import { InputAdornment } from '@mui/material';
 
+
 interface CustomInputProps {
   label: string;
   type: 'text' | 'email' | 'password' | 'number' | 'tel' | 'cpf' | 'cnpj';
@@ -14,9 +15,10 @@ interface CustomInputProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   error?: boolean;
   helperText?: string;
+  disabled?: boolean;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ label, type, value, onChange, error, helperText }) => {
+const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, onChange, error, helperText }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => {
@@ -56,6 +58,9 @@ const CustomInput: React.FC<CustomInputProps> = ({ label, type, value, onChange,
       fullWidth
       margin="normal"
       error={error}
+      color={'primary'}
+      focused
+      disabled={!disabled ? false : true}
       helperText={helperText}
       inputProps={{
         maxLength: type === 'cpf' ? 14 : type === 'cnpj' ? 18 : undefined,
@@ -77,5 +82,6 @@ const CustomInput: React.FC<CustomInputProps> = ({ label, type, value, onChange,
     />
   );
 };
+
 
 export default CustomInput;

@@ -137,7 +137,7 @@ const navItems = [
   // { id: 2, label: 'Cadastre-se', path: '/auth/cadastro' },
 ];
 
-function HideOnScroll(props: Props) {
+function HideOnScroll( props: Props) {
   const { children, window } = props;
   const trigger = useScrollTrigger({
     target: window ? window() : undefined,

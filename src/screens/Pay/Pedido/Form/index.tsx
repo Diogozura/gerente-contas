@@ -17,7 +17,7 @@ export default function SimpleForm({ plano }) {
     email: '',
     // name: '',
   });
-console.log(formValues)
+
   const router = useRouter();
 
   const handleChange = (field: string) => (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,7 +39,7 @@ console.log(formValues)
       email: validateEmail,
       // name: validateName,
     };
-console.log('formValues[formName]', formValues.contato.email)
+
     const currentFormValues = formValues[formName] || {};
 
 

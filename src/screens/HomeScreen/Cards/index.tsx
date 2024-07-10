@@ -42,13 +42,13 @@ export default function CardsPlano({plano, preco, descricao}) {
     });
   };
 
-  console.log()
+
   return (
     <>
 
-    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 55px'  , borderRadius:5}}  >
+    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 20px', borderStyle:'groove', borderRadius:5}}  >
       <CardContent>
-      <Typography gutterBottom variant="h5" component="div">
+      <Typography variant="h5"  fontWeight={'bold'}  color="primary" component="h2">
           Plano  {plano} 
           {/* || Meses {timePlano} */}
           </Typography>
@@ -59,7 +59,7 @@ export default function CardsPlano({plano, preco, descricao}) {
           <ul>
             {descricao.map((item, index) => (
               <li key={index}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body1" color="text.secondary">
                   {item.descricao}
                 </Typography>
               </li>
@@ -72,17 +72,21 @@ export default function CardsPlano({plano, preco, descricao}) {
         )}
 
       </CardContent>
-      <CardActions>
+      <CardActions sx={{justifyContent: 'space-around'}}>
       <Button 
       size="large" 
       variant='contained'
       onClick={handleClick}
-      fullWidth
+      
       sx={{
       textTransform: 'uppercase',
+      background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+      color: 'white',
+      '&:hover': {
+        background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+      },
     }} 
-      color="primary"
-          
+    
           >
          comprar
         </Button>

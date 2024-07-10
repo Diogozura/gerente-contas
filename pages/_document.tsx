@@ -1,22 +1,30 @@
 import React, { ReactElement } from "react";
-import Document, { Html, Head, Main, NextScript, DocumentInitialProps, DocumentContext } from 'next/document';
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentInitialProps,
+  DocumentContext,
+} from "next/document";
 import { ServerStyleSheet } from "styled-components";
 
 // NEXT.JS CUSTOM DOCUMENT
 // https://nextjs.org/docs/advanced-features/custom-document
 
 export default class MyDocument extends Document {
-  
-  static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
+  static async getInitialProps(
+    ctx: DocumentContext
+  ): Promise<DocumentInitialProps> {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
 
     try {
       ctx.renderPage = () =>
-      originalRenderPage({
-        enhanceApp: (App) => (props) =>
-          sheet.collectStyles(<App {...props} />),
-      });
+        originalRenderPage({
+          enhanceApp: (App) => (props) =>
+            sheet.collectStyles(<App {...props} />),
+        });
 
       const initialProps = await Document.getInitialProps(ctx);
       return {
@@ -25,7 +33,7 @@ export default class MyDocument extends Document {
           <>
             {initialProps.styles}
             {sheet.getStyleElement()}
-          </>
+          </>,
         ],
       };
     } finally {
@@ -34,18 +42,20 @@ export default class MyDocument extends Document {
   }
 
   render(): ReactElement {
-    return(
+    return (
       <Html lang="pt-br">
         <Head>
           <meta charSet="utf-8" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&family=Radio+Canada:ital,wght@0,300..700;1,300..700&display=swap"
+            rel="stylesheet"
           />
           <link
-  rel="stylesheet"
-  href="https://fonts.googleapis.com/icon?family=Material+Icons"
-/>
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          />
         </Head>
         <body>
           <Main />
@@ -55,6 +65,3 @@ export default class MyDocument extends Document {
     );
   }
 }
-
-
-

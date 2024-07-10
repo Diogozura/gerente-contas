@@ -28,16 +28,16 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
     })
     .then(async (response) => {
       if (!fetchOptions.refresh) return response;
-      console.log('response.status', response.status)
+      
       if (response.status !== 401) return response;
 
       const isServer = true
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
-    console.log('antes do try')
+    
      
         // tentar rodar o request anterior 
       try {
-     console.log('entrei no try')
+   
       const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
         method: isServer ? 'PUT' : 'GET',
         body: isServer? {refreshToken : currentRefreshToken} : undefined
@@ -46,8 +46,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       const newAccessToken = refreshResponse.body.data.access;
       const newRefreshToken = refreshResponse.body.data.refresh;
    
-     console.log('refreshResponse', refreshResponse)
-     console.log('newRefreshToken', newRefreshToken)
+    
   if (isServer) {
     nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
       httpOnly: true,
@@ -65,7 +64,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       },
       body: { token: newAccessToken },
     })
-    console.log('retryResponse', retryResponse) 
+
     return retryResponse
   }catch(err){
     

@@ -114,7 +114,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function PrivateLayout( props:Props) {
+export default function PrivateLayout(props:Props) {
     const { window } = props;
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);

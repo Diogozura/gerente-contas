@@ -34,7 +34,7 @@ export default function NovaSenha() {
             router.push("/sala");
         } catch (erro) {
             error();
-            console.log(erro);
+         
             handleClose();
         }
     };

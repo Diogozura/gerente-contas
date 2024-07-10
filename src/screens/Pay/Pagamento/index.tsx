@@ -18,37 +18,37 @@ import HubeefivePlano from "../../../components/layout/HubeefivePlano";
 export default function Pedido() {
   const router = useRouter();
   const { id } = router.query;
-  console.log("id", id);
+
   const steps = ["Select Plano", "Primeiro contato", "Pagamento", "Cadastro"];
 
   const [countdown, setCountdown] = useState(5);
 
-  // useEffect(() => {
-  //   if (countdown > 0) {
-  //     const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-  //     return () => clearTimeout(timer);
-  //   } else {
-  //     router.push({
-  //       pathname: '/auth/cadastro',
-  //       query: { id }, // Supondo que você precisa do ID da resposta
-  //     });
-  //   }
-  // }, [countdown, router, id]);
+  useEffect(() => {
+    if (countdown > 0) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else {
+      router.push({
+        pathname: '/auth/cadastro',
+        query: { id }, // Supondo que você precisa do ID da resposta
+      });
+    }
+  }, [countdown, router, id]);
 
   return (
     <>
      
-      <Container
+     <Container
         maxWidth="sm"
         sx={{
+          display:'flex',
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-        }}
-      >
+        }}>
         {/* <LinearStepper/> */}
        <Grid container height={'50vh'} xs={12}>
-          <Grid item xs={12}>
+          {/* <Grid item xs={12}>
             <Stepper activeStep={2} alternativeLabel>
               {steps.map((label) => (
                 <Step key={label}>
@@ -56,7 +56,7 @@ export default function Pedido() {
                 </Step>
               ))}
             </Stepper>
-          </Grid>
+          </Grid> */}
           <Grid
             item
             borderRadius={4}

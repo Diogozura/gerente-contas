@@ -6,11 +6,13 @@ import FormGroup from "@mui/material/FormGroup";
 import Grid from "@mui/material/Grid";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { validateCNPJ, validateConfirmPassword, validateCPF, validateEmail, validateName, validatePassword } from "../../../../utils/validators";
+import { validateCNPJ, validateConfirmPassword, validateCPF, validateEmail, validateName, validatePassword, validatePhone } from "../../../../utils/validators";
 import { useFormContext } from "../../../../config/FormContext";
 import { authService } from "../../../../services/auth/authService";
 import { PromiseNotification } from "../../../../components/common/PromiseNotification";
-
+function limparNumeros(valor: string): string {
+  return valor.replace(/\D/g, "");
+}
 export default function RegisterForm() {
   const { formValues, setFormValues } = useFormContext();
   const formName = "register";
@@ -18,6 +20,7 @@ export default function RegisterForm() {
 
   const [formErrors, setFormErrors] = React.useState({
     email: "",
+    tel: "",
     password: "",
     confirmPassword: "",
     firstname: "",
@@ -60,7 +63,8 @@ export default function RegisterForm() {
       cnpj: validateCNPJ,
       password: validatePassword,
       confirmPassword: (value: string) => validateConfirmPassword(formValues[formName]?.password || '', value),
-      razao_social: validateName
+      razao_social: validateName,
+      // tel :validatePhone,
     };
 
     Object.keys(formValues[formName] || {}).forEach((field) => {
@@ -77,29 +81,33 @@ export default function RegisterForm() {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      // const registerPromise = authService.cadastro({
-      //   body:{
-      //     email: formValues[formName].email,
-      //     name: formValues[formName].name,
-      //     password: formValues[formName].password,
-      //   }
-      // });
+      const registerPromise = authService.cadastro({
+        body:{
+          email: formValues[formName].email,
+          firstname: formValues[formName].firstname,
+          lastname: formValues[formName].lastname,
+          password: formValues[formName].password,
+          cpf:parseInt(limparNumeros(formValues[formName].cpf), 10),
+          cnpj: parseInt(limparNumeros(formValues[formName].cnpj), 10),
+          razao_social: formValues[formName].razao_social,
+        }
+      });
 
-      console.log("formErrors", formErrors);
+     
       setTimeout(() => {
         router.push('/auth/login');
       }, 300);
-      // PromiseNotification({
-      //   promise: registerPromise,
-      //   pendingMessage: 'Registering...',
-      //   successMessage: 'Registration successful! Redirecting...',
-      //   errorMessage: 'An error occurred. Please try again.',
-      //   successCallback: () => {
-      //     return setTimeout(() => {
-      //       router.push('/auth/login');
-      //     }, 300);
-      //   },
-      // });
+      PromiseNotification({
+        promise: registerPromise,
+        pendingMessage: 'Registering...',
+        successMessage: 'Registration successful! Redirecting...',
+        errorMessage: 'An error occurred. Please try again.',
+        successCallback: () => {
+          return setTimeout(() => {
+            router.push('/auth/login');
+          }, 300);
+        },
+      });
     }
   };
 
@@ -119,9 +127,10 @@ export default function RegisterForm() {
   };
 
   return (
+    <>
     <form onSubmit={handleSubmit}>
-      <FormGroup>
-        <Grid container spacing={2}>
+      <FormGroup >
+        <Grid container spacing={2} bgcolor={'background'} borderRadius={1} textAlign={'center'}>
           <Grid item xs={12}>
             <CustomInput
               label="Nome"
@@ -153,12 +162,17 @@ export default function RegisterForm() {
             />
           </Grid>
           <Grid item xs={12}>
-            <FormControlLabel
-              control={<Switch checked={isCPF} onChange={handleSwitchChange} />}
-              label={isCPF ? "Usar CPF" : "Usar CNPJ"}
+            <CustomInput
+              label="Telefone"
+              type="tel"
+              value={formValues[formName]?.tel || ""}
+              onChange={handleChange("tel")}
+              helperText={formErrors.tel}
+              error={!!formErrors.tel}
             />
           </Grid>
-          {isCPF ? (
+         
+         
             <Grid item xs={12}>
               <CustomInput
                 label="CPF"
@@ -169,7 +183,7 @@ export default function RegisterForm() {
                 error={!!formErrors.cpf}
               />
             </Grid>
-          ) : (
+    
             <>
               <Grid item xs={12}>
                 <CustomInput
@@ -192,7 +206,7 @@ export default function RegisterForm() {
                 />
               </Grid>
             </>
-          )}
+      
           <Grid item xs={12}>
             <CustomInput
               label="Senha"
@@ -226,5 +240,6 @@ export default function RegisterForm() {
         </Grid>
       </FormGroup>
     </form>
+    </>
   );
 }

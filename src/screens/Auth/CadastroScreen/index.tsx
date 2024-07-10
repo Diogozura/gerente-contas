@@ -1,4 +1,4 @@
-import { Backdrop, Button, CircularProgress, Container, TextField } from "@mui/material";
+import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
@@ -9,40 +9,33 @@ import { Notification } from "../../../components/common/AlertToast";
 import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 import CadastroForm from "./Form";
 
-interface Props {
-  senha: string;
-  nome: string;
-  email: string;
-}
-
-const error = () => {
-  toast.error("Error usuário já existe", {
-    position: "top-center",
-    autoClose: 3000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-  });
-};
 
 export default function CadastroScreen() {
-  const router = useRouter();
 
   return (
-    <BackgroundBox>
-     <Container  maxWidth="sm"
+    <>
+     <Container
+        maxWidth="sm"
         sx={{
+          display:'flex',
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
         }}>
-     <CadastroForm />
+      <Grid  padding={2}>
+      <Typography variant="h4" m={2} color={'text.secondary'} component={'h1'} textAlign={'center'}>FINALIZE O SEU CADASTRO</Typography>
+
+      <CadastroForm />
+      </Grid>
+     
+      
      </Container>
      
-
+     <Typography variant="h5" textAlign={'center'} component={'p'}>
+      Garantimos a privacidade dos seus
+      dados com criptografia.
+      </Typography>
       {/* <CadastroForm /> */}
-    </BackgroundBox>
+    </>
   );
 }
