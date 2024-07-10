@@ -51,6 +51,11 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
   return (
     <TextField
       label={label}
+      InputLabelProps={{
+        sx: {
+          fontSize: '1.2rem', // Aumenta o tamanho da fonte
+        },
+      }}
       type={type === 'password' && !showPassword ? 'password' : 'text'}
       value={value}
       onChange={type === 'tel' || type === 'cpf' ? handleMaskedChange : onChange}
