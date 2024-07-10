@@ -59,7 +59,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
       margin="normal"
       error={error}
       color={'primary'}
-      focused
+      // focused
       disabled={!disabled ? false : true}
       helperText={helperText}
       inputProps={{

@@ -5,6 +5,7 @@ import {
   Step,
   StepLabel,
   Stepper,
+  TextField,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
@@ -25,7 +26,7 @@ export default function Pedido() {
   const steps = ["Select Plano", "Primeiro contato", "Pagamento", "Cadastro"];
 
   return (
-    <BackgroundBox>
+    <>
       <Container
         maxWidth="sm"
         sx={{
@@ -67,13 +68,16 @@ export default function Pedido() {
           </Typography>
 
           <Form plano={plano} />
+          
           <br/>
           <Typography variant="body1" component={"p"}>
             Garantimos a privacidade dos seus dados com criptografia.
           </Typography>
           <br/>
         </Grid>
+        
       </Container>
-    </BackgroundBox>
+    
+    </>
   );
 }
