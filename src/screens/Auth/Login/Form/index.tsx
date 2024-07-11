@@ -154,10 +154,10 @@ export default function LoginForm() {
             </Grid>
             <Grid item xs={12}>
               <Typography variant="body1" textAlign={"center"} component={"p"}>
-                Não tem plano , <Link href={"/"}>Escolha um agora mesmo </Link>
+                Não tem plano , <Link href={"/"} style={{textDecoration: 'underline'}}>Escolha um agora mesmo </Link>
               </Typography>
               <Typography variant="body1" textAlign={"center"} component={"p"}>
-                <Link href={"/auth/trocar-senha"}> Esqueceu a senha ?</Link>
+                <Link href={"/auth/trocar-senha"} style={{textDecoration: 'underline'}} > Esqueceu a senha ?</Link>
               </Typography>
             </Grid>
           </Grid>

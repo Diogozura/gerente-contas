@@ -33,7 +33,7 @@ export default function Pedido() {
           display:'flex',
           justifyContent: "center",
           alignItems: "center",
-          minHeight: "100vh",
+          minHeight: "80vh",
         }}
       >
         {/* <Box sx={{  mb: 10 }}>

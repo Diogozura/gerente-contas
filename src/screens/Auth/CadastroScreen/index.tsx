@@ -23,7 +23,7 @@ export default function CadastroScreen() {
           minHeight: "100vh",
         }}>
       <Grid  padding={2}>
-      <Typography variant="h4" m={2} color={'text.secondary'} component={'h1'} textAlign={'center'}>FINALIZE O SEU CADASTRO</Typography>
+      <Typography variant="h6" m={1} color={'text.secondary'} component={'h1'} textAlign={'center'}>FINALIZE O SEU CADASTRO</Typography>
 
       <CadastroForm />
       </Grid>
@@ -31,10 +31,7 @@ export default function CadastroScreen() {
       
      </Container>
      
-     <Typography variant="h5" textAlign={'center'} component={'p'}>
-      Garantimos a privacidade dos seus
-      dados com criptografia.
-      </Typography>
+    
       {/* <CadastroForm /> */}
     </>
   );

@@ -23,13 +23,18 @@ const drawerWidth = 240;
 const navItems = [
   {
     id: 1,
+    label: "Sobre nós",
+    path: "/sobre",
+  },
+  {
+    id: 2,
     label: "Planos",
     path: "/",
   },
   {
     id: 3,
-    label: "Sobre",
-    path: "/sobre",
+    label: "Contato",
+    path: "/contato",
   },
 ];
 
@@ -96,14 +101,11 @@ export default function Topo({currentPath }) {
           <Container>
             <Toolbar disableGutters>
               <Typography
-                variant="h6"
+              variant="h6" component={'h2'} fontWeight={'bold'}
+                
                 noWrap
-                component="div"
-                sx={{
-                  flexGrow: 1,
-                  display: { xs: "none", md: "flex" },
-                  fontWeight: "bold",
-                }}
+              
+              
               >
                 HubeeFive
               </Typography>
@@ -141,8 +143,9 @@ export default function Topo({currentPath }) {
             </IconButton>
             <Button sx={{ color: "white" }}>
                 <Link href="/auth/login" passHref>
-                <Typography variant="h6" component={'h2'} fontWeight={'bold'} ml={1}>
-             Hubeefive
+                <Typography  
+                 ml={1}>
+             Login
             </Typography>
                 </Link>
               </Button>

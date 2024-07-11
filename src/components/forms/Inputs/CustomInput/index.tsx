@@ -54,6 +54,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
       InputLabelProps={{
         sx: {
           fontSize: '1.2rem', // Aumenta o tamanho da fonte
+          fontWeight:'semiBold'
         },
       }}
       type={type === 'password' && !showPassword ? 'password' : 'text'}
@@ -64,7 +65,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
       margin="normal"
       error={error}
       color={'primary'}
-      // focused
+      focused
       disabled={!disabled ? false : true}
       helperText={helperText}
       inputProps={{

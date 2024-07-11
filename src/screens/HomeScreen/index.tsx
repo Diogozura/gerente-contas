@@ -33,8 +33,8 @@ import { BackgroundBox } from "../../components/layout/backgrouds/comeia";
 
       <Grid container >
 
-        <Grid item xs={12} textAlign={'center'} m={2}>
-          <Typography variant="h4" component={'h1'}>🐝Escolha um plano que mais se encaixa com sua operação</Typography>
+        <Grid item xs={12} textAlign={'center'} mt={5}>
+          <Typography variant="h5" color={'text.secondary'} component={'h1'}>Escolha um plano que mais se encaixa com sua operação</Typography>
         </Grid>
         <Grid item xs={12} padding={1} display={"flex"} flexWrap={'wrap'} textAlign={"center"} justifyContent={'space-around'} >
           {plans.map((plan: Plan) => (

@@ -46,7 +46,9 @@ export default function CardsPlano({plano, preco, descricao}) {
   return (
     <>
 
-    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 20px', borderStyle:'groove', borderRadius:5}}  >
+    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 20px', 
+      // borderStyle:'groove', 
+      borderRadius:5}}  >
       <CardContent>
       <Typography variant="h5"  fontWeight={'bold'}  color="primary" component="h2">
           Plano  {plano} 

@@ -8,9 +8,9 @@ export default function Footer() {
         container
         component={'footer'}
         sx={{
-          bgcolor: "#ca434f",
-          p: 11,
-          mt:9,
+          // bgcolor: "#ca434f",
+          // p: 11,
+          // mt:9,
           justifyContent:'space-evenly',
           alignItems:'center'
         }}

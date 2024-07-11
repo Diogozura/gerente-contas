@@ -6,10 +6,19 @@ import FormGroup from "@mui/material/FormGroup";
 import Grid from "@mui/material/Grid";
 import Switch from "@mui/material/Switch";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import { validateCNPJ, validateConfirmPassword, validateCPF, validateEmail, validateName, validatePassword, validatePhone } from "../../../../utils/validators";
+import {
+  validateCNPJ,
+  validateConfirmPassword,
+  validateCPF,
+  validateEmail,
+  validateName,
+  validatePassword,
+  validatePhone,
+} from "../../../../utils/validators";
 import { useFormContext } from "../../../../config/FormContext";
 import { authService } from "../../../../services/auth/authService";
 import { PromiseNotification } from "../../../../components/common/PromiseNotification";
+import { Typography } from "@mui/material";
 function limparNumeros(valor: string): string {
   return valor.replace(/\D/g, "");
 }
@@ -32,16 +41,17 @@ export default function RegisterForm() {
 
   const [isCPF, setIsCPF] = React.useState(true);
 
-  const handleChange = (field: string) => (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setFormValues(formName, { [field]: value });
+  const handleChange =
+    (field: string) => (event: ChangeEvent<HTMLInputElement>) => {
+      const { value } = event.target;
+      setFormValues(formName, { [field]: value });
 
-    // Clear the error for the current field
-    setFormErrors({
-      ...formErrors,
-      [field]: "",
-    });
-  };
+      // Clear the error for the current field
+      setFormErrors({
+        ...formErrors,
+        [field]: "",
+      });
+    };
 
   const handleSwitchChange = () => {
     setIsCPF(!isCPF);
@@ -62,7 +72,8 @@ export default function RegisterForm() {
       cpf: validateCPF,
       cnpj: validateCNPJ,
       password: validatePassword,
-      confirmPassword: (value: string) => validateConfirmPassword(formValues[formName]?.password || '', value),
+      confirmPassword: (value: string) =>
+        validateConfirmPassword(formValues[formName]?.password || "", value),
       razao_social: validateName,
       // tel :validatePhone,
     };
@@ -82,29 +93,28 @@ export default function RegisterForm() {
 
     if (Object.keys(errors).length === 0) {
       const registerPromise = authService.cadastro({
-        body:{
+        body: {
           email: formValues[formName].email,
           firstname: formValues[formName].firstname,
           lastname: formValues[formName].lastname,
           password: formValues[formName].password,
-          cpf:parseInt(limparNumeros(formValues[formName].cpf), 10),
+          cpf: parseInt(limparNumeros(formValues[formName].cpf), 10),
           cnpj: parseInt(limparNumeros(formValues[formName].cnpj), 10),
           razao_social: formValues[formName].razao_social,
-        }
+        },
       });
 
-     
       setTimeout(() => {
-        router.push('/auth/login');
+        router.push("/auth/login");
       }, 300);
       PromiseNotification({
         promise: registerPromise,
-        pendingMessage: 'Registering...',
-        successMessage: 'Registration successful! Redirecting...',
-        errorMessage: 'An error occurred. Please try again.',
+        pendingMessage: "Registering...",
+        successMessage: "Registration successful! Redirecting...",
+        errorMessage: "An error occurred. Please try again.",
         successCallback: () => {
           return setTimeout(() => {
-            router.push('/auth/login');
+            router.push("/auth/login");
           }, 300);
         },
       });
@@ -122,57 +132,64 @@ export default function RegisterForm() {
     const specificFields = isCPF
       ? [formValues[formName]?.cpf]
       : [formValues[formName]?.cnpj, formValues[formName]?.razao_social];
-    
+
     return [...commonFields, ...specificFields].every(Boolean);
   };
 
   return (
     <>
-    <form onSubmit={handleSubmit}>
-      <FormGroup >
-        <Grid container spacing={2} bgcolor={'background'} borderRadius={1} textAlign={'center'}>
-          <Grid item xs={12}>
-            <CustomInput
-              label="Nome"
-              type="text"
-              value={formValues[formName]?.firstname || ""}
-              onChange={handleChange("firstname")}
-              helperText={formErrors.firstname}
-              error={!!formErrors.firstname}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomInput
-              label="Sobrenome"
-              type="text"
-              value={formValues[formName]?.lastname || ""}
-              onChange={handleChange("lastname")}
-              helperText={formErrors.lastname}
-              error={!!formErrors.lastname}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomInput
-              label="Email"
-              type="email"
-              value={formValues[formName]?.email || ""}
-              onChange={handleChange("email")}
-              helperText={formErrors.email}
-              error={!!formErrors.email}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <CustomInput
-              label="Telefone"
-              type="tel"
-              value={formValues[formName]?.tel || ""}
-              onChange={handleChange("tel")}
-              helperText={formErrors.tel}
-              error={!!formErrors.tel}
-            />
-          </Grid>
-         
-         
+      <form onSubmit={handleSubmit}>
+        <FormGroup>
+          <Grid
+            container
+            xs={12}
+            spacing={2}
+            bgcolor={"#FBFBFB"}
+            padding={1}
+            borderRadius={1}
+            textAlign={"center"}
+          >
+            <Grid item xs={12}>
+              <CustomInput
+                label="Nome"
+                type="text"
+                value={formValues[formName]?.firstname || ""}
+                onChange={handleChange("firstname")}
+                helperText={formErrors.firstname}
+                error={!!formErrors.firstname}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomInput
+                label="Sobrenome"
+                type="text"
+                value={formValues[formName]?.lastname || ""}
+                onChange={handleChange("lastname")}
+                helperText={formErrors.lastname}
+                error={!!formErrors.lastname}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomInput
+                label="Email"
+                type="email"
+                value={formValues[formName]?.email || ""}
+                onChange={handleChange("email")}
+                helperText={formErrors.email}
+                error={!!formErrors.email}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomInput
+                label="Telefone"
+                type="tel"
+                value={formValues[formName]?.tel || ""}
+                onChange={handleChange("tel")}
+                helperText={formErrors.tel}
+                error={!!formErrors.tel}
+              />
+            </Grid>
+
             <Grid item xs={12}>
               <CustomInput
                 label="CPF"
@@ -183,7 +200,7 @@ export default function RegisterForm() {
                 error={!!formErrors.cpf}
               />
             </Grid>
-    
+
             <>
               <Grid item xs={12}>
                 <CustomInput
@@ -206,40 +223,45 @@ export default function RegisterForm() {
                 />
               </Grid>
             </>
-      
-          <Grid item xs={12}>
-            <CustomInput
-              label="Senha"
-              type="password"
-              value={formValues[formName]?.password || ""}
-              onChange={handleChange("password")}
-              helperText={formErrors.password}
-              error={!!formErrors.password}
-            />
+
+            <Grid item xs={12}>
+              <CustomInput
+                label="Senha"
+                type="password"
+                value={formValues[formName]?.password || ""}
+                onChange={handleChange("password")}
+                helperText={formErrors.password}
+                error={!!formErrors.password}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <CustomInput
+                label="Repita a Senha"
+                type="password"
+                value={formValues[formName]?.confirmPassword || ""}
+                onChange={handleChange("confirmPassword")}
+                helperText={formErrors.confirmPassword}
+                error={!!formErrors.confirmPassword}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={!isFormValid()}
+              >
+                Register
+              </Button>
+            </Grid>
+            <Grid item xs={12} >
+              <Typography variant="body1" textAlign={"center"}p={10} component={"p"}>
+                Garantimos a privacidade dos seus dados com criptografia.
+              </Typography>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <CustomInput
-              label="Repita a Senha"
-              type="password"
-              value={formValues[formName]?.confirmPassword || ""}
-              onChange={handleChange("confirmPassword")}
-              helperText={formErrors.confirmPassword}
-              error={!!formErrors.confirmPassword}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={!isFormValid()}
-            >
-              Register
-            </Button>
-          </Grid>
-        </Grid>
-      </FormGroup>
-    </form>
+        </FormGroup>
+      </form>
     </>
   );
 }
