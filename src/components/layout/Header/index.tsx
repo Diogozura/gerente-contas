@@ -100,14 +100,11 @@ export default function Topo({currentPath }) {
         <AppBar component="nav" position="static">
           <Container>
             <Toolbar disableGutters>
-              <Typography
-              variant="h6" component={'h2'} fontWeight={'bold'}
-                
-                noWrap
-              
-              
-              >
-                HubeeFive
+              <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
+                Hubee
+              </Typography>
+              <Typography variant="h4" component={'h2'} fontWeight={'bold'}noWrap>
+                Five
               </Typography>
               <Box
                 sx={{

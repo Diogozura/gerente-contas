@@ -56,6 +56,7 @@ export default function Pedido() {
             textAlign: "center",
 
           }}
+          xs={12}
           direction="column"
           justifyContent="center"
           alignItems="center"

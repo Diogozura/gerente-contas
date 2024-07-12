@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 export default function HubeefivePlano({price}){
     return(
@@ -16,8 +16,12 @@ export default function HubeefivePlano({price}){
                
                 <Typography variant="h5">R${price}</Typography>
             </Box>
-            <Typography color={'primary'} variant="h4" fontWeight={'500'} component={'h2'}>Hubeefive</Typography>
+            <Grid item display={'flex'} flexWrap={'nowrap'} textAlign={'center'} justifyContent={'center'}>
+            <Typography color={'primary'} variant="h4" fontWeight={'400'} component={'h2'}>Hubee</Typography>
+            <Typography color={'primary'} variant="h4" fontWeight={'bold'} component={'h2'}>Five</Typography>
       
+            </Grid>
+           
         </>
     )
 }

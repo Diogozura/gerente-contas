@@ -160,6 +160,11 @@ export default function LoginForm() {
                 <Link href={"/auth/trocar-senha"} style={{textDecoration: 'underline'}} > Esqueceu a senha ?</Link>
               </Typography>
             </Grid>
+             <Grid item xs={12} >
+              <Typography variant="body1" textAlign={"center"}p={10} component={"p"}>
+                Garantimos a privacidade dos seus dados com criptografia.
+              </Typography>
+            </Grid>
           </Grid>
         </FormGroup>
       </form>
