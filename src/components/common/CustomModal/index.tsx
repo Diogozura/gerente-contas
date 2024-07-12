@@ -1,44 +1,56 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { TransitionProps } from '@mui/material/transitions';
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
+const Transition = React.forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
-export default function CustomModal() {
+export default function AlertDialogSlide() {
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
-    <div>
-      <Button onClick={handleOpen} variant='contained'>Integração com Mercado livre</Button>
-      <Modal
+    <React.Fragment>
+      <Button variant="contained"  onClick={handleClickOpen}>
+Integração com o mercado Livre    
+  </Button>
+      <Dialog
         open={open}
+        TransitionComponent={Transition}
+        keepMounted
         onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+        aria-describedby="alert-dialog-slide-description"
       >
-        <Box sx={style}>
-          <Typography id="modal-modal-title"  variant="h4" component="h2">
-          Integração com Mercado livre
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Na proxima sprint
-          </Typography>
-        </Box>
-      </Modal>
-    </div>
+        <DialogTitle>{"Integração com o mercado Livre    "}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+Na proxima sprint
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Fechar</Button>
+          {/* <Button onClick={handleClose}>Agree</Button> */}
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
   );
 }
