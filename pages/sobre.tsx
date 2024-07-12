@@ -5,7 +5,7 @@ export default function Sobre(){
     return(
         <Container>
             <Typography variant="h2" component={'h1'} textAlign={'center'}> 🐝 Sobre HubeeFive 🐝</Typography>
-<CustomModal/>
+{/* <CustomModal/> */}
         </Container>
     )
 }
