@@ -26,7 +26,7 @@ export default function RegisterForm() {
   const { formValues, setFormValues } = useFormContext();
   const formName = "register";
   const router = useRouter();
-
+  const { id } = router.query;
   const [formErrors, setFormErrors] = React.useState({
     email: "",
     tel: "",
@@ -102,11 +102,10 @@ export default function RegisterForm() {
           cnpj: parseInt(limparNumeros(formValues[formName].cnpj), 10),
           razao_social: formValues[formName].razao_social,
         },
+        id
       });
 
-      setTimeout(() => {
-        router.push("/auth/login");
-      }, 300);
+
       PromiseNotification({
         promise: registerPromise,
         pendingMessage: "Registering...",
@@ -144,7 +143,7 @@ export default function RegisterForm() {
             container
             xs={12}
             spacing={2}
-            bgcolor={"#FBFBFB"}
+            bgcolor={'background.paper'}
             padding={1}
             borderRadius={1}
             textAlign={"center"}

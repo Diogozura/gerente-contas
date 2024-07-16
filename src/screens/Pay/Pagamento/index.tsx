@@ -14,6 +14,7 @@ import { useEffect, useState } from "react";
 import { tokenService } from "../../../services/auth/tokenService";
 import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 import HubeefivePlano from "../../../components/layout/HubeefivePlano";
+import { authService } from "../../../services/auth/authService";
 
 export default function Pedido() {
   const router = useRouter();
@@ -24,30 +25,39 @@ export default function Pedido() {
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    if (countdown > 0) {
-      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-      return () => clearTimeout(timer);
-    } else {
-      router.push({
-        pathname: '/auth/cadastro',
-        query: { id }, // Supondo que você precisa do ID da resposta
-      });
-    }
+    console.log(id);
+    const confirmarPagamento = async (id) => {
+      try {
+        if (id) {
+          console.log("id te", id);
+          await authService.confirmarPagamento({ id });
+            router.push({
+              pathname: "/auth/cadastro",
+              query: { id },
+            });
+          
+        }
+      } catch (error) {
+        console.error("Erro ao confirmar pagamento:", error);
+      }
+    };
+
+    confirmarPagamento(id);
   }, [countdown, router, id]);
 
   return (
     <>
-     
-     <Container
+      <Container
         maxWidth="sm"
         sx={{
-          display:'flex',
+          display: "flex",
           justifyContent: "center",
           alignItems: "center",
           minHeight: "100vh",
-        }}>
+        }}
+      >
         {/* <LinearStepper/> */}
-       <Grid container height={'50vh'} xs={12}>
+        <Grid container height={"50vh"} xs={12}>
           {/* <Grid item xs={12}>
             <Stepper activeStep={2} alternativeLabel>
               {steps.map((label) => (
@@ -62,21 +72,19 @@ export default function Pedido() {
             borderRadius={4}
             padding={1}
             sx={{
-              m: '0px auto',
+              m: "0px auto",
               bgcolor: "#14961a65",
             }}
           >
-            <Typography variant="h3" component={'h1'}>
+            <Typography variant="h3" component={"h1"}>
               Pagamento Confirmado
-            </Typography> 
-            <Typography variant="h4" component={'h2'}>
+            </Typography>
+            <Typography variant="h4" component={"h2"}>
               Redirecionando em {countdown}...
             </Typography>
             <Link href={"/auth/cadastro"}>Seguir com cadastro</Link>
           </Grid>
         </Grid>
-          
-     
       </Container>
     </>
   );

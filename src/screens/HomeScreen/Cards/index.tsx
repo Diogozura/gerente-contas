@@ -47,14 +47,13 @@ export default function CardsPlano({plano, preco, descricao}) {
     <>
 
     <Card sx={{ maxWidth: 500, m:2 , padding:'0px 20px', 
-      // borderStyle:'groove', 
+      
       borderRadius:5}}  >
       <CardContent>
       <Typography variant="h5"  fontWeight={'bold'}  color="primary" component="h2">
           Plano  {plano} 
-          {/* || Meses {timePlano} */}
           </Typography>
-          <Typography variant="h4" fontWeight={'bold'} mb={5} color="primary">
+          <Typography variant="h4" fontWeight={'bold'} fontFamily={'Radio Canada, sans-serif'} mb={5} color="primary">
           R${preco}
           </Typography>
           {Array.isArray(descricao) ? (
@@ -79,7 +78,6 @@ export default function CardsPlano({plano, preco, descricao}) {
       size="large" 
       variant='contained'
       onClick={handleClick}
-      
       sx={{
       textTransform: 'uppercase',
       background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
@@ -87,9 +85,7 @@ export default function CardsPlano({plano, preco, descricao}) {
       '&:hover': {
         background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
       },
-    }} 
-    
-          >
+    }}>
          comprar
         </Button>
       </CardActions>

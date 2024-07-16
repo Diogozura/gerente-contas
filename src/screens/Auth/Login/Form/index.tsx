@@ -4,16 +4,9 @@ import CustomInput from "../../../../components/forms/Inputs/CustomInput";
 import Button from "@mui/material/Button";
 import FormGroup from "@mui/material/FormGroup";
 import Grid from "@mui/material/Grid";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import {
-  validateCNPJ,
-  validateConfirmPassword,
-  validateCPF,
   validateEmail,
-  validateName,
   validatePassword,
-  validatePhone,
 } from "../../../../utils/validators";
 import { useFormContext } from "../../../../config/FormContext";
 import { authService } from "../../../../services/auth/authService";
@@ -116,7 +109,7 @@ export default function LoginForm() {
           <Grid
             container
             spacing={2}
-            bgcolor={"background"}
+            bgcolor={'background.paper'}
             borderRadius={1}
             textAlign={"center"}
           >

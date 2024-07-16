@@ -26,14 +26,29 @@ async primeiroContato({ email, plano }) {
     })
 },
   
-//Cadastro
-  async cadastro({ body }) {
+//Primeiro contato
+async confirmarPagamento( {id} ) {
 
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastro`, {
+  return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/confirmar_pagamento?token=${id}`, {
+    method: 'POST',
+    body:{}
+  })
+    .then((response) => {
+      tokenService.savePay(response.body);
+  
+     return response;
+    })
+},
+  
+//Cadastro
+  async cadastro({ body, id }) {
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastrar_usuario?token=${id}`, {
       method: 'POST',
       body
     })
       .then((res) => {
+        if (!res.ok) throw new Error(res.body.mensagem)
        return res
       })
   },

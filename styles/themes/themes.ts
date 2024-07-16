@@ -77,12 +77,12 @@ const lightTheme = createTheme({
       'Quicksand', // Usando Quicksand como a fonte padrão
       'sans-serif',
     ].join(','),
-    h4: {
-      fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H2
-    },
-    h5: {
-      fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H3
-    },
+    // h4: {
+    //   fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H2
+    // },
+      // h5: {
+      //   fontFamily: 'Radio Canada, sans-serif', // Aplicando Radio Canada ao H3
+      // },
   },
   palette: {
     mode: 'light',
@@ -107,8 +107,8 @@ const lightTheme = createTheme({
       main: '#4caf50', // verde
     },
     background: {
-      default: '#FBFBFB', // fundo claro
-      paper: '#ffffff', // papel branco
+      default: '#ffffff', // fundo claro
+      paper: '#FBFBFB', // papel branco
     },
     text: {
       primary: '#000000', // texto preto
