@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { maskCPF, maskPhone } from '../../../../utils/mask';
+import { maskCPF, maskPhone, maskCNPJ } from '../../../../utils/mask';
 import { InputAdornment } from '@mui/material';
 
 
@@ -35,8 +35,11 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
 
     if (type === 'tel') {
       maskedValue = maskPhone(value);
-    } else if (type === 'cpf') {
+    } 
+    else if (type === 'cpf') {
       maskedValue = maskCPF(value);
+    } else if (type === 'cnpj'){
+      maskedValue = maskCNPJ(value);
     }
 
     onChange({
@@ -59,7 +62,7 @@ const CustomInput: React.FC<CustomInputProps> = ({ label,disabled, type, value, 
       }}
       type={type === 'password' && !showPassword ? 'password' : 'text'}
       value={value}
-      onChange={type === 'tel' || type === 'cpf' ? handleMaskedChange : onChange}
+      onChange={type === 'tel' || type === 'cpf' || type === 'cnpj' ? handleMaskedChange : onChange}
       variant="standard"
       fullWidth
       margin="normal"
