@@ -58,8 +58,7 @@ async confirmarPagamento( {id} ) {
     // var myHeaders = new Headers();
     // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
 
-    // return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
-    return HttpClient(`http://192.168.0.109:8000/api/token/`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -141,7 +140,7 @@ async confirmarPagamento( {id} ) {
 
   },
   async authIntegracaoML() {
-    return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth/`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
       method: 'GET',
     }
     )
@@ -155,7 +154,7 @@ async confirmarPagamento( {id} ) {
   async authRetornoML({code, token}) {
     console.log('code ML',code)
     console.log('token auth',token)
-    return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
