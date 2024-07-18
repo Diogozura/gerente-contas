@@ -86,7 +86,7 @@ async confirmarPagamento( {id} ) {
   // Session
   async getSession(ctx) {
     const token = tokenService.get(ctx);
-      console.log('token', token)
+   console.log('verifica')
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
       method: 'POST',
       headers: {
@@ -145,15 +145,14 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-        console.log(response)
+    
         if (!response.ok) throw new Error('Não autorizado');
         return response.body.dados;
       });
 
   },
   async authRetornoML({code, token}) {
-    console.log('code ML',code)
-    console.log('token auth',token)
+
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {
@@ -162,7 +161,7 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-        console.log(response)
+      
         if (!response.ok) throw new Error('Não autorizado');
         return response;
       });

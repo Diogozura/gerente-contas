@@ -25,11 +25,10 @@ export default function Pedido() {
   const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    console.log(id);
     const confirmarPagamento = async (id) => {
       try {
         if (id) {
-          console.log("id te", id);
+          
           await authService.confirmarPagamento({ id });
             router.push({
               pathname: "/auth/cadastro",

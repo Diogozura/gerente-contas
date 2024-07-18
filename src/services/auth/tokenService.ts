@@ -11,9 +11,9 @@ const ONE_MINUTE = ONE_SECOND * 60;
 
 export const tokenService = {
   save(accessToken: string, ctx = null) {
-    
+    console.log('acss', accessToken)
     nookies.set(ctx, ACCESS_TOKEN_KEY, accessToken, {
-      maxAge: ONE_MINUTE * 10,
+      maxAge: ONE_MINUTE * 5,
       path: '/',
     });
   },

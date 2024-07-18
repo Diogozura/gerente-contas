@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return;
     }
 
-    console.log('resposta', resposta);
+    
 
     // Aqui está um exemplo simples de uma resposta de sucesso
     res.status(200).json({

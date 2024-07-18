@@ -4,7 +4,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { code } = req.query;
-console.log('code', code)
+
   if (!code) {
     return res.status(400).json({ error: 'Code não fornecido' });
   }
