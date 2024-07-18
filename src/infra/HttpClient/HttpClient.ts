@@ -37,7 +37,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
      console.log('currentRefreshToken', currentRefreshToken)
         // tentar rodar o request anterior 
       try {
-      const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
+        const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
         method: isServer ? 'PUT' : 'GET',
         body: isServer? {refreshToken : currentRefreshToken} : undefined
       });
