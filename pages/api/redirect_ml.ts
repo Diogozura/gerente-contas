@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Por exemplo, você pode fazer uma chamada a outro serviço, salvar no banco de dados, etc.
     const resposta = await authService.authRetornoML({ code, token });
 
-    if (resposta.status === 200) {
+    if (resposta.status === 201) {
       // Redirecionar o usuário para a página desejada
       res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
       res.end();
