@@ -20,13 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     code,
   });
 
-  // try {
-  //   await authService.authRetornoML({ code, token });
-  // } 
-  // finally {
-  //   // Redirecionar o usuário independentemente do resultado
+  try {
+    await authService.authRetornoML({ code, token });
+  } 
+  finally {
+    // Redirecionar o usuário independentemente do resultado
 
-  //   // res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
-  //   res.end();
-  // }
+    res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
+    res.end();
+  }
 }
