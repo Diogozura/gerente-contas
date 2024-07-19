@@ -155,8 +155,8 @@ async confirmarPagamento( {id} ) {
 
   },
   async authRetornoML({code, token}) {
-    // return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
-    return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
+    // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
