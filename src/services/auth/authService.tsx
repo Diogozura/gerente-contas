@@ -152,7 +152,6 @@ async confirmarPagamento( {id} ) {
 
   },
   async authRetornoML({code, token}) {
-
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {

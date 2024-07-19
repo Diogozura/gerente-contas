@@ -1,5 +1,13 @@
 import { useState } from "react";
 import { Button, Container, Grid, Typography } from "@mui/material";
+import { requireAuthentication } from "../../helpers/auth";
+
+
+export const getServerSideProps = requireAuthentication(async (ctx) => {
+  return {
+    props: {}, // Props adicionais, se necessário
+  };
+});
 
 export default function Pedido() {
   const [loading, setLoading] = useState(false);
