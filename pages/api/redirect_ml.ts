@@ -16,28 +16,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Parâmetros recebidos com sucesso',
-      code,
-    });
-
-    // Faça o que for necessário com os parâmetros `code` e `state`
-    // Por exemplo, você pode fazer uma chamada a outro serviço, salvar no banco de dados, etc.
     const resposta = await authService.authRetornoML({ code, token });
-
+    console.log('resposta', resposta)
     if (resposta.status === 201) {
       // Redirecionar o usuário para a página desejada
       res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
       res.end();
       return;
     }
-
-    console.log('resposta', resposta);
-
-    // Aqui está um exemplo simples de uma resposta de sucesso
-  
-  } catch (error) {
-    res.status(500).json({ error: 'Erro interno do servidor' });
+  } finally {
+    // Redirecionar o usuário independentemente do resultado
+    res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
+    res.end();
   }
 }

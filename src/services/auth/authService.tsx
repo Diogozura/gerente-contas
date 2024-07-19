@@ -86,7 +86,6 @@ async confirmarPagamento( {id} ) {
   // Session
   async getSession(ctx) {
     const token = tokenService.get(ctx);
-   console.log('verifica')
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
       method: 'POST',
       headers: {
@@ -156,7 +155,8 @@ async confirmarPagamento( {id} ) {
 
   },
   async authRetornoML({code, token}) {
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
+    // return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
+    return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -164,7 +164,6 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-      
         if (!response.ok) throw new Error('Não autorizado');
         return response;
       });
