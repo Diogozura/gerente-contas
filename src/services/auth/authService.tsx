@@ -127,7 +127,6 @@ async confirmarPagamento( {id} ) {
   async dadosSala(token) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
       method: 'GET',
-
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -139,15 +138,20 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async authIntegracaoML() {
+  async authIntegracaoML(token) {
+    console.log('token', token)
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
+    // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
       method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     }
     )
       .then(response => {
-    
+        console.log('response', response)
         if (!response.ok) throw new Error('Não autorizado');
-        return response.body.dados;
+        return response;
       });
 
   },

@@ -6,37 +6,7 @@ import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
 
-// export const getServerSideProps = withSession(async (ctx) => {
-//   const session = ctx.req.session;
-//   const token = ctx.req.token;
 
-//   if (!session) {
-//     return {
-//       redirect: {
-//         destination: '/auth/login',
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   try {
-//     const dadosSala = await authService.dadosSala(token);
-
-//     return {
-//       props: {
-//         session,
-//         dadosSala,
-//       },
-//     };
-//   } catch (error) {
-//     return {
-//       redirect: {
-      
-//         permanent: true,
-//       },
-//     };
-//   }
-// });
 export const getServerSideProps = requireAuthentication(async (ctx) => {
   const token = ctx.req.token;
   try {
@@ -64,9 +34,7 @@ export default function Dashboard(props) {
             Dashboard
             <CustomModal/>
             <Link href={'/integracao'}>integracao</Link>
-            {/* <pre>
-            {JSON.stringify(props, null, 2)}
-        </pre>  */}
+            <pre> {JSON.stringify(props, null, 2)}</pre> 
         <Link href={'/sala'}>Sala</Link>
         
         </>
