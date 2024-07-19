@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    authService.authRetornoML({ code, token });
+    await authService.authRetornoML({ code, token });
   } finally {
     // Redirecionar o usuário independentemente do resultado
     res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
