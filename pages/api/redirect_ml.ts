@@ -16,14 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const resposta = await authService.authRetornoML({ code, token });
-    console.log('resposta', resposta)
-    if (resposta.status === 201) {
-      // Redirecionar o usuário para a página desejada
-      res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
-      res.end();
-      return;
-    }
+    authService.authRetornoML({ code, token });
   } finally {
     // Redirecionar o usuário independentemente do resultado
     res.writeHead(302, { Location: '/integracao/minhas-integracoes' });
