@@ -8,22 +8,23 @@ import { requireAuthentication } from "../../helpers/auth";
 
 export const getServerSideProps = requireAuthentication(async (ctx) => {
   const token = ctx.req.token;
-  try {
-    const dadosSala = await authService.dadosSala(token);
+  return {
+        props: {
+          
+        },
+      };
+  // try {
+  //   const dadosSala = await authService.dadosSala(token);
 
-    return {
-      props: {
-        dadosSala,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
+  //   
+  // } catch (error) {
+  //   return {
+  //     redirect: {
       
-        permanent: true,
-      },
-    };
-  }
+  //       permanent: true,
+  //     },
+  //   };
+  // }
 });
 
 function Sala(props) {

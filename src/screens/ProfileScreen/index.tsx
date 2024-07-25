@@ -1,26 +1,23 @@
-/* eslint-disable react/no-children-prop */
-import React from "react";
-import MenuAppBar from "../../components/layout/Header/PrivateLayout";
-import { withSession } from "../../services/auth/session";
-import { Typography } from "@mui/material";
-
-export const getServerSideProps = withSession((ctx) => {
-    return {
-      props: {
-        session: ctx.req.session
-      }
-    }
-  })
-
-export default function Profile(props) {
-    return (
-        <>
-            <pre>
-            {JSON.stringify(props, null, 2)}
-        </pre> 
-        <Typography> Adod adoadoso</Typography>
-        </>
-    )
+ 
+type Repo = {
+  name: string
+  stargazers_count: number
 }
-
-
+ 
+export const getServerSideProps = (async (ctx) => {
+  const res = await fetch('https://api.github.com/repos/vercel/next.js')
+  const repo: Repo = await res.json()
+  // Pass data to the page via props
+  return {
+     props: { repo }
+     }
+});
+export default function Page({
+  repo,
+}) {
+  return (
+    <main>
+      <p>{repo.stargazers_count}</p>
+    </main>
+  )
+}

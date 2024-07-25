@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (!code) {
     return res.status(400).json({ error: 'Code não fornecido' });
   }
-
+  
   try {
     await authService.authRetornoML({ code, token });
   } 
