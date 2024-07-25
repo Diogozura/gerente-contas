@@ -3,6 +3,7 @@ import { HttpClient } from '../../src/infra/HttpClient/HttpClient';
 import { tokenService } from '../../src/services/auth/tokenService';
 
 const REFRESH_TOKEN_NAME = 'REFRESH_TOKEN_NAME'
+const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY'
 
 const controllers = {
   async stroreRefreshToken(req, res) {
@@ -22,7 +23,7 @@ const controllers = {
   },
   async regenerateTokens(req, res) {
     const ctx = { req, res }
-
+console.log('regenera pra nois')
     const cookies = nookies.get(ctx);
     const refresh = cookies[REFRESH_TOKEN_NAME] || req.body.refreshToken
    const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/refresh/`, {
@@ -33,16 +34,18 @@ const controllers = {
      body:{refresh}
 
  })
- 
+ console.log('resfersh os token', refreshResponse.body)
     if (refreshResponse.ok) {
       nookies.set(ctx, REFRESH_TOKEN_NAME, refreshResponse.body.refresh, {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
       })
-      
-      tokenService.save(refreshResponse.body.access ,ctx)
-
+      nookies.set(ctx, ACCESS_TOKEN_KEY, refreshResponse.body.access, {
+ 
+        path: '/',
+      })
+     
       res.status(200).json({
         data: refreshResponse.body
       })
@@ -64,6 +67,12 @@ const controllersBy = {
   DELETE: (req, res) => {
     const ctx = { req, res }
     nookies.destroy(ctx, REFRESH_TOKEN_NAME, {
+      httpOnly: true,
+      sameSite: 'lax',
+      path: '/', 
+    });
+    
+    nookies.destroy(ctx, ACCESS_TOKEN_KEY, {
       httpOnly: true,
       sameSite: 'lax',
       path: '/', 

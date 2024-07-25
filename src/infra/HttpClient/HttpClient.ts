@@ -33,16 +33,16 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
 
       const isServer = true
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
-    
-     
+    console.log('tentou gerar')
+     console.log('currentRefreshToken', currentRefreshToken)
         // tentar rodar o request anterior 
       try {
-   
-      const refreshResponse = await HttpClient('http://localhost:3000/api/refresh', {
+        const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
         method: isServer ? 'PUT' : 'GET',
         body: isServer? {refreshToken : currentRefreshToken} : undefined
       });
      // Guardar os token 
+    //  console.log('tenta' , refreshResponse.body.data)
       const newAccessToken = refreshResponse.body.data.access;
       const newRefreshToken = refreshResponse.body.data.refresh;
    
@@ -53,7 +53,13 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       sameSite: 'lax',
       path: '/',
     })
+    tokenService.save(newAccessToken)
+    nookies.set( fetchOptions.ctx, 'ACCESS_TOKEN_KEY', newAccessToken, {
+ 
+      path: '/',
+    })
   }
+  
     tokenService.save(newAccessToken)
     
     const retryResponse = await HttpClient(fetchUrl, {
