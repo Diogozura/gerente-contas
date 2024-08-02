@@ -1,4 +1,4 @@
-import { Backdrop, Button, CircularProgress, Container, Grid, TextField, Typography } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, Container, Grid, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ import CadastroForm from "./Form";
 
 
 export default function CadastroScreen() {
+  const steps = ["Select Plano", "Primeiro contato", "Pagamento", "Cadastro"];
 
   return (
     <>
@@ -23,6 +24,15 @@ export default function CadastroScreen() {
           minHeight: "100vh",
         }}>
       <Grid  padding={2}>
+      <Box sx={{  mb: 10 }}>
+          <Stepper activeStep={3} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
       <Typography variant="h6" m={1} color={'text.secondary'} component={'h1'} textAlign={'center'}>FINALIZE O SEU CADASTRO</Typography>
 
       <CadastroForm />

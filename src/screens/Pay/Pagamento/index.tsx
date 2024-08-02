@@ -2,7 +2,7 @@ import {
   Box,
   Button,
   Container,
-  Grid,
+  Grid, 
   Step,
   StepLabel,
   Stepper,
@@ -15,6 +15,7 @@ import { tokenService } from "../../../services/auth/tokenService";
 import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 import HubeefivePlano from "../../../components/layout/HubeefivePlano";
 import { authService } from "../../../services/auth/authService";
+import LinearStepper from "../../../components/common/Stepper";
 
 export default function Pedido() {
   const router = useRouter();
@@ -24,48 +25,51 @@ export default function Pedido() {
 
   const [countdown, setCountdown] = useState(5);
 
-  useEffect(() => {
-    const confirmarPagamento = async (id) => {
-      try {
-        if (id) {
+  // useEffect(() => {
+  //   const confirmarPagamento = async (id) => {
+  //     try {
+  //       if (id) {
           
-          await authService.confirmarPagamento({ id });
-            router.push({
-              pathname: "/auth/cadastro",
-              query: { id },
-            });
+  //         await authService.confirmarPagamento({ id });
+  //           router.push({
+  //             pathname: "/auth/cadastro",
+  //             query: { id },
+  //           });
           
-        }
-      } catch (error) {
-        console.error("Erro ao confirmar pagamento:", error);
-      }
-    };
+  //       }
+  //     } catch (error) {
+  //       console.error("Erro ao confirmar pagamento:", error);
+  //     }
+  //   };
 
-    confirmarPagamento(id);
-  }, [countdown, router, id]);
+  //   confirmarPagamento(id);
+  // }, [countdown, router, id]);
 
   return (
     <>
-      <Container
+     <Container
         maxWidth="sm"
         sx={{
-          display: "flex",
+          mt:2,
+          display:'flex',
           justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
+          flexDirection:'column',
+          alignItems: "stretch",
+          minHeight: "80vh",
         }}
       >
+        <Box sx={{  mb: 10 }}>
+          <Stepper activeStep={2} alternativeLabel>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+        </Box>
         {/* <LinearStepper/> */}
-        <Grid container height={"50vh"} xs={12}>
-          {/* <Grid item xs={12}>
-            <Stepper activeStep={2} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Grid> */}
+        <Grid container xs={12}>
+         
           <Grid
             item
             borderRadius={4}

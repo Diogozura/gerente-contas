@@ -144,8 +144,8 @@ export default function RegisterForm() {
             xs={12}
             spacing={2}
             bgcolor={'background.paper'}
-            padding={1}
-            borderRadius={1}
+            padding={2}
+            borderRadius={2}
             textAlign={"center"}
           >
             <Grid item xs={12}>
@@ -200,7 +200,7 @@ export default function RegisterForm() {
               />
             </Grid>
 
-            <>
+{/*          
               <Grid item xs={12}>
                 <CustomInput
                   label="CNPJ"
@@ -220,8 +220,8 @@ export default function RegisterForm() {
                   helperText={formErrors.razao_social}
                   error={!!formErrors.razao_social}
                 />
-              </Grid>
-            </>
+              </Grid> */}
+         
 
             <Grid item xs={12}>
               <CustomInput
@@ -254,7 +254,7 @@ export default function RegisterForm() {
               </Button>
             </Grid>
             <Grid item xs={12} >
-              <Typography variant="body1" textAlign={"center"}p={10} component={"p"}>
+              <Typography variant="body1" textAlign={"center"} p={2} component={"p"}>
                 Garantimos a privacidade dos seus dados com criptografia.
               </Typography>
             </Grid>

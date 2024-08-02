@@ -16,6 +16,7 @@ import { useFormContext } from "../../../config/FormContext";
 
 import React from "react";
 import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
+import LinearStepper from "../../../components/common/Stepper";
 
 export default function Pedido() {
   const router = useRouter();
@@ -30,13 +31,15 @@ export default function Pedido() {
       <Container
         maxWidth="sm"
         sx={{
+          mt:2,
           display:'flex',
           justifyContent: "center",
-          alignItems: "center",
+          flexDirection:'column',
+          alignItems: "stretch",
           minHeight: "80vh",
         }}
       >
-        {/* <Box sx={{  mb: 10 }}>
+        <Box sx={{  mb: 10 }}>
           <Stepper activeStep={1} alternativeLabel>
             {steps.map((label) => (
               <Step key={label}>
@@ -44,7 +47,7 @@ export default function Pedido() {
               </Step>
             ))}
           </Stepper>
-        </Box> */}
+        </Box>
         {/* <LinearStepper/> */}
         <Grid
           sx={{
@@ -52,6 +55,7 @@ export default function Pedido() {
             borderRadius: 10,
             padding: "2rem",
             mt:5,
+            mb:5,
             position: "relative",
             textAlign: "center",
 
