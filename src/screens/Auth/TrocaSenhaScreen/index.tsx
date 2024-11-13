@@ -41,6 +41,9 @@ export default function TrocarSenha() {
 
     return (
         <>
+        <Head>
+             <title>Hubeefive - trocar a senha</title>
+        </Head>
             <BoxForm>
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()

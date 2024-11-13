@@ -5,37 +5,64 @@ import Link from "next/link";
 import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
+import LineChart from "../../components/charts/LineChart";
+import { Grid } from "@mui/material";
 
 
-export const getServerSideProps = requireAuthentication(async (ctx) => {
-  const token = ctx.req.token;
-  try {
-    const dadosSala = await authService.dadosSala(token);
+// export const getServerSideProps = requireAuthentication(async (ctx) => {
+//   // const token = ctx.req.token;
+//   // try {
+//   //   const dadosSala = await authService.dadosSala(token);
 
-    return {
-      props: {
-        dadosSala,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
+//   //   return {
+//   //     props: {
+//   //       dadosSala,
+//   //     },
+//   //   };
+//   // } catch (error) {
+//   //   return {
+//   //     redirect: {
       
-        permanent: true,
-      },
-    };
-  }
-});
+//   //       permanent: true,
+//   //     },
+//   //   };
+//   // }
+// });
 
 export default function Dashboard(props) {
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
+ const data = {
+  labels,
+  datasets: [
+    {
+      label: 'Dataset 1',
+      data: [1, 2,4, 5],
+      borderColor: 'rgb(255, 99, 132)',
+      backgroundColor: 'rgba(255, 99, 132, 0.5)',
+    },
+    {
+      label: 'Dataset 2',
+      data: [1, 2,4, 5],
+      borderColor: 'rgb(53, 162, 235)',
+      backgroundColor: 'rgba(53, 162, 235, 0.5)',
+    },
+  ],
+};
     return (
         <>
             Dashboard
             <CustomModal/>
             <Link href={'/integracao'}>integracao</Link>
             <pre> {JSON.stringify(props, null, 2)}</pre> 
-        <Link href={'/sala'}>Sala</Link>
+            <Grid container spacing={2}>
+                <Grid item size={{ xs: 6, md: 8 }}>
+                <LineChart data={data} />
+                </Grid>
+            
+            </Grid>
+            
+           <Link href={'/sala'}>Sala</Link>
         
         </>
     )

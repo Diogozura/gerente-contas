@@ -5,8 +5,6 @@ import { CacheProvider, EmotionCache } from '@emotion/react';
 import CssBaseline from '@mui/material/CssBaseline';
 import createEmotionCache from '../src/utils/createEmotionCache';
 import nookies from 'nookies';
-import authenticatedPagesConfig from '../src/config/authenticatedPages.json';
-import { isAuthenticated } from '../src/utils/auth';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Header from '../src/components/layout/Header';

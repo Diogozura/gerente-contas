@@ -2,12 +2,16 @@
 import { Grid, Typography } from "@mui/material";
 import CardsPlano from "./Cards";
 import { Plan, plans } from "./planos";
+import Head from "next/head";
 
 
   export default function HomeScreen() {
   
   return (
     <>
+     <Head>
+      <title>Hubeefive - seu novo hub de marketing places</title>
+    </Head>
       <Grid container >
         <Grid item xs={12} textAlign={'center'} mt={5}>
           <Typography variant="h5" color={'text.secondary'} component={'h1'}>Escolha um plano que mais se encaixa com sua operação</Typography>

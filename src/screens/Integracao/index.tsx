@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import { Button, Container } from "@mui/material";
+import { Button, Container, Grid } from "@mui/material";
 import { authService } from "../../services/auth/authService";
 import { requireAuthentication } from "../../helpers/auth";
 import Link from "next/link";
 import { tokenService } from "../../services/auth/tokenService";
+import TabPanel from "./minhasIntegracoes";
+import FullWidthTabs from "./table";
+import VerticalTabs from "./tabelVertical";
 
 export const getServerSideProps = requireAuthentication(async (ctx) => {
   const token = ctx.req.token;
@@ -33,12 +36,12 @@ const Pedido = (ctx) => {
   const [response, setResponse] = useState<any>(null);
 
   const handleClick = async () => {
-  router.push('/integracao/integra')
+  router.push('/integracao/minhas-integracoes')
   };
 
   return (
     <Container
-      maxWidth="sm"
+      maxWidth="lg"
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -57,6 +60,12 @@ const Pedido = (ctx) => {
           {JSON.stringify(response, null, 2)}
         </pre>
       )}
+      <Grid item >
+  <VerticalTabs/>
+      </Grid>
+    
+      
+
     </Container>
   );
 };

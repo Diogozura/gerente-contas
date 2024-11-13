@@ -4,6 +4,7 @@ import React from "react";
 import { BoxForm, Formulario } from "../../../components/forms/Formulario";
 import { TituloFom } from "../../../components/forms/Formulario/TituloForm";
 import { authService } from "../../../services/auth/authService";
+import Head from "next/head";
 
 export default function NovaSenha() {
     const router = useRouter()
@@ -42,6 +43,9 @@ export default function NovaSenha() {
 
     return (
         <>
+        <Head>
+            <title>Hubeefive - nova  senha</title>
+        </Head>
             <BoxForm>
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()

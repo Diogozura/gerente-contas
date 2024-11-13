@@ -2,12 +2,14 @@ import React from 'react';
 import { Box, Button, Container, Paper, Tab, Tabs, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import Link from 'next/link';
+import Head from 'next/head';
 
 // Estilização para o menu lateral
-const SideMenu = styled(Box)({
+const SideMenu = styled(Paper)({
   width: '250px',
   borderRight: '2px solid #E0E0E0',
   padding: '20px',
+  height:'80vh',
   backgroundColor: '#FAFAFA',
 });
 
@@ -16,11 +18,11 @@ const TabPanel = styled(Box)({
 });
 
 const icons = [
-  { src: '/path/to/mercado_livre_logo.png', alt: 'Mercado Livre' },
-  { src: '/path/to/shopee_logo.png', alt: 'Shopee' },
-  { src: '/path/to/magalu_logo.png', alt: 'Magalu' },
-  { src: '/path/to/americanas_logo.png', alt: 'Americanas' },
-  { src: '/path/to/amazon_logo.png', alt: 'Amazon' },
+  { src: '/marketingplaces/mercadoLivre.png', alt: 'Mercado Livre' },
+  { src: '/marketingplaces/shopee.png', alt: 'Shopee' },
+  { src: '/marketingplaces/magalu.png', alt: 'Magalu' },
+  { src: '/marketingplaces/americanas.png', alt: 'Americanas' },
+  { src: '/marketingplaces/amazon.png', alt: 'Amazon' },
 ];
 
 const IntegrationsPage: React.FC = () => {
@@ -31,11 +33,16 @@ const IntegrationsPage: React.FC = () => {
   };
 
   return (
+
+    <>
+      <Head>
+            <title>Hubeefive - Gerenciamento</title>
+        </Head>
     <Box display="flex" p={10}>
       {/* Menu Lateral */}
       <SideMenu>
         <Typography variant="h6" color="primary" fontWeight="bold">
-          Integrações
+          Integrações 
         </Typography>
       </SideMenu>
 
@@ -107,6 +114,7 @@ const IntegrationsPage: React.FC = () => {
         ?
       </Box>
     </Box>
+    </>
   );
 };
 

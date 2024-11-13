@@ -4,30 +4,30 @@ import { Button, Container } from "@mui/material";
 import { requireAuthentication } from "../../src/helpers/auth";
 import { authService } from "../../src/services/auth/authService";
 
-export const getServerSideProps = requireAuthentication(async (ctx) => {
-  const token = ctx.req.token;
-  try {
-    const authIntegracaoML = await authService.authIntegracaoML(token);
+// export const getServerSideProps = requireAuthentication(async (ctx) => {
+//   const token = ctx.req.token;
+//   try {
+//     const authIntegracaoML = await authService.authIntegracaoML(token);
 
-    return {
-      props: {
-        authIntegracaoML,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
+//     return {
+//       props: {
+//         authIntegracaoML,
+//       },
+//     };
+//   } catch (error) {
+//     return {
+//       redirect: {
       
-        permanent: true,
-      },
-    };
-  }
-});
+//         permanent: true,
+//       },
+//     };
+//   }
+// });
 
 const Pedido = (props) => {
-  const router = useRouter();
-  const url = props.authIntegracaoML.body.dados.url
-  router?.push(url)
+  // const router = useRouter();
+  // const url = props.authIntegracaoML.body.dados.url
+  // router?.push(url)
 
   return (
    <>

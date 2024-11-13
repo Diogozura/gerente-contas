@@ -124,6 +124,7 @@ import ThemeToggle from '../../../common/ThemeToggle';
 import nookies from 'nookies';
 
 import { ThemeProvider, useTheme } from '../../../../../styles/themes/themeContext';
+import { Container } from '@mui/material';
 
 interface Props {
   window?: () => Window;
@@ -132,103 +133,192 @@ interface Props {
 
 const drawerWidth = 240;
 
+
 const navItems = [
-  { id: 1, label: 'Login', path: '/auth/login' },
-  // { id: 2, label: 'Cadastre-se', path: '/auth/cadastro' },
+  {
+    id: 1,
+    label: "Sobre nós",
+    path: "/sobre",
+  },
+  {
+    id: 2,
+    label: "Planos",
+    path: "/",
+  },
+  {
+    id: 3,
+    label: "Contato",
+    path: "/contato",
+  },
 ];
 
-function HideOnScroll( props: Props) {
-  const { children, window } = props;
-  const trigger = useScrollTrigger({
-    target: window ? window() : undefined,
-  });
 
-  return (
-    <Slide appear={false} direction="down" in={!trigger}>
-      {children}
-    </Slide>
-  );
-}
 
-const PublicLayout: React.FC<Props> = ({ children, window }) => {
+
+export default function PublicLayout({ currentPath = '' }: { currentPath?: string }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const { currentTheme, toggleTheme } = useTheme();
-
-  React.useEffect(() => {
-    const cookies = nookies.get();
-    const savedTheme = cookies.theme || 'dark1';
-    toggleTheme(savedTheme);
-  }, []);
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-
+  const isActive = (path) => path === currentPath;
+  console.log('isActive', currentPath)
   const drawer = (
-    <Box onClick={handleDrawerToggle}>
-      <Typography variant="h6" sx={{ my: 2 }}></Typography>
-      <Divider />
-      <List>
+    <Box onClick={handleDrawerToggle} component={"header"}>
+      <Box padding={1} color={"white"}>
+        <Link href={"/"}>
+          <Box component={"aside"} display={"flex"} alignItems={"center"}>
+            <Typography variant="h6" component={'h2'} fontWeight={'bold'} ml={1} color={'primary'}>
+             Hubeefive
+            </Typography>
+          </Box>
+        </Link>
+      </Box>
+      <Divider
+        sx={{
+          border: "1px solid #939393",
+        }}
+      />
+      <List component={"nav"}>
         {navItems.map((item) => (
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
-              <Link href={item.path}>{item.label}</Link>
-            </ListItemButton>
-          </ListItem>
+          <>
+            <ListItem key={item.id} disablePadding>
+              <ListItemButton sx={{ textAlign: "center" }}>
+                <Link
+                  href={item.path}
+                  style={{ textDecoration: "none", fontSize: "1.3rem" }}
+                >
+                  {item.label}
+                </Link>
+              </ListItemButton>
+            </ListItem>
+            <Divider
+              sx={{
+                border: "1px solid #939393",
+              }}
+              
+            />
+
+          </>
         ))}
+          <ListItemButton sx={{ textAlign: "center" }}>
+                <Link
+                  href={'/auth/login'}
+                  style={{ textDecoration: "none", fontSize: "1.3rem" }}
+                >
+                 Login
+                </Link>
+              </ListItemButton>
       </List>
     </Box>
   );
 
-  const container = window !== undefined ? () => window().document.body : undefined;
-
   return (
-    <ThemeProvider>
-      <HideOnScroll window={window}>
-        <AppBar position="static">
-          <Toolbar>
-            <IconButton
+    <>
+      <Box sx={{ display: "flex" }} component={"header"}>
+        <AppBar component="nav" position="static">
+          <Container>
+            <Toolbar disableGutters>
+              <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
+                Hubee
+              </Typography>
+              <Typography variant="h4" component={'h2'} fontWeight={'bold'}noWrap>
+                Five
+              </Typography>
+              <Box
+                sx={{
+                  display: { xs: "none", md: "flex" },
+                  flexGrow: 1,
+                  justifyContent: "center",
+                }}
+              >
+                 {navItems.map((item) => (
+                  <Button
+                    key={item.id}
+                    sx={{
+                      color: 'white',
+                      mx: 2,
+                      borderBottom: isActive(item.path) ? '2px solid white' : 'none',
+                    }}
+                  >
+                    <Link href={item.path} passHref>
+                      <Typography>{item.label}</Typography>
+                    </Link>
+                  </Button>
+                ))}
+              </Box>
+             
+              <IconButton
               color="inherit"
               aria-label="open drawer"
-              edge="start"
+              edge="end"
               onClick={handleDrawerToggle}
               sx={{ mr: 2, display: { sm: 'none' } }}
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}>
+            <Button sx={{ color: "white" }}>
+                <Link href="/auth/login" passHref>
+                <Typography  
+                 ml={1}>
+             Login
             </Typography>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              {navItems.map((item) => (
-                <Button variant="contained" sx={{m:1}} color='info' key={item.id}>
-                  <Link style={{ color: '#ffffff' }} href={item.path}>{item.label}</Link>
-                </Button>
-              ))}
+                </Link>
+              </Button>
+            </Toolbar>
+          </Container>
+          {/*
+           <Toolbar >
+            
+            <Box sx={{ flexGrow: 1, width: 150, padding: 2, display: { xs: 'none', sm: 'block' } }}>
+              <Link href={'/'}>
+                <Box
+                component={'aside'}
+                display={'flex'}
+               alignItems={'center'}
+                >  
+               
+                  <Typography variant='h4' ml={1} >Easy cálculos</Typography>
+                </Box>
+              
+              </Link>
+           
             </Box>
-            <ThemeToggle toggleDarkMode={() => toggleTheme(currentTheme === 'dark1' ? 'dark2' : 'dark1')} />
-          </Toolbar>
-        </AppBar>
-      </HideOnScroll>
-      <Box component="nav">
-        <Drawer
-          container={container}
-          variant="temporary"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            display: { xs: 'block', sm: 'none' },
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </Box>
-      <Box component="main" sx={{ p: 3 }}>
-        {children}
-      </Box>
-    </ThemeProvider>
-  );
-};
+             </Toolbar> */}
+            {/* <Box sx={{ display: { xs: 'none', sm: 'block' } }} component={'nav'}>
+              {navItems.map((item) => (
+                <Link key={item.id} href={item.path} style={{  fontSize: '1.3rem' }} >
+                  {item.label}
+                </Link>
 
-export default PublicLayout;
+
+              ))}
+            </Box> */}
+
+            
+           
+         
+        </AppBar>
+        <Box component="nav">
+          <Drawer
+            variant="temporary"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            sx={{
+              display: { sm: "none" },
+              "& .MuiDrawer-paper": {
+                boxSizing: "border-box",
+                width: drawerWidth,
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Box>
+      </Box>
+    </>
+  );
+}
+

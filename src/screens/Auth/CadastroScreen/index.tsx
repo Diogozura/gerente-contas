@@ -8,6 +8,7 @@ import { authService } from "../../../services/auth/authService";
 import { Notification } from "../../../components/common/AlertToast";
 import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
 import CadastroForm from "./Form";
+import Head from "next/head";
 
 
 export default function CadastroScreen() {
@@ -15,6 +16,9 @@ export default function CadastroScreen() {
 
   return (
     <>
+      <Head>
+      <title>Hubeefive - Cadastro</title>
+    </Head>
      <Container
         maxWidth="sm"
         sx={{
