@@ -6,7 +6,8 @@ import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
 import LineChart from "../../components/charts/LineChart";
-import { Grid } from "@mui/material";
+import { Box, Container, Divider, Grid } from "@mui/material";
+import Head from "next/head";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -51,7 +52,11 @@ const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 };
     return (
         <>
-            Dashboard
+           <Head>
+            <title>Hubeefive - Gerenciamento</title>
+        </Head>
+        <Box bgcolor={'#f4f4f4'} padding={10}>
+          Dashboard
             <CustomModal/>
             <Link href={'/integracao'}>integracao</Link>
             <pre> {JSON.stringify(props, null, 2)}</pre> 
@@ -63,7 +68,25 @@ const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
             </Grid>
             
            <Link href={'/sala'}>Sala</Link>
+        </Box>
+       
+    <Box display="flex" p={10}>
+      {/* Menu Lateral */}
+     
+
+      {/* Conteúdo Principal */}
+      <Container maxWidth="md" sx={{ mt: 4 , height:'80vh' }}>
+        {/* Tabs */}
+       
+
+        {/* Painel de conteúdo */}
         
+
+        
+      </Container>
+
+      {/* Botão de Ajuda no Canto Inferior Direito */}
+    </Box>
         </>
     )
 }

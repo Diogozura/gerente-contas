@@ -94,25 +94,6 @@ const IntegrationsPage: React.FC = () => {
       </Container>
 
       {/* Botão de Ajuda no Canto Inferior Direito */}
-      <Box
-        position="fixed"
-        bottom={16}
-        right={16}
-        sx={{
-          width: 48,
-          height: 48,
-          backgroundColor: '#6A1B9A',
-          color: 'white',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          boxShadow: 3,
-        }}
-      >
-        ?
-      </Box>
     </Box>
     </>
   );
