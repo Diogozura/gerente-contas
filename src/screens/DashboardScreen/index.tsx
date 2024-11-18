@@ -6,8 +6,9 @@ import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
 import LineChart from "../../components/charts/LineChart";
-import { Box, Container, Divider, Grid } from "@mui/material";
+import { Box, Container, Divider, Grid, Typography } from "@mui/material";
 import Head from "next/head";
+import ListaDeNotificacao from "./listaNotificações";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -55,38 +56,24 @@ const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
            <Head>
             <title>Hubeefive - Gerenciamento</title>
         </Head>
-        <Box bgcolor={'#f4f4f4'} padding={10}>
-          Dashboard
-            <CustomModal/>
-            <Link href={'/integracao'}>integracao</Link>
-            <pre> {JSON.stringify(props, null, 2)}</pre> 
-            <Grid container spacing={2}>
-                <Grid item size={{ xs: 6, md: 8 }}>
-                <LineChart data={data} />
-                </Grid>
-            
-            </Grid>
-            
-           <Link href={'/sala'}>Sala</Link>
+        <Container >
+        <Box sx={{ bgcolor: '#cfe8fc', height: '50vh', mt:2, p:2, borderRadius:3  }} >
+          <Typography textAlign={'center'} component={'h3'} variant="h4">Notificações</Typography>
+          <ListaDeNotificacao/>
         </Box>
-       
-    <Box display="flex" p={10}>
-      {/* Menu Lateral */}
+        <Divider sx={{m:1}}/>
+
+        <Box sx={{ bgcolor: '#cfe8fc', height: '50vh' }} >
+        <LineChart data={data}/>
+        </Box>
+         <Divider sx={{m:1}}/>
+         <Box sx={{ bgcolor: '#cfe8fc', height: '50vh', mt:2, p:2, borderRadius:3 }} >
+            <Typography>Lojas Integradas </Typography>
+        </Box>
+        </Container>
+
      
 
-      {/* Conteúdo Principal */}
-      <Container maxWidth="md" sx={{ mt: 4 , height:'80vh' }}>
-        {/* Tabs */}
-       
-
-        {/* Painel de conteúdo */}
-        
-
-        
-      </Container>
-
-      {/* Botão de Ajuda no Canto Inferior Direito */}
-    </Box>
         </>
     )
 }
