@@ -125,7 +125,7 @@ import ThemeToggle from '../../../common/ThemeToggle';
 import nookies from 'nookies';
 
 import { ThemeProvider, useTheme } from '../../../../../styles/themes/themeContext';
-import { Avatar, Container, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Avatar, Badge, Container, Menu, MenuItem, Tooltip } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
 import { themes } from '../../../../../styles/themes/themes';
 
@@ -167,32 +167,26 @@ const navItems = [
 ];
 
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anúncio publicado'];
 
 
 export default function PublicLayout({ currentPath = '' }: { currentPath?: string }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-  const isActive = (path) => path === currentPath;
-  console.log('isActive', currentPath)
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+  const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
+  const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
 
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
+  const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) =>
+    setAnchorElNotifications(event.currentTarget);
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
+  const handleOpenSettings = (event: React.MouseEvent<HTMLElement>) =>
+    setAnchorElSettings(event.currentTarget);
+
+  const handleCloseNotifications = () => setAnchorElNotifications(null);
+  const handleCloseSettings = () => setAnchorElSettings(null);
+
+  const isActive = (path: string) => path === currentPath;
   const drawer = (
     <Box onClick={handleDrawerToggle} component={"header"}>
       <Box padding={1} color={"white"}>
@@ -250,12 +244,17 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
         <AppBar component="nav" position="static" color="default" enableColorOnDark>
           <Container>
             <Toolbar disableGutters>
-              <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
+            <Link href='/home-hub' passHref>
+            <Box component={'span'} display={'flex'}>
+            <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
                 Hubee
               </Typography>
               <Typography variant="h4" component={'h2'} fontWeight={'bold'}noWrap>
                 Five
               </Typography>
+            </Box>
+             
+              </Link>
               <Box
                 sx={{
                   display: { xs: "none", md: "flex" },
@@ -288,60 +287,40 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
              
        <Box sx={{ flexGrow: 0 }}>
        <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <NotificationsIcon color='primary'  fontSize="large"/>
-              </IconButton>
+       <IconButton onClick={handleOpenNotifications}>
+              <Badge badgeContent={notifications.length} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            anchorEl={anchorElNotifications}
+            open={Boolean(anchorElNotifications)}
+            onClose={handleCloseNotifications}
+          >
+            {notifications.map((notification, index) => (
+              <MenuItem key={index} onClick={handleCloseNotifications}>
+                {notification}
+              </MenuItem>
+            ))}
+          </Menu>
          
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
+            <Tooltip title="Configurações">
+            <IconButton onClick={handleOpenSettings}>
+              <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+            </IconButton>
             </Tooltip>
             <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            anchorEl={anchorElSettings}
+            open={Boolean(anchorElSettings)}
+            onClose={handleCloseSettings}
+          >
+            {settings.map((setting, index) => (
+              <MenuItem key={index} onClick={handleCloseSettings}>
+                {setting}
+              </MenuItem>
+            ))}
+          </Menu>
           </Box>
             </Toolbar>
           </Container>

@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "titulo": "Nova atualização disponível",
+      "descricao": "Uma nova atualização foi lançada para o aplicativo.",
+      "sku": "SKU-001",
+      "data": "2024-11-19"
+    },
+    {
+      "id": 2,
+      "titulo": "Seu pedido foi enviado",
+      "descricao": "O pedido #12345 foi enviado com sucesso.",
+      "sku": "SKU-002",
+      "data": "2024-11-18"
+    },
+    {
+      "id": 3,
+      "titulo": "Promoção especial",
+      "descricao": "Confira nossas promoções de Black Friday.",
+      "sku": "SKU-003",
+      "data": "2024-11-17"
+    }
+  ]
+  
