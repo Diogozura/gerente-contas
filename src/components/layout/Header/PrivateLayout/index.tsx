@@ -120,6 +120,7 @@ import Link from 'next/link';
 import Slide from '@mui/material/Slide';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { useRouter } from "next/router"
 
 import ThemeToggle from '../../../common/ThemeToggle';
 import nookies from 'nookies';
@@ -171,6 +172,7 @@ const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anún
 
 
 export default function PublicLayout({ currentPath = '' }: { currentPath?: string }) {
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
   const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
@@ -184,7 +186,31 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
     setAnchorElSettings(event.currentTarget);
 
   const handleCloseNotifications = () => setAnchorElNotifications(null);
-  const handleCloseSettings = () => setAnchorElSettings(null);
+  const handleCloseSettings = () =>{
+    setAnchorElSettings(null);
+  }
+  const handleSettingsAction = (setting: string) => {
+    handleCloseSettings(); // Fecha o menu primeiro
+  
+    switch (setting) {
+      case 'Profile':
+        router.push('/perfil'); // Redireciona para a página do perfil
+        break;
+      case 'Account':
+        router.push('/conta'); // Redireciona para a página da conta
+        break;
+      case 'Dashboard':
+        router.push('/dashboard'); // Redireciona para o dashboard
+        break;
+      case 'Logout':
+        // Limpa cookies ou tokens e redireciona para a página de login
+        nookies.destroy(null, 'token');
+        router.push('/auth/login');
+        break;
+      default:
+        console.warn('Ação desconhecida:', setting);
+    }
+  };
 
   const isActive = (path: string) => path === currentPath;
   const drawer = (
@@ -305,22 +331,25 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
             ))}
           </Menu>
          
-            <Tooltip title="Configurações">
-            <IconButton onClick={handleOpenSettings}>
-              <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-            </IconButton>
-            </Tooltip>
-            <Menu
-            anchorEl={anchorElSettings}
-            open={Boolean(anchorElSettings)}
-            onClose={handleCloseSettings}
-          >
-            {settings.map((setting, index) => (
-              <MenuItem key={index} onClick={handleCloseSettings}>
-                {setting}
-              </MenuItem>
-            ))}
-          </Menu>
+          <Tooltip title="Configurações">
+  <IconButton onClick={handleOpenSettings}>
+    <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+  </IconButton>
+</Tooltip>
+<Menu
+  anchorEl={anchorElSettings}
+  open={Boolean(anchorElSettings)}
+  onClose={handleCloseSettings}
+>
+  {settings.map((setting, index) => (
+    <MenuItem
+      key={index}
+      onClick={() => handleSettingsAction(setting)}
+    >
+      {setting}
+    </MenuItem>
+  ))}
+</Menu>
           </Box>
             </Toolbar>
           </Container>
