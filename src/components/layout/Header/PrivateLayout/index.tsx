@@ -312,7 +312,7 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
              
              
        <Box sx={{ flexGrow: 0 }}>
-       <Tooltip title="Open settings">
+       <Tooltip title="Notificações">
        <IconButton onClick={handleOpenNotifications}>
               <Badge badgeContent={notifications.length} color="error">
                 <NotificationsIcon />

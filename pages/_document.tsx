@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import React from "react";
 import Document, {
   Html,
   Head,
@@ -7,41 +7,55 @@ import Document, {
   DocumentInitialProps,
   DocumentContext,
 } from "next/document";
-import { ServerStyleSheet } from "styled-components";
-
-// NEXT.JS CUSTOM DOCUMENT
-// https://nextjs.org/docs/advanced-features/custom-document
+import { ServerStyleSheet as StyledComponentsSheet } from "styled-components";
+import createEmotionServer from "@emotion/server/create-instance";
+import createEmotionCache from "../src/utils/createEmotionCache";
 
 export default class MyDocument extends Document {
   static async getInitialProps(
     ctx: DocumentContext
   ): Promise<DocumentInitialProps> {
-    const sheet = new ServerStyleSheet();
+    const styledComponentsSheet = new StyledComponentsSheet();
+    const emotionCache = createEmotionCache();
+    const { extractCriticalToChunks } = createEmotionServer(emotionCache);
+
     const originalRenderPage = ctx.renderPage;
 
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: (App) => (props) =>
-            sheet.collectStyles(<App {...props} />),
+          enhanceApp: (App: any) => (props) =>
+            styledComponentsSheet.collectStyles(
+              <App emotionCache={emotionCache} {...props} />
+            ),
         });
 
       const initialProps = await Document.getInitialProps(ctx);
+      const emotionStyles = extractCriticalToChunks(initialProps.html);
+      const emotionStyleTags = emotionStyles.styles.map((style) => (
+        <style
+          data-emotion={`${style.key} ${style.ids.join(" ")}`}
+          key={style.key}
+          dangerouslySetInnerHTML={{ __html: style.css }}
+        />
+      ));
+
       return {
         ...initialProps,
         styles: [
           <>
             {initialProps.styles}
-            {sheet.getStyleElement()}
+            {styledComponentsSheet.getStyleElement()}
+            {emotionStyleTags}
           </>,
         ],
       };
     } finally {
-      sheet.seal();
+      styledComponentsSheet.seal();
     }
   }
 
-  render(): ReactElement {
+  render() {
     return (
       <Html lang="pt-br">
         <Head>
