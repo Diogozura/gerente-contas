@@ -105,7 +105,7 @@ const IntegrationsPage: React.FC = () => {
 
           {/* Painel de conteúdo */}
           <TabPanel hidden={selectedTab !== 0}>
-            <Paper elevation={1} sx={{p:1, textAlign: 'center', backgroundColor:'white' }}>
+            <Paper elevation={1} sx={{p:1, textAlign: 'center', backgroundColor:'#ffff' }}>
               <Typography variant="subtitle1" textAlign={'left'} gutterBottom p={2}>
                 Selecione um Marketplace para integrar ao HubeeFive
               </Typography>

@@ -33,6 +33,18 @@ const darkTheme1 = createTheme({
       secondary: '#b0bec5', // texto cinza claro
     },
   },
+  components: {
+    MuiDialog: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
+    },
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
+    },
+  },
 });
 
 // Defina suas paletas de cores para outro tema escuro
@@ -66,6 +78,18 @@ const darkTheme2 = createTheme({
     text: {
       primary: '#5E5E5E', // texto branco
       secondary: '#b0bec5', // texto cinza claro
+    },
+  },
+  components: {
+    MuiDialog: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
+    },
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
     },
   },
 });
@@ -115,7 +139,18 @@ const lightTheme = createTheme({
       secondary: '#5E5E5E', // texto cinza  
     },
   },
-
+  components: {
+    MuiDialog: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
+    },
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true, // Desabilita o scroll lock para todos os Dialogs
+      },
+    },
+  },
 });
 
 export const themes = {

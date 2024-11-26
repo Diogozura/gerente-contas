@@ -320,12 +320,13 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
             </IconButton>
             </Tooltip>
             <Menu
+           
             anchorEl={anchorElNotifications}
             open={Boolean(anchorElNotifications)}
             onClose={handleCloseNotifications}
           >
             {notifications.map((notification, index) => (
-              <MenuItem key={index} onClick={handleCloseNotifications}>
+              <MenuItem key={index}  onClick={handleCloseNotifications}>
                 {notification}
               </MenuItem>
             ))}
