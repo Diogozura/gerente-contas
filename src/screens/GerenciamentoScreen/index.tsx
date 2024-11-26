@@ -39,25 +39,25 @@ const IntegrationsPage: React.FC = () => {
   };
 
 
-const dadosIntegracao = [
-  {
-  nomeLoja: 'beefive',
-  icon:{
-    src:'/marketingplaces/log-mercado-livre.png',
-    alt:'logo mercado livre'
-  },
-  atencao: 'tem que ver isso ai meu truta',
+  const dadosIntegracao = [
+    {
+      nomeLoja: 'beefive',
+      icon: {
+        src: '/marketingplaces/log-mercado-livre.png',
+        alt: 'logo mercado livre'
+      },
+      atencao: 'tem que ver isso ai meu truta',
 
-},
-  {
-  nomeLoja: 'Universos Encaixados',
-  icon:{
-    src:'/marketingplaces/log-mercado-livre.png',
-    alt:'logo mercado livre'
-  },
-  error:'Vincule esta integração a um CNPJ ou CPF correspondente'
-},
-]
+    },
+    {
+      nomeLoja: 'Universos Encaixados',
+      icon: {
+        src: '/marketingplaces/log-mercado-livre.png',
+        alt: 'logo mercado livre'
+      },
+      error: 'Vincule esta integração a um CNPJ ou CPF correspondente'
+    },
+  ]
   return (
 
     <>
@@ -73,15 +73,30 @@ const dadosIntegracao = [
         </SideMenu>
 
         {/* Conteúdo Principal */}
-        <Container   sx={{ mt: 4 }}>
+        <Container sx={{ mt: 4 }}>
           {/* Tabs */}
-          <Paper component={'aside'}  elevation={3} sx={{ mb: 3, maxWidth:'600px' }}>
+          <Paper component={'aside'} elevation={3} sx={{ maxWidth: '600px' }}>
             <Tabs
               value={selectedTab}
               onChange={handleTabChange}
-              indicatorColor="primary"
-              textColor="primary"
               variant="fullWidth"
+              sx={{
+                '.MuiTabs-indicator': {
+                  display: 'none', // Esconde o indicador
+                },
+                '.MuiTab-root': {
+                  backgroundColor: '#F5F5F5', // Cor inativa
+                  color: '#9E9E9E', // Texto inativo
+                  // '&:hover': {
+                  //   backgroundColor: '#E0E0E0', // Cor ao passar o mouse
+                  // },
+                },
+                '.Mui-selected': {
+                  backgroundColor: '#FFFFFF', // Cor ativa
+                  color: '#000000', // Texto ativo
+                  fontWeight: 'bold',
+                },
+              }}
             >
               <Tab label="Integrações" />
               <Tab label="Minhas Integrações" />
@@ -90,8 +105,8 @@ const dadosIntegracao = [
 
           {/* Painel de conteúdo */}
           <TabPanel hidden={selectedTab !== 0}>
-            <Paper elevation={1} sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="subtitle1" gutterBottom>
+            <Paper elevation={1} sx={{p:1, textAlign: 'center', backgroundColor:'white' }}>
+              <Typography variant="subtitle1" textAlign={'left'} gutterBottom p={2}>
                 Selecione um Marketplace para integrar ao HubeeFive
               </Typography>
               <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
@@ -125,7 +140,6 @@ const dadosIntegracao = [
 
           <TabPanel hidden={selectedTab !== 1}>
             {/* Conteúdo para "Minhas Integrações" */}
-            <Typography>Conteúdo da aba "Minhas Integrações".</Typography>
             <Filtro />
             <MinhasIntegracoes dadosIntegracao={dadosIntegracao} />
           </TabPanel>

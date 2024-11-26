@@ -35,6 +35,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            backgroundColor:'#ffff'
           }}
         >
           <Box display={"flex"} alignItems="center">

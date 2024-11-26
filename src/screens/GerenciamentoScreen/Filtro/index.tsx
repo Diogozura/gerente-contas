@@ -1,8 +1,27 @@
-import { Paper, TextField } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Divider, FormControl, IconButton, InputAdornment, InputBase, InputLabel, OutlinedInput, Paper, TextField } from "@mui/material";
+import React from "react";
+import MenuIcon from '@mui/icons-material/Menu';
+import SearchIcon from '@mui/icons-material/Search';
+import DirectionsIcon from '@mui/icons-material/Directions';
 
 export default function Filtro() {
 
 
+  const [searchValue, setSearchValue] = React.useState<string>('');
+
+  const handleSearch = () => {
+    if (searchValue.trim() !== '') {
+      console.log('Valor pesquisado:', searchValue); // Salva o valor no console
+      // Aqui você pode chamar outra função ou processar o valor
+    }
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
+  };
   return (
     <>
      
@@ -19,7 +38,19 @@ export default function Filtro() {
            <TextField
               variant="outlined"
               id="outlined-basic"
-            label="Filtro de visualização"
+            placeholder="Filtro de visualização"
+            onKeyDown={handleKeyDown} // Chama a função ao pressionar uma tecla
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <IconButton onClick={handleSearch}>
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
             //   disabled={editIndex !== index} // Somente habilitado no modo edição
             //   value={nomeLojas[index]}
             //   onChange={(event) => handleChange(event, index)}
@@ -30,6 +61,8 @@ export default function Filtro() {
                 },  
              }}
             />
+  
+   
         </Paper>
      
     </>
