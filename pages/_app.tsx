@@ -26,8 +26,6 @@ function MyApp(props: MyAppProps) {
 
   React.useEffect(() => {
     const cookies = nookies.get(null); // Use null here, ctx is not available in the client-side
-    const savedMode = cookies.theme === 'dark';
-
   }, []);
 
   const router = useRouter();

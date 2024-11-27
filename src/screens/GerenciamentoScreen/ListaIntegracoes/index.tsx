@@ -128,7 +128,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
                 handleOpenModal("Configuração", { mensagem: "Configurar integração.", ...integracao })
               }
             >
-              <SettingsIcon />
+              <SettingsIcon color="inherit"/>
             </IconButton>
             <IconButton
               aria-label="Deletar"

@@ -121,14 +121,15 @@ import Slide from '@mui/material/Slide';
 import useScrollTrigger from '@mui/material/useScrollTrigger';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useRouter } from "next/router"
-
+import ContrastIcon from '@mui/icons-material/Contrast';
 import ThemeToggle from '../../../common/ThemeToggle';
 import nookies from 'nookies';
 
 import { ThemeProvider, useTheme } from '../../../../../styles/themes/themeContext';
-import { Avatar, Badge, Container, Menu, MenuItem, Tooltip } from '@mui/material';
-import { AccountCircle } from '@mui/icons-material';
+import { Avatar, Badge, Container, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { AccountCircle, DarkMode, ExitToApp } from '@mui/icons-material';
 import { themes } from '../../../../../styles/themes/themes';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 interface Props {
   window?: () => Window;
@@ -164,15 +165,21 @@ const navItems = [
     label: "Gerenciamento",
     path: "/gerenciamento",
   },
- 
+
 ];
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = [
+  { label: 'Perfil', icon: <AccountCircle /> },
+  { label: 'Minha conta', icon:  <SettingsIcon /> },
+  { label: 'Tema', icon: <ContrastIcon /> },
+  { label: 'Sair', icon: <ExitToApp /> },
+];
 const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anúncio publicado'];
 
 
 export default function PublicLayout({ currentPath = '' }: { currentPath?: string }) {
   const router = useRouter()
+  const { currentTheme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
   const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
@@ -186,23 +193,23 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
     setAnchorElSettings(event.currentTarget);
 
   const handleCloseNotifications = () => setAnchorElNotifications(null);
-  const handleCloseSettings = () =>{
+  const handleCloseSettings = () => {
     setAnchorElSettings(null);
   }
   const handleSettingsAction = (setting: string) => {
     handleCloseSettings(); // Fecha o menu primeiro
-  
+
     switch (setting) {
-      case 'Profile':
+      case 'Perfil':
         router.push('/perfil'); // Redireciona para a página do perfil
         break;
-      case 'Account':
+      case 'Conta':
         router.push('/conta'); // Redireciona para a página da conta
         break;
-      case 'Dashboard':
-        router.push('/dashboard'); // Redireciona para o dashboard
+      case 'Tema':
+        toggleTheme(currentTheme === 'light' ? 'dark1' : 'light');
         break;
-      case 'Logout':
+      case 'Sair':
         // Limpa cookies ou tokens e redireciona para a página de login
         nookies.destroy(null, 'token');
         router.push('/auth/login');
@@ -219,7 +226,7 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
         <Link href={"/"}>
           <Box component={"aside"} display={"flex"} alignItems={"center"}>
             <Typography variant="h6" component={'h2'} fontWeight={'bold'} ml={1} color={'primary'}>
-             Hubeefive
+              Hubeefive
             </Typography>
           </Box>
         </Link>
@@ -246,137 +253,137 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
               sx={{
                 border: "1px solid #939393",
               }}
-              
+
             />
 
           </>
         ))}
-          <ListItemButton sx={{ textAlign: "center" }}>
-                <Link
-                  href={'/auth/login'}
-                  style={{ textDecoration: "none", fontSize: "1.3rem" }}
-                >
-                 Login
-                </Link>
-              </ListItemButton>
+        <ListItemButton sx={{ textAlign: "center" }}>
+          <Link
+            href={'/auth/login'}
+            style={{ textDecoration: "none", fontSize: "1.3rem" }}
+          >
+            Login
+          </Link>
+        </ListItemButton>
       </List>
     </Box>
   );
 
   return (
     <>
-    <ThemeProvider theme={themes.dark1}>
-      <Box sx={{ display: "flex" }} component={"header"}>
-        <AppBar component="nav" position="static" color="default" enableColorOnDark>
-          <Container>
-            <Toolbar disableGutters>
-            <Link href='/home-hub' passHref>
-            <Box component={'span'} display={'flex'}>
-            <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
-                Hubee
-              </Typography>
-              <Typography variant="h4" component={'h2'} fontWeight={'bold'}noWrap>
-                Five
-              </Typography>
-            </Box>
-             
-              </Link>
-              <Box
-                sx={{
-                  display: { xs: "none", md: "flex" },
-                  flexGrow: 1,
-                  justifyContent: "center",
-                }}
-              >
-                 {navItems.map((item) => (
-                  <Button
-                    key={item.id}
-                    sx={{
-                      color: 'primary',
-                      mx: 2,
-                     
-                    }}
-                  >
-                   
-                    <Link href={item.path} passHref>
-                      <Typography component={'p'} sx={{
-                          fontWeight:'600',
+     
+        <Box sx={{ display: "flex" }} component={"header"}>
+          <AppBar component="nav" position="static" color="default" enableColorOnDark>
+            <Container>
+              <Toolbar disableGutters>
+                <Link href='/home-hub' passHref>
+                  <Box component={'span'} display={'flex'}>
+                    <Typography variant="h4" component={'h2'} fontWeight={'400'} noWrap>
+                      Hubee
+                    </Typography>
+                    <Typography variant="h4" component={'h2'} fontWeight={'bold'} noWrap>
+                      Five
+                    </Typography>
+                  </Box>
+
+                </Link>
+                <Box
+                  sx={{
+                    display: { xs: "none", md: "flex" },
+                    flexGrow: 1,
+                    justifyContent: "center",
+                  }}
+                >
+                  {navItems.map((item) => (
+                    <Button
+                      key={item.id}
+                      sx={{
+                        color: 'primary',
+                        mx: 2,
+
+                      }}
+                    >
+
+                      <Link href={item.path} passHref>
+                        <Typography component={'p'} sx={{
+                          fontWeight: '600',
                           color: isActive(item.path) ? 'primary' : 'inherit', // Cor do texto (ajuste conforme o necessário)
-                          borderBottom: isActive(item.path) ? '2px solid #6A1B9A' : 'none', // Cor e espessura da borda inferior
+                          borderBottom: isActive(item.path) ? `2px solid #6A1B9A` : 'none', // Cor e espessura da borda inferior
                           pb: 0.5, // Padding na parte inferior para dar um espaçamento visual mais agradável
-                      }}>{item.label}</Typography>
-                    </Link>
-                  </Button>
-                ))}
-              </Box>
-             
-             
-       <Box sx={{ flexGrow: 0 }}>
-       <Tooltip title="Notificações">
-       <IconButton onClick={handleOpenNotifications}>
-              <Badge badgeContent={notifications.length} color="error">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-            </Tooltip>
-            <Menu
-           
-            anchorEl={anchorElNotifications}
-            open={Boolean(anchorElNotifications)}
-            onClose={handleCloseNotifications}
-          >
-            {notifications.map((notification, index) => (
-              <MenuItem key={index}  onClick={handleCloseNotifications}>
-                {notification}
-              </MenuItem>
-            ))}
-          </Menu>
-         
-          <Tooltip title="Configurações">
-  <IconButton onClick={handleOpenSettings}>
-    <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
-  </IconButton>
-</Tooltip>
-<Menu
-  anchorEl={anchorElSettings}
-  open={Boolean(anchorElSettings)}
-  onClose={handleCloseSettings}
->
-  {settings.map((setting, index) => (
-    <MenuItem
-      key={index}
-      onClick={() => handleSettingsAction(setting)}
-    >
-      {setting}
-    </MenuItem>
-  ))}
-</Menu>
+                        }}>{item.label}</Typography>
+                      </Link>
+                    </Button>
+                  ))}
+                </Box>
+
+
+                <Box sx={{ flexGrow: 0 }}>
+                  <Tooltip title="Notificações">
+                    <IconButton onClick={handleOpenNotifications}>
+                      <Badge badgeContent={notifications.length} color="error">
+                        <NotificationsIcon />
+                      </Badge>
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+
+                    anchorEl={anchorElNotifications}
+                    open={Boolean(anchorElNotifications)}
+                    onClose={handleCloseNotifications}
+                  >
+                    {notifications.map((notification, index) => (
+                      <MenuItem key={index} onClick={handleCloseNotifications}>
+                        {notification}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+
+                  <Tooltip title="Configurações">
+                    <IconButton onClick={handleOpenSettings}>
+                      <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    anchorEl={anchorElSettings}
+                    open={Boolean(anchorElSettings)}
+                    onClose={handleCloseSettings}
+                  >
+                    {settings.map((setting, index) => (
+                      <ListItem key={index} disablePadding>
+                        <ListItemButton sx={{ textAlign: 'center' }} onClick={() => handleSettingsAction(setting.label)}>
+                          <ListItemIcon>{setting.icon}</ListItemIcon>
+                          <Typography>{setting.label}</Typography>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </Menu>
+                </Box>
+              </Toolbar>
+            </Container>
+
+          </AppBar>
+          <Box component="nav">
+            <Drawer
+              variant="temporary"
+              open={mobileOpen}
+              onClose={handleDrawerToggle}
+              ModalProps={{
+                keepMounted: true, // Better open performance on mobile.
+              }}
+              sx={{
+                display: { sm: "none" },
+                "& .MuiDrawer-paper": {
+                  boxSizing: "border-box",
+                  width: drawerWidth,
+                },
+              }}
+            >
+              {drawer}
+            </Drawer>
           </Box>
-            </Toolbar>
-          </Container>
-         
-        </AppBar>
-        <Box component="nav">
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-            sx={{
-              display: { sm: "none" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-              },
-            }}
-          >
-            {drawer}
-          </Drawer>
         </Box>
-      </Box>
-      </ThemeProvider>
+   
     </>
   );
 }
