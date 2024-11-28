@@ -5,11 +5,12 @@ import Link from "next/link";
 import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
-import LineChart from "../../components/charts/LineChart";
+// import LineChart from "../../components/charts/LineChart";
 import { Box, Container, Divider, Grid, Typography } from "@mui/material";
 import Head from "next/head";
 import ListaDeNotificacao from "./listaNotificações";
-
+import { BarChart } from '@mui/x-charts/BarChart';
+import { LineChart } from '@mui/x-charts/LineChart';
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
 //   // const token = ctx.req.token;
@@ -57,14 +58,40 @@ const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
             <title>Hubeefive - Gerenciamento</title>
         </Head>
         <Container >
-        <Box sx={{ bgcolor: '#cfe8fc', height: '50vh', mt:2, p:2, borderRadius:3  }} >
+        <Box sx={{ bgcolor: '#cfe8fc', display:'flex', height: '50vh', mt:2, p:2, borderRadius:3  }} >
           <Typography textAlign={'center'} component={'h3'} variant="h4">Notificações</Typography>
-          <ListaDeNotificacao/>
+          <BarChart
+      xAxis={[
+        {
+          id: 'barCategories',
+          data: ['bar A', 'bar B', 'bar C'],
+          scaleType: 'band',
+        },
+      ]}
+      series={[
+        {
+          data: [2, 5, 3],
+        },
+      ]}
+      width={500}
+      height={300}
+    />
+    <LineChart
+  xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+  series={[
+    {
+      data: [2, 5.5, 2, 8.5, 1.5, 5],
+    },
+  ]}
+  width={500}
+  height={300}
+/>
         </Box>
         <Divider sx={{m:1}}/>
 
         <Box sx={{ bgcolor: '#cfe8fc', height: '50vh' }} >
-        <LineChart data={data}/>
+        {/* <LineChart data={data}/> */}
+        
         </Box>
          <Divider sx={{m:1}}/>
          <Box sx={{ bgcolor: '#cfe8fc', mt:2, p:2, borderRadius:3 }} >

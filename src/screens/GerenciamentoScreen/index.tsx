@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Head from 'next/head';
 import MinhasIntegracoes from './ListaIntegracoes/index';
 import Image from 'next/image';
-import icons from '../../../src/dadosFakes/icones.json';
+import icons from '../../../src/mock/icones.json';
 import { useRouter } from 'next/router';
 import Filtro from './Filtro';
 
@@ -105,7 +105,7 @@ const IntegrationsPage: React.FC = () => {
 
           {/* Painel de conteúdo */}
           <TabPanel hidden={selectedTab !== 0}>
-            <Paper elevation={1} sx={{p:1, textAlign: 'center', backgroundColor:'#ffff' }}>
+            <Paper elevation={1} sx={{ p: 1, textAlign: 'center', backgroundColor: '#ffff' }}>
               <Typography variant="subtitle1" textAlign={'left'} gutterBottom p={2}>
                 Selecione um Marketplace para integrar ao HubeeFive
               </Typography>

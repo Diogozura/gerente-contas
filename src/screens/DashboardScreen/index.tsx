@@ -14,7 +14,7 @@ import {
 } from 'chart.js';
 
 // Importa os dados fake
-import dadosVendas from '../../dadosFakes/dadosVendas.json';
+import dadosVendas from '../../mock/dadosVendas.json';
 import { Container } from '@mui/material';
 
 // Registra todos os elementos necessários

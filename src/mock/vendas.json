@@ -1,0 +1,123 @@
+[
+  {
+    "id": 1,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Chaleira",
+    "descricao": "1 chaleira vendida",
+    "quantidade": 1,
+    "valor": "R$79,90",
+    "sku": "SKU-001",
+    "data": "2024-11-28T11:30:00Z"
+  },
+  {
+    "id": 2,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Torradeira",
+    "descricao": "2 torradeiras vendidas",
+    "quantidade": 2,
+    "valor": "R$199,90",
+    "sku": "SKU-002",
+    "data": "2024-11-28T14:30:00Z"
+  },
+  {
+    "id": 3,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Liquidificador",
+    "descricao": "1 liquidificador vendido",
+    "quantidade": 1,
+    "valor": "R$149,90",
+    "sku": "SKU-003",
+    "data": "2024-11-28T12:30:00Z"
+  },
+  {
+    "id": 4,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Panela de Pressão",
+    "descricao": "3 panelas de pressão vendidas",
+    "quantidade": 3,
+    "valor": "R$239,90",
+    "sku": "SKU-004",
+    "data": "2024-11-28T13:30:00Z"
+  },
+  {
+    "id": 5,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Ferro de Passar",
+    "descricao": "1 ferro de passar vendido",
+    "quantidade": 1,
+    "valor": "R$89,90",
+    "sku": "SKU-005",
+    "data": "2024-11-21"
+  },
+  {
+    "id": 6,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Aspirador de Pó",
+    "descricao": "2 aspiradores de pó vendidos",
+    "quantidade": 2,
+    "valor": "R$399,90",
+    "sku": "SKU-006",
+    "data": "2024-11-22"
+  },
+  {
+    "id": 7,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Batedeira",
+    "descricao": "1 batedeira vendida",
+    "quantidade": 1,
+    "valor": "R$179,90",
+    "sku": "SKU-007",
+    "data": "2024-11-22"
+  },
+  {
+    "id": 8,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Cafeteira",
+    "descricao": "4 cafeteiras vendidas",
+    "quantidade": 4,
+    "valor": "R$249,90",
+    "sku": "SKU-008",
+    "data": "2024-11-23"
+  },
+  {
+    "id": 9,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Sanduicheira",
+    "descricao": "3 sanduicheiras vendidas",
+    "quantidade": 3,
+    "valor": "R$99,90",
+    "sku": "SKU-009",
+    "data": "2024-11-24"
+  },
+  {
+    "id": 10,
+    "marketing": "Amazon",
+    "img": "/marketingplaces/amazon.png",
+    "titulo": "Ventilador",
+    "descricao": "2 ventiladores vendidos",
+    "quantidade": 2,
+    "valor": "R$189,90",
+    "sku": "SKU-010",
+    "data": "2024-11-25"
+  },
+  {
+    "id": 11,
+    "marketing": "Mercado livre",
+    "img": "/marketingplaces/mercadoLivre.png",
+    "titulo": "Fogão Portátil",
+    "descricao": "1 fogão portátil vendido",
+    "quantidade": 1,
+    "valor": "R$299,90",
+    "sku": "SKU-011",
+    "data": "2024-11-25"
+  }
+]

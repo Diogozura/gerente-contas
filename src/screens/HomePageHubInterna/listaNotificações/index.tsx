@@ -6,7 +6,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 
 // Importa os dados do JSON
-import notificacoes from '../../../dadosFakes/notificacoes.json';
+import notificacoes from '../../../mock/notificacoes.json';
 
 export default function ListaDeNotificacao() {
   return (

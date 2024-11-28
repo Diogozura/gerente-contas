@@ -1,128 +1,69 @@
-/* eslint-disable react/no-children-prop */
 import React from "react";
-import { withSession } from "../../services/auth/session";
+import { withSession } from "../../services/auth/session"; // Assuming session management
 import Link from "next/link";
-import { authService } from "../../services/auth/authService";
+import { authService } from "../../services/auth/authService"; // Assuming authentication service
 import CustomModal from "../../components/common/CustomModal";
-import { requireAuthentication } from "../../helpers/auth";
-import LineChart from "../../components/charts/LineChart";
-import { Box, Container, Divider, Grid, Typography } from "@mui/material";
+// import { requireAuthentication } (../../helpers/auth"); // Assuming authentication helper
+import LineChart from "../../components/charts/LineChart"; // Assuming LineChart component
+import { Box, Container, Divider, Grid, Paper, Typography } from "@mui/material";
 import Head from "next/head";
-import ListaDeNotificacao from "./listaNotificações";
+import vendas from "../../mock/vendas.json"; // Replace with your data source
+import Image from "next/image";
+import moment from "moment";
 
+// ... (rest of your imports)
 
-// export const getServerSideProps = requireAuthentication(async (ctx) => {
-//   // const token = ctx.req.token;
-//   // try {
-//   //   const dadosSala = await authService.dadosSala(token);
+export default function Vendas({ data }) {
+  // Filter recent sales (24 hours)
+  const hoje = moment(data);
+  const ontem = moment(data).subtract(1, "days");
+  const vendasUltimas24h = vendas.filter((venda) => {
+    const dataVenda = moment(venda.data);
+    return dataVenda.isBetween(ontem, hoje);
+  });
 
-//   //   return {
-//   //     props: {
-//   //       dadosSala,
-//   //     },
-//   //   };
-//   // } catch (error) {
-//   //   return {
-//   //     redirect: {
-      
-//   //       permanent: true,
-//   //     },
-//   //   };
-//   // }
-// });
+  // Sort sales by date (most recent first)
+  vendasUltimas24h.sort((a, b) => moment(b.data).diff(moment(a.data)));
 
-export default function Dashboard(props) {
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  return (
+    <Container maxWidth="lg" sx={{ p: 5, borderRadius: "10px" }}>
+      <Box bgcolor="#f4f4f4" padding={10}>
+        <Typography variant="h3" component="h2" textTransform="uppercase" textAlign="center">
+          NOTIFICAÇÕES de vendas 
+        </Typography>
+        <Typography variant="body1" component="p" textAlign="center">
+          Vá até o marketplace para seguir com a venda
+        </Typography>
 
- const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [1, 2,4, 5],
-      borderColor: 'rgb(255, 99, 132)',
-      backgroundColor: 'rgba(255, 99, 132, 0.5)',
-    },
-    {
-      label: 'Dataset 2',
-      data: [1, 2,4, 5],
-      borderColor: 'rgb(53, 162, 235)',
-      backgroundColor: 'rgba(53, 162, 235, 0.5)',
-    },
-  ],
-};
-    return (
-        <>
-           <Head>
-            <title>Hubeefive - Vendas</title>
-        </Head>
-        <Container >
-       
-        </Container>
-
-     
-
-        </>
-    )
+        {vendasUltimas24h.length === 0 ? (
+          <Typography variant="body1" textAlign="center">
+            Não houve vendas nas últimas 24 horas.
+          </Typography>
+        ) : (
+          vendasUltimas24h.map((item) => (
+            <Paper key={item.id} elevation={1} sx={{ p: 3, mb: 2 }}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={2}>
+                  <Image src={item.img} alt={item.titulo} width={100} height={46} style={{ objectFit: "contain" }} />
+                </Grid>
+                <Grid item xs={7}>
+                   {item.descricao} / {item.sku}
+                </Grid>
+                <Grid item xs={3}>
+                  <Typography variant="body2" component="p">
+                    Vendido há {moment(item.data).fromNow()}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          ))
+        )}
+      </Box>
+      <Divider />
+      {/* Rest of your content... */}
+    </Container>
+  );
 }
 
-
-
-
-// export default function Dashboard() {
-//   const { data: session } = useSession();
-
-//   if (!session) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//     <div>
-//       <h1>Dashboard</h1>
-//       <p>Welcome, {session.user.email}!</p>
-//     </div>
-//   );
-// }
-/* eslint-disable react/no-children-prop */
-// import React from "react";
-// import MenuAppBar from "../../components/layout/Header/PrivateLayout";
-// import { withSession } from "../../services/auth/session";
-
-// import axios from "axios";
-// import { tokenService } from "../../services/auth/tokenService";
-
-// export const getServerSideProps = withSession(async (ctx) => {
-//   // Recupera a sessão
-//   const session = ctx.req.session;
-
-//   // Faz a chamada ao endpoint adicional
-//   let userInfo = null;
-//   const token = tokenService.get(ctx);
-//   console.log('token', token)
-  
-
-//   return {
-//     props: {
-//       session,
-//       userInfo,
-//       token,
-//     }
-//   };
-// });
-
-
-// export default function Dashboard(props) {
-
-//     return (
-//         <>
-          
-//             Dashboard
-//             <pre>
-//             {JSON.stringify(props, null, 2)}
-//         </pre> 
-//         </>
-//     )
-// }
-
-
-
+// Consider adding authentication logic (optional)
+// Vendas.getLayout = (page) => requireAuthentication(page);
