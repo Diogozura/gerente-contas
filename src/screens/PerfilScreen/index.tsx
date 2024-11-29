@@ -33,7 +33,15 @@ export default function Dashboard(props) {
             <title>Hubeefive - Perfil</title>
         </Head>
         <Container >
+        <Box bgcolor="#f4f4f4" padding={10}>
+        <Typography variant="h3" component="h2" textTransform="uppercase" textAlign="center">
+          Dados do usuario logado
+        </Typography>
        
+
+      
+      </Box>
+      <Divider />
         </Container>
 
      
