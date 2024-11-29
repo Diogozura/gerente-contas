@@ -130,6 +130,7 @@ import { Avatar, Badge, Container, ListItemIcon, Menu, MenuItem, Tooltip } from 
 import { AccountCircle, DarkMode, ExitToApp } from '@mui/icons-material';
 import { themes } from '../../../../../styles/themes/themes';
 import SettingsIcon from '@mui/icons-material/Settings';
+import MailIcon from '@mui/icons-material/Mail';
 
 interface Props {
   window?: () => Window;
@@ -183,7 +184,8 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
   const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
-
+  const [alertNotification, setAlertNotification] = React.useState<null | Number>(notifications.length);
+console.log('alertNotification', alertNotification)
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) =>
@@ -192,7 +194,10 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
   const handleOpenSettings = (event: React.MouseEvent<HTMLElement>) =>
     setAnchorElSettings(event.currentTarget);
 
-  const handleCloseNotifications = () => setAnchorElNotifications(null);
+  const handleCloseNotifications = () => {
+    setAnchorElNotifications(null);
+    setAlertNotification(0)
+  }
   const handleCloseSettings = () => {
     setAnchorElSettings(null);
   }
@@ -295,7 +300,11 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
                     justifyContent: "center",
                   }}
                 >
+                 
+
+
                   {navItems.map((item) => (
+
                     <Button
                       key={item.id}
                       sx={{
@@ -314,14 +323,16 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
                         }}>{item.label}</Typography>
                       </Link>
                     </Button>
+                   
                   ))}
+                  
                 </Box>
 
 
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Notificações">
                     <IconButton onClick={handleOpenNotifications}>
-                      <Badge badgeContent={notifications.length} color="error">
+                      <Badge badgeContent={Number(alertNotification)} color="error">
                         <NotificationsIcon />
                       </Badge>
                     </IconButton>
