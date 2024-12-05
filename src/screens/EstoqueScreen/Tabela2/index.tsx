@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -6,94 +6,99 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Checkbox,
-  Button,
-  Typography,
-  Tooltip,
   IconButton,
+  Typography,
+  Checkbox,
 } from "@mui/material";
-import { SaveAlt, Edit, Delete, Visibility } from "@mui/icons-material";
-import { saveAs } from "file-saver";
+import { Edit, Delete } from "@mui/icons-material";
+import Link from "next/link";
+import Image from "next/image";
 
-// Dados fake (simula importação)
+interface Product {
+  id: number;
+  titulo: string;
+  sku: string;
+  estoque: number;
+  estoqueCd: number;
+}
 
+interface QuickFilteringGridProps {
+  products: Product[];
+  selectedIds: number[];
+  onSelectAll: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onSelectOne: (id: number) => void;
+  onEdit: (product: Product) => void;
+  onDelete: (id: number) => void;
+}
 
-const ProductsPage = ({products, selectedAll}) => {
-  const [product, setProducts] = useState(products);
-  const [selected, setSelected] = useState<number[]>(selectedAll);
-  console.log('selected all', selectedAll)
-  console.log('selected individual', selected)
-// Seleção individual
-const handleSelect = (id: number) => {
-  setSelected((prev) =>
-    prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-  );
-};
-
+const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
+  products,
+  onEdit,
+  onDelete,
+  selectedIds,
+  onSelectAll,
+  onSelectOne,
+}) => {
+  const allSelected = selectedIds.length === products.length;
+  const someSelected = selectedIds.length > 0 && !allSelected;
   return (
-    <div>
-      <Typography variant="h5" gutterBottom>
-        Gerenciamento de Produtos
-      </Typography>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell padding="checkbox">
+    <TableContainer>
+      <Table>
+        <TableHead>
+          <TableRow>
+          <TableCell padding="checkbox">
+              <Checkbox
+                indeterminate={someSelected}
+                checked={allSelected}
+                onChange={onSelectAll}
+              />
+            </TableCell>
+            <TableCell>Título</TableCell>
+            <TableCell>SKU</TableCell>
+            <TableCell>Estoque</TableCell>
+            <TableCell>Estoque em CD</TableCell>
+            <TableCell>Ações</TableCell>
+          </TableRow>
+        </TableHead>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                     <TableCell padding="checkbox">
+                      <Checkbox
+                        checked={selectedIds.includes(product.id)}
+                        onChange={() => onSelectOne(product.id)}
+                      />
+                  </TableCell>
+                     <TableCell padding="checkbox">
+                      <Image
+                        src={'https://picsum.photos/200'}
+                        width={200}
+                        height={200} alt={""}                      />
+                  </TableCell>
+                    <TableCell>
+                     <Link href={`/estoque/${product.sku}`} passHref>
+                        <Typography color="primary" style={{ cursor: "pointer" }}>
+                          {product.titulo}
+                        </Typography>
+                      </Link>
+                    </TableCell>
+              <TableCell>{product.sku}</TableCell>
+              <TableCell>{product.estoque}</TableCell>
+              <TableCell>{product.estoqueCd}</TableCell>
+              <TableCell>
+                <IconButton color="primary" onClick={() => onEdit(product)}>
+                  <Edit />
+                </IconButton>
+                <IconButton color="error" onClick={() => onDelete(product.id)}>
+                  <Delete />
+                </IconButton>
               </TableCell>
-              <TableCell>Título</TableCell>
-              <TableCell>SKU</TableCell>
-              <TableCell>Estoque</TableCell>
-              <TableCell>Estoque em CD</TableCell>
-              <TableCell>Ações</TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selected.includes(product.id)}
-                    onChange={() => handleSelect(product.id)}
-                  />
-                </TableCell>
-                <TableCell>{product.titulo}</TableCell>
-                <TableCell>{product.sku}</TableCell>
-                <TableCell>
-                  <span
-                    style={{
-                      color: product.estoque < 20 ? "red" : "green",
-                    }}
-                  >
-                    {product.estoque}
-                  </span>
-                </TableCell>
-                <TableCell>{product.estoqueCd}</TableCell>
-                <TableCell>
-                  <Tooltip title="Editar">
-                    <IconButton color="primary">
-                      <Edit />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Excluir">
-                    <IconButton color="error">
-                      <Delete />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Visualizar">
-                    <IconButton color="info">
-                      <Visibility />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-     
-    </div>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 
-export default ProductsPage;
+export default QuickFilteringGrid;
