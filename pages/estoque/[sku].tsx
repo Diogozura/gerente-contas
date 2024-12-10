@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Container, Typography, Box } from "@mui/material";
+import { Container, Typography, Box, Button } from "@mui/material";
 import Bread from "../../src/components/Breadcrumbs";
 
 interface Product {
@@ -50,6 +50,7 @@ export default function ProductDetail() {
         <Typography><strong>SKU:</strong> {product.sku}</Typography>
         <Typography><strong>Estoque:</strong> {product.estoque}</Typography>
         <Typography><strong>Estoque em CD:</strong> {product.estoqueCd}</Typography>
+        <Button>Nova compra</Button>
       </Box>
     </Container>
   );

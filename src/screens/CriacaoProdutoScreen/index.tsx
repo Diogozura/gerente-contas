@@ -7,9 +7,23 @@ import {
   Button,
   Grid,
   Box,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormControl,
+  OutlinedInput,
+  InputAdornment,
+  FormHelperText,
+  Modal,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import Bread from "../../components/Breadcrumbs";
-
+// import Swiper from "swiper";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
 export default function CriacaoProduto() {
   const router = useRouter();
   const [newProduct, setNewProduct] = useState({
@@ -18,13 +32,39 @@ export default function CriacaoProduto() {
     sku: "",
     estoque: 0,
     estoqueCd: 0,
+    dataCompra: "",
+    marca: "",
+    modelo: "",
+    altura: 0,
+    largura: 0,
+    profundidade: 0,
+    pesoLiquido: 0,
+    pesoBruto: 0,
+    descricao: "",
+    imagens: [] as File[],
   });
 
   const handleChange = (field: string, value: string | number) => {
     setNewProduct((prev) => ({
       ...prev,
-      [field]: field === "estoque" || field === "estoqueCd" ? +value : value,
+      [field]: typeof value === "number" && value < 0 ? 0 : value,
     }));
+  };
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [garantiaTipo, setGarantiaTipo] = useState('semGarantia');
+  const [garantiaValor, setGarantiaValor] = useState('');
+  const [garantiaPeriodo, setGarantiaPeriodo] = useState('dias');
+
+  const handleTipoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setGarantiaTipo(event.target.value);
+    if (event.target.value === 'semGarantia') {
+      setGarantiaValor('');
+    }
+  };
+  const handleGenerateDescription = () => {
+    const { titulo, marca, modelo, altura, largura, profundidade, pesoLiquido } = newProduct;
+    const descricao = `Produto: ${titulo},\n Marca: ${marca},\n Modelo: ${modelo},\n Dimensões: ${altura}x${largura}x${profundidade} cm,\n Peso Líquido: ${pesoLiquido} g.\n`;
+    setNewProduct((prev) => ({ ...prev, descricao }));
   };
 
   const saveProduct = () => {
@@ -37,61 +77,339 @@ export default function CriacaoProduto() {
     localStorage.setItem("produtos", JSON.stringify(updatedProducts));
     router.push("/estoque");
   };
-const nav ={
-    'principal': 'estoque',
-    'atual': 'criacao-produto'
-};
-   
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files) return;
+
+    const validImages: File[] = [];
+    const errors: string[] = [];
+
+    for (const file of Array.from(files)) {
+      const img = await getImageDimensions(file);
+      if (img.width >= 500 && img.height >= 500) {
+        validImages.push(file);
+      } else {
+        errors.push(`A imagem "${file.name}" não atende ao tamanho mínimo de 500x500 pixels.`);
+      }
+    }
+
+    const totalImages = newProduct.imagens.length + validImages.length;
+
+    if (totalImages > 6) {
+      errors.push("Você pode enviar no máximo 6 imagens.");
+    }
+
+    if (errors.length > 0) {
+      alert(errors.join("\n"));
+    } else {
+      setNewProduct((prev) => ({
+        ...prev,
+        imagens: [...prev.imagens, ...validImages].slice(0, 6), // Limita a 6 imagens.
+      }));
+    }
+  };
+
+  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = () => {
+        resolve({ width: img.width, height: img.height });
+        URL.revokeObjectURL(img.src);
+      };
+      img.onerror = reject;
+    });
+  };
+  const handleImageClick = (index: number) => {
+    const image = newProduct.imagens[index];
+    if (image) {
+      setSelectedImage(URL.createObjectURL(image)); // Define a URL da imagem selecionada
+    }
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
+  };
+  const nav = {
+    principal: "estoque",
+    atual: "criacao-produto",
+  };
 
   return (
-    <Container>
-         <Bread nav={nav}/>
-      <Typography variant="h4" gutterBottom>
-        Criar Produto
+    <>
+      <Container>
+        <Bread nav={nav} />
+        <Typography variant="h4" gutterBottom>
+          Criar Produto
+        </Typography>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Button
+                variant="contained"
+                component="label"
+                color="primary"
+                disabled={newProduct.imagens.length >= 6}
+              >
+                Upload de Imagens
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                />
+              </Button>
+              <FormHelperText>
+                {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
+              </FormHelperText>
+            </Grid>
+
+            {/* Carrossel de pré-visualização */}
+            {newProduct.imagens.length > 0 && (
+              <Grid item xs={12}>
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  style={{ height: "150px", marginTop: "20px" }}
+                >
+                  {newProduct.imagens.map((img, idx) => (
+                    <SwiperSlide key={idx}>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          border: "1px solid #ccc",
+                        }}
+                        onClick={() => handleImageClick(idx)}
+                      >
+                        <img
+                          src={URL.createObjectURL(img)}
+                          alt={`Imagem ${idx + 1}`}
+                          style={{ maxWidth: "100%", maxHeight: "100%" }}
+                        />
+                      </Box>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Grid>
+            )}
+            {/* Modal para exibir a imagem em tamanho grande */}
+            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "background.paper",
+                  border: "2px solid #000",
+                  boxShadow: 24,
+                  p: 2,
+                }}
+              >
+                {selectedImage && (
+                  <img
+                    src={selectedImage}
+                    alt="Imagem ampliada"
+                    style={{ maxWidth: "100%", maxHeight: "100%" }}
+                  />
+                )}
+              </Box>
+            </Modal>
+            <Grid item xs={12}>
+              <TextField
+                label="Título"
+                fullWidth
+                value={newProduct.modelo}
+                onChange={(e) => handleChange("modelo", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Modelo"
+                fullWidth
+                value={newProduct.titulo}
+                onChange={(e) => handleChange("titulo", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Marca"
+                fullWidth
+                value={newProduct.marca}
+                onChange={(e) => handleChange("marca", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Código SKU"
+                fullWidth
+                value={newProduct.sku}
+                onChange={(e) => handleChange("sku", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Estoque"
+                type="number"
+                fullWidth
+                value={newProduct.estoque}
+                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Estoque em CD"
+                type="number"
+                fullWidth
+                value={newProduct.estoqueCd}
+                onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Altura (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.altura}
+                onChange={(e) => handleChange("altura", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Largura (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.largura}
+                onChange={(e) => handleChange("largura", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Profundidade (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.profundidade}
+                onChange={(e) => handleChange("profundidade", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Peso Líquido (g)"
+                type="number"
+                fullWidth
+                value={newProduct.pesoLiquido}
+                onChange={(e) => handleChange("pesoLiquido", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                label="Peso Bruto (g)"
+                type="number"
+                fullWidth
+                value={newProduct.pesoBruto}
+                onChange={(e) => handleChange("pesoBruto", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Descrição do Produto"
+                multiline
+                fullWidth
+                value={newProduct.descricao}
+                onChange={(e) => handleChange("descricao", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+            <Typography variant="h6" gutterBottom>
+        Garantia
       </Typography>
-      <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
+      <Typography variant="body2" gutterBottom>
+        {garantiaTipo === 'garantiaFabrica' && garantiaValor
+          ? `Você oferece garantia de fábrica por ${garantiaValor} ${garantiaPeriodo}.`
+          : garantiaTipo === 'garantiaVendedor' && garantiaValor
+          ? `Você oferece garantia do vendedor por ${garantiaValor} ${garantiaPeriodo}.`
+          : 'Nenhuma garantia selecionada.'}
+      </Typography>
+      <FormControl component="fieldset">
+        <RadioGroup
+          name="garantia"
+          value={garantiaTipo}
+          onChange={handleTipoChange}
+        >
+          <FormControlLabel
+            value="garantiaVendedor"
+            control={<Radio />}
+            label="Garantia do vendedor"
+          />
+          <FormControlLabel
+            value="garantiaFabrica"
+            control={<Radio />}
+            label="Garantia de fábrica"
+          />
+        
+          <FormControlLabel
+            value="semGarantia"
+            control={<Radio />}
+            label="Sem garantia"
+          />
+          
+        </RadioGroup>
+      </FormControl>
+            </Grid>
+            
+            <Grid item xs={6}>
+            <Box
+            sx={{
+              pl: 4,
+              display:
+                garantiaTipo === 'garantiaFabrica' ||
+                garantiaTipo === 'garantiaVendedor'
+                  ? 'flex'
+                  : 'none',
+              gap: 2,
+            }}
+          >
             <TextField
-              label="Título"
-              fullWidth
-              value={newProduct.titulo}
-              onChange={(e) => handleChange("titulo", e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="SKU"
-              fullWidth
-              value={newProduct.sku}
-              onChange={(e) => handleChange("sku", e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Estoque"
+              label="Valor"
               type="number"
-              fullWidth
-              value={newProduct.estoque}
-              onChange={(e) => handleChange("estoque", e.target.value)}
+              value={garantiaValor}
+              onChange={(e) => setGarantiaValor(e.target.value)}
+              size="small"
             />
+            <Select
+              value={garantiaPeriodo}
+              onChange={(e) => setGarantiaPeriodo(e.target.value)}
+              size="small"
+            >
+              <MenuItem value="dias">Dias</MenuItem>
+              <MenuItem value="meses">Meses</MenuItem>
+              <MenuItem value="anos">Anos</MenuItem>
+            </Select>
+          </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleGenerateDescription}
+              >
+                Gerar Descrição
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <Button variant="contained" color="primary" onClick={saveProduct}>
+                Salvar Produto
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              label="Estoque em CD"
-              type="number"
-              fullWidth
-              value={newProduct.estoqueCd}
-              onChange={(e) => handleChange("estoqueCd", e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" onClick={saveProduct}>
-              Salvar Produto
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </>
   );
 }

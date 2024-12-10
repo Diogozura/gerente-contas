@@ -13,6 +13,8 @@ import { FormProvider } from '../src/config/FormContext';
 import { ThemeProvider } from '../styles/themes/themeContext';
 import { useRouter } from 'next/router';
 import '../styles/globals.css';
+import { authenticatedPages } from "../src/config/authenticatedPages";
+
 const clientSideEmotionCache = createEmotionCache();
 
 interface MyAppProps extends AppProps {
@@ -34,10 +36,18 @@ function MyApp(props: MyAppProps) {
 
 
   React.useEffect(() => {
-    document.body.style.backgroundImage = 'url("/COLMEIA-FUNDO-1.svg")';
-    document.body.style.backgroundSize = 'cover';
+    // Atualiza o caminho atual
     setCurrentPath(router.pathname);
- 
+
+    // Aplica o background somente para páginas não autenticadas
+    if (authenticatedPages.includes(router.pathname)) {
+      document.body.style.backgroundImage = 'url("/COLMEIA-FUNDO-1.svg")';
+      document.body.style.backgroundSize = 'cover';
+    } else {
+      // Remove o background para páginas autenticadas
+      document.body.style.backgroundImage = '';
+      document.body.style.backgroundColor = '#F7F7F7'
+    }
   }, [router.pathname]);
 
 

@@ -146,10 +146,16 @@ export default function Estoque() {
     });
     saveAs(blob, "produtos_selecionados.csv");
   };
+
+  
   return (
     <>
-   
+   <Typography variant="h1" component={'h1'} textAlign={'center'}>Estoque de produtos </Typography>
+   <Typography  variant="body1" component={'p'} textAlign={'center'}>Nessa tela é possivel adicionar , editar e remover os produtos ,  de forma indivial  </Typography>
       <Container maxWidth="md" sx={{ mt: 4 }}>
+
+
+        
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
           {/* <Typography variant="h5">Gerenciamento de Estoque</Typography> */}
           <Button
@@ -169,7 +175,7 @@ export default function Estoque() {
             Importar CSV
             <Input
               type="file"
-              accept=".csv"
+              // accept=".csv"
               onChange={handleFileUpload}
               sx={{ display: "none" }}
             />
@@ -184,9 +190,7 @@ export default function Estoque() {
         </Button>
         </Box>
         <Box mb={2}>
-        <Typography>
-           Total de Produtos: {products.length} / Selecionados: {selectedIds.length} 
-        </Typography>
+        
       </Box>
         
 
