@@ -25,7 +25,7 @@ const darkTheme1 = createTheme({
       contrastText: '#5E5E5E',
     },
     error: {
-      main: '#f44336', // vermelho
+      main: '#DA2A2A', // vermelho
     },
     warning: {
       main: '#ffa726', // laranja
@@ -72,7 +72,7 @@ const darkTheme2 = createTheme({
       contrastText: '#5E5E5E',
     },
     error: {
-      main: '#d32f2f', // vermelho escuro
+      main: '#DA2A2A', // vermelho escuro
     },
     warning: {
       main: '#ffa000', // laranja escuro
@@ -135,7 +135,7 @@ const lightTheme = createTheme({
       contrastText: '#ffffff',
     },
     error: {
-      main: '#f44336', // vermelho
+      main: '#DA2A2A', // vermelho
     },
     warning: {
       main: '#ffa726', // laranja

@@ -13,6 +13,7 @@ import {
   TextField,
   InputAdornment,
   Button,
+  Box,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import Link from "next/link";
@@ -20,6 +21,8 @@ import Image from "next/image";
 import SearchIcon from '@mui/icons-material/Search';
 import FiltroTexto from "../../../components/common/FiltroText";
 import FiltroAvancado from "../../../components/common/FiltroAvancado";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 interface Product {
   id: number;
@@ -148,6 +151,7 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
                 onChange={setFiltroAvancado}
               />
             </TableCell>
+            
             <TableCell padding="normal">
               <Typography variant="body2">
                 Total de Produtos: {products.length} / Selecionados: {selectedIds.length}
@@ -179,15 +183,16 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
                   onChange={() => onSelectOne(product.id)}
                 />
               </TableCell>
-              <TableCell padding="checkbox">
+              <TableCell padding="none">
+                
                 <Image
                   src={'https://picsum.photos/200'}
-                  width={200}
-                  height={200} alt={""} />
+                  width={150}
+                  height={150} alt={""} />
               </TableCell>
               <TableCell>
                 <Link href={`/estoque/${product.sku}`} passHref>
-                  <Typography color="primary" style={{ cursor: "pointer" }}>
+                  <Typography  style={{ cursor: "pointer" }} fontWeight={'600'}>
                     {product.titulo}
                   </Typography>
 
@@ -201,15 +206,38 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
                 </Typography>
               </TableCell>
               <TableCell> </TableCell>
-              <TableCell> </TableCell>
-              <TableCell> </TableCell>
-              <TableCell>
-                <IconButton color="primary" onClick={() => onEdit(product)}>
+              <TableCell >
+             
+                <Button variant="contained" color={'error'} sx={{m:1}}>
+                  Estoque Baixo
+                </Button>
+                <Button variant="contained" color={'error'} >
+                  Estoque Baixo Em CD
+                </Button>
+              
+              </TableCell>
+       
+              <TableCell >
+                <Button variant="contained" color="inherit" sx={{ m:1}} 
+                onClick={() => onEdit(product)}>
                   <Edit />
-                </IconButton>
-                <IconButton color="error" onClick={() => onDelete(product.id)}>
+                </Button>
+                <Button variant="contained" color="inherit" disabled 
+                sx={{m:1}} 
+                >
+                  <ContentCopyIcon />
+                </Button>
+                <Button variant="contained" color="inherit" 
+                onClick={() => onDelete(product.id)}
+                sx={{m:1}} 
+                >
                   <Delete />
-                </IconButton>
+                </Button>
+                <Button variant="contained" color="inherit" disabled
+                 sx={{m:1}} 
+                >
+                  <RemoveRedEyeIcon />
+                </Button>
               </TableCell>
 
             </TableRow>

@@ -6,16 +6,16 @@ import {
   Typography,
   Modal,
   TextField,
-  Grid,
-  IconButton,
   Input,
+  Grid,
 } from "@mui/material";
-import { Add, Save, Close, Upload } from "@mui/icons-material";
+import { Save, Close } from "@mui/icons-material";
 import QuickFilteringGrid from "./Tabela2";
 import productsData from "../../mock/products.json"; // Importe os dados
-import {  useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { saveAs } from 'file-saver';
 import Papa from "papaparse";
+
 
 interface Product {
   id: number;
@@ -33,12 +33,12 @@ export default function Estoque() {
 
   const router = useRouter();
   // Carregar produtos do localStorage ou iniciar com exemplos
- 
+
 
 
   useEffect(() => {
     const storedProducts = localStorage.getItem("produtos");
-  
+
     if (storedProducts && storedProducts !== "[]") {
       // Se o localStorage tiver dados válidos, carregue-os
       setProducts(JSON.parse(storedProducts));
@@ -51,11 +51,11 @@ export default function Estoque() {
 
   useEffect(() => {
     // Salva os produtos no localStorage sempre que forem atualizados
-    const produtosLocal =  localStorage.getItem("produtos")
-    if(!produtosLocal){
+    const produtosLocal = localStorage.getItem("produtos")
+    if (!produtosLocal) {
       localStorage.setItem("produtos", JSON.stringify(products));
     }
-   
+
   }, [products]);
   // Abrir o modal para adicionar ou editar produto
   const openModal = (product?: Product) => {
@@ -101,7 +101,7 @@ export default function Estoque() {
       prev.includes(id) ? prev.filter((selectedId) => selectedId !== id) : [...prev, id]
     );
   };
-    
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -147,52 +147,58 @@ export default function Estoque() {
     saveAs(blob, "produtos_selecionados.csv");
   };
 
-  
+
   return (
     <>
-   <Typography variant="h1" component={'h1'} textAlign={'center'}>Estoque de produtos </Typography>
-   <Typography  variant="body1" component={'p'} textAlign={'center'}>Nessa tela é possivel adicionar , editar e remover os produtos ,  de forma indivial  </Typography>
+      {/* <Typography variant="h1" component={'h1'} textAlign={'center'}>Estoque de produtos </Typography>
+   <Typography  variant="body1" component={'p'} textAlign={'center'}>Nessa tela é possivel adicionar , editar e remover os produtos ,  de forma indivial  </Typography> */}
+
+<Grid
+  container
+  justifyContent="flex-end" // Alinha os itens ao lado direito
+  alignItems="center"
+  spacing={2}
+  padding={2}
+  sx={{ mb: 4 }} // Margem inferior
+>
+  <Grid item>
+    <Button
+      variant="contained"
+      color="primary"
+      onClick={() => router.push('/estoque/criacao-produto')}
+    >
+      Cadastro de Produto Individual
+    </Button>
+  </Grid>
+  <Grid item>
+    <Button
+      variant="contained"
+      component="label"
+      color="primary"
+    >
+      Cadastro de Produto Em Massa
+      <Input
+        type="file"
+        onChange={handleFileUpload}
+        sx={{ display: "none" }}
+      />
+    </Button>
+  </Grid>
+  <Grid item>
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={selectedIds.length === 0}
+      onClick={exportToCSV}
+    >
+      Exportar Produtos
+    </Button>
+  </Grid>
+</Grid>
       <Container maxWidth="md" sx={{ mt: 4 }}>
+ 
 
 
-        
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          {/* <Typography variant="h5">Gerenciamento de Estoque</Typography> */}
-          <Button
-            variant="contained"
-            color="primary"
-           
-            onClick={() => router.push('/estoque/criacao-produto')}
-          >
-            Adicionar Produto
-          </Button>
-          <Button
-            variant="contained"
-            component="label"
-            color="primary"
-            
-          >
-            Importar CSV
-            <Input
-              type="file"
-              // accept=".csv"
-              onChange={handleFileUpload}
-              sx={{ display: "none" }}
-            />
-          </Button>
-          <Button
-          variant="contained"
-          color="primary"
-          disabled={selectedIds.length === 0}
-          onClick={exportToCSV}
-        >
-          Exportar Selecionados
-        </Button>
-        </Box>
-        <Box mb={2}>
-        
-      </Box>
-        
 
         {/* Modal para Adicionar/Editar Produto */}
         <Modal open={isModalOpen} >
@@ -290,7 +296,7 @@ export default function Estoque() {
         onSelectOne={handleSelectOne}
         onEdit={(product) => openModal(product)}
         onDelete={(id) => removeProduct(id)}
-        />
+      />
     </>
   );
 }
