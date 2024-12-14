@@ -283,11 +283,11 @@ console.log('alertNotification', alertNotification)
             <Container>
               <Toolbar disableGutters>
                 <Link href='/home-hub' passHref>
-                  <Box component={'span'} display={'flex'}>
-                    <Typography variant="h4" component={'h2'} fontWeight={'400'} noWrap>
+                  <Box component={'span'} display={'flex'} >
+                    <Typography variant="h4" component={'h2'} fontWeight={'500'} noWrap color={'primary'}>
                       Hubee
                     </Typography>
-                    <Typography variant="h4" component={'h2'} fontWeight={'bold'} noWrap>
+                    <Typography variant="h4" component={'h2'} fontWeight={'bold'} noWrap color={'primary'}>
                       Five
                     </Typography>
                   </Box>
@@ -333,7 +333,7 @@ console.log('alertNotification', alertNotification)
                   <Tooltip title="Notificações">
                     <IconButton onClick={handleOpenNotifications}>
                       <Badge badgeContent={Number(alertNotification)} color="error">
-                        <NotificationsIcon />
+                        <NotificationsIcon color={'primary'} fontSize='medium'/>
                       </Badge>
                     </IconButton>
                   </Tooltip>
@@ -352,7 +352,7 @@ console.log('alertNotification', alertNotification)
 
                   <Tooltip title="Configurações">
                     <IconButton onClick={handleOpenSettings}>
-                      <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+                      <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" color={'primary'}/>
                     </IconButton>
                   </Tooltip>
                   <Menu

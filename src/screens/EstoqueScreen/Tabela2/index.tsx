@@ -23,7 +23,7 @@ import FiltroTexto from "../../../components/common/FiltroText";
 import FiltroAvancado from "../../../components/common/FiltroAvancado";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-
+import LinkIcon from '@mui/icons-material/Link';
 interface Product {
   id: number;
   titulo: string;
@@ -56,49 +56,20 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
   const [filtroAvancado, setFiltroAvancado] = React.useState('');
   const [searchValue, setSearchValue] = React.useState<string>('');
 
-  const handleSearch = () => {
-    if (searchValue.trim() !== '') {
-      console.log('Valor pesquisado:', searchValue); // Salva o valor no console
-      // Aqui você pode chamar outra função ou processar o valor
-    }
-  };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
-      handleSearch();
-    }
-  };
-
-  // Opções para o filtro avançado
-  const filtroAvancadoOpcoes = [
-    { value: 'categoria', label: 'Categoria' },
-    { value: 'status', label: 'Status' },
-    { value: 'preco', label: 'Preço' },
-  ];
 
   // Filtragem dos produtos
   const produtosFiltrados = products.filter((produto) =>
     produto.titulo.toLowerCase().includes(textoFiltro.toLowerCase()) ||
     produto.sku.includes(textoFiltro)
   );
-  console.log('produtosFiltrados', produtosFiltrados);
-  // Lógica de exclusão em massa
-  const handleDeleteSelected = () => {
-    if (selectedIds.length === 0) {
-      alert("Selecione pelo menos um produto para excluir.");
-      return;
-    }
 
-    if (confirm("Você tem certeza que deseja excluir os produtos selecionados?")) {
-      selectedIds.forEach((id) => onDelete(id));
-      alert("Produtos excluídos com sucesso!");
-    }
-  };
+  
   return (
     <TableContainer>
       <Table>
         <TableHead>
-          <TableRow>
+          {/* <TableRow>
             <TableCell padding="checkbox">
               <Checkbox
                 indeterminate={someSelected}
@@ -106,35 +77,7 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
                 onChange={onSelectAll}
               />
             </TableCell>
-            <TableCell padding="normal">
-              {/* <TextField
-            variant="outlined"
-            id="outlined-basic"
-            placeholder="Filtro de visualização"
-            onKeyDown={handleKeyDown} // Chama a função ao pressionar uma tecla
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton onClick={handleSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-            //   disabled={editIndex !== index} // Somente habilitado no modo edição
-            //   value={nomeLojas[index]}
-            //   onChange={(event) => handleChange(event, index)}
-              sx={{ width: "400px", 
-              
-                '& .MuiOutlinedInput-root': {
-                borderRadius: '60px', // Aplica o borderRadius ao campo
-                },  
-             }}
-            /> */}
-
-            </TableCell>
+    
             <TableCell padding="normal">
               <FiltroTexto
                 label="Filtrar por título ou SKU"
@@ -167,14 +110,15 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
                 Excluir Produtos
               </Button>
             </TableCell>
-          </TableRow>
+          </TableRow> */}
         </TableHead>
-        <TableBody>
+        <TableBody >
           {produtosFiltrados.map((product, index) => (
 
-            <TableRow key={product.id} sx={{
+            <TableRow component={Paper} key={product.id} sx={{
               borderBottom: '20px solid #f5f5f5', // Cor da separação entre as linhas
               bgcolor: "Background", // Cor alternada de fundo para melhorar a visualização
+             
             }}>
 
               <TableCell padding="checkbox">
@@ -192,27 +136,38 @@ const QuickFilteringGrid: React.FC<QuickFilteringGridProps> = ({
               </TableCell>
               <TableCell>
                 <Link href={`/estoque/${product.sku}`} passHref>
-                  <Typography  style={{ cursor: "pointer" }} fontWeight={'600'}>
+                  <Typography  style={{ cursor: "pointer" }} fontWeight={'600'}  component="h3">
                     {product.titulo}
                   </Typography>
 
 
                 </Link>
-                <Typography  >
-                  SKU : {product.sku}
+                <Typography   component="p">
+                  SKU : <b>{product.sku}</b>
                 </Typography>
-                <Typography  >
-                  Estoque : {product.estoque}
+                <Typography   component="p">
+                  Estoque : <b>{product.estoqueCd}</b>
+                </Typography>
+                <Typography   component="p">
+                  Estoque em centro de distribuição : <b>{product.estoque}</b>
+                </Typography>
+                <Typography display={'flex'} component="p">
+                🔗 Vinculado em seus Anúncios
                 </Typography>
               </TableCell>
-              <TableCell> </TableCell>
-              <TableCell >
+            
+              <TableCell sx={{
+                display:'grid'
+              }}>
              
                 <Button variant="contained" color={'error'} sx={{m:1}}>
-                  Estoque Baixo
+                  Estoque   Baixo
                 </Button>
                 <Button variant="contained" color={'error'} >
                   Estoque Baixo Em CD
+                </Button>
+                <Button variant="contained" color={'success'} >
+                 Confirme dados do produto
                 </Button>
               
               </TableCell>
