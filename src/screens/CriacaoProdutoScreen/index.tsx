@@ -22,6 +22,10 @@ import {
   Tabs,
   Tab,
   Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  AccordionActions,
 } from "@mui/material";
 import Bread from "../../components/Breadcrumbs";
 // import Swiper from "swiper";
@@ -30,6 +34,7 @@ import "swiper/css";
 import Head from "next/head";
 import { styled } from '@mui/system';
 import Image from "next/image";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 
@@ -66,13 +71,21 @@ export default function CriacaoProduto() {
     id: 0,
     titulo: "",
     sku: "",
+    ean:"",
     estoque: 0,
+    estoqueMin: 0,
+    estoqueMax: 0,
+    crossdocking: 0,
     estoqueCd: 0,
+    estoqueCdMin: 0,
+    estoqueCdMax: 0,
+    localizacao:'',
     dataCompra: "",
     marca: "",
     modelo: "",
     altura: 0,
     largura: 0,
+    unidade:"",
     profundidade: 0,
     pesoLiquido: 0,
     pesoBruto: 0,
@@ -187,359 +200,119 @@ export default function CriacaoProduto() {
         <Typography variant="h4" gutterBottom>
           Criar Produto
         </Typography>
+        <Grid item xs={12}>
+          <Button variant="contained" color="primary" onClick={saveProduct}>
+            Salvar Produto
+          </Button>
+        </Grid>
 
         <Tabs value={tab} onChange={handleTabChange} aria-label="product tabs" centered>
           <Tab label="Ficha do Produto" id="tab-0" aria-controls="tabpanel-0" />
           <Tab label="Estoque" id="tab-1" aria-controls="tabpanel-1" />
-          <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" />
+          <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" disabled/>
         </Tabs>
-
-
-        <TabPanel value={tab} index={0}>
-          <Grid container spacing={2}>
-            <Grid xs={4}>
-
-              {/* Carrossel de pré-visualização */}
-              {newProduct.imagens.length > 0 && (
-                <Grid item xs={12}>
-                  <Swiper
-                    spaceBetween={10}
-                    slidesPerView={3}
-                    style={{ height: "150px", marginTop: "20px" }}
-                  >
-                    {newProduct.imagens.map((img, idx) => (
-                      <SwiperSlide key={idx}>
-                        <Box
-                          sx={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            cursor: "pointer",
-                            border: "1px solid #ccc",
-                          }}
-                          onClick={() => handleImageClick(idx)}
-                        >
-                          <Image
-                            src={URL.createObjectURL(img)}
-                            alt={`Imagem ${idx + 1}`}
-                            width={400}
-                            height={400}
-                            // style={{ maxWidth: "100%", maxHeight: "100%" }}
-                          />
-                        </Box>
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                </Grid>
-              )}
-              {/* Modal para exibir a imagem em tamanho grande */}
-              <Modal open={!!selectedImage} onClose={handleCloseModal}>
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    bgcolor: "background.paper",
-                    border: "2px solid #000",
-                    boxShadow: 24,
-                    p: 2,
-                  }}
-                >
-                  {selectedImage && (
-                    <img
-                      src={selectedImage}
-                      alt="Imagem ampliada"
-                      style={{ maxWidth: "100%", maxHeight: "100%" }}
-                    />
-                  )}
-                </Box>
-              </Modal>
-              <Grid item xs={12}>
-              
-              <FormHelperText>
-                {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
-              </FormHelperText>
-              <Button
-                variant="contained"
-                component="label"
-                color="primary"
-                disabled={newProduct.imagens.length >= 6}
-              >
-                Upload de Imagens
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                />
-              </Button>
-            </Grid>
-            </Grid>
-            <Grid xs={8}>
-
-              <Grid item xs={12}>
-                <TextField
-                  label="Título"
-                  fullWidth
-                  value={newProduct.modelo}
-                  onChange={(e) => handleChange("modelo", e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Modelo"
-                  fullWidth
-                  value={newProduct.titulo}
-                  onChange={(e) => handleChange("titulo", e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Marca"
-                  fullWidth
-                  value={newProduct.marca}
-                  onChange={(e) => handleChange("marca", e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Código SKU"
-                  fullWidth
-                  value={newProduct.sku}
-                  onChange={(e) => handleChange("sku", e.target.value)}
-                />
-              </Grid>
-
-              <Grid item xs={4}>
-                <TextField
-                  label="Altura (cm)"
-                  type="number"
-                  fullWidth
-                  value={newProduct.altura}
-                  onChange={(e) => handleChange("altura", parseInt(e.target.value, 10))}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  label="Largura (cm)"
-                  type="number"
-                  fullWidth
-                  value={newProduct.largura}
-                  onChange={(e) => handleChange("largura", parseInt(e.target.value, 10))}
-                />
-              </Grid>
-              <Grid item xs={4}>
-                <TextField
-                  label="Profundidade (cm)"
-                  type="number"
-                  fullWidth
-                  value={newProduct.profundidade}
-                  onChange={(e) => handleChange("profundidade", parseInt(e.target.value, 10))}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  label="Peso Líquido (g)"
-                  type="number"
-                  fullWidth
-                  value={newProduct.pesoLiquido}
-                  onChange={(e) => handleChange("pesoLiquido", parseInt(e.target.value, 10))}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <TextField
-                  label="Peso Bruto (g)"
-                  type="number"
-                  fullWidth
-                  value={newProduct.pesoBruto}
-                  onChange={(e) => handleChange("pesoBruto", parseInt(e.target.value, 10))}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  label="Descrição do Produto"
-                  multiline
-                  fullWidth
-                  value={newProduct.descricao}
-                  onChange={(e) => handleChange("descricao", e.target.value)}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="h6" gutterBottom>
-                  Garantia
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  {garantiaTipo === 'garantiaFabrica' && garantiaValor
-                    ? `Você oferece garantia de fábrica por ${garantiaValor} ${garantiaPeriodo}.`
-                    : garantiaTipo === 'garantiaVendedor' && garantiaValor
-                      ? `Você oferece garantia do vendedor por ${garantiaValor} ${garantiaPeriodo}.`
-                      : 'Nenhuma garantia selecionada.'}
-                </Typography>
-                <FormControl component="fieldset">
-                  <RadioGroup
-                    name="garantia"
-                    value={garantiaTipo}
-                    onChange={handleTipoChange}
-                  >
-                    <FormControlLabel
-                      value="garantiaVendedor"
-                      control={<Radio />}
-                      label="Garantia do vendedor"
-                    />
-                    <FormControlLabel
-                      value="garantiaFabrica"
-                      control={<Radio />}
-                      label="Garantia de fábrica"
-                    />
-
-                    <FormControlLabel
-                      value="semGarantia"
-                      control={<Radio />}
-                      label="Sem garantia"
-                    />
-
-                  </RadioGroup>
-                </FormControl>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Box
-                  sx={{
-                    pl: 4,
-                    display:
-                      garantiaTipo === 'garantiaFabrica' ||
-                        garantiaTipo === 'garantiaVendedor'
-                        ? 'flex'
-                        : 'none',
-                    gap: 2,
-                  }}
-                >
-                  <TextField
-                    label="Valor"
-                    type="number"
-                    value={garantiaValor}
-                    onChange={(e) => setGarantiaValor(e.target.value)}
-                    size="small"
-                  />
-                  <Select
-                    value={garantiaPeriodo}
-                    onChange={(e) => setGarantiaPeriodo(e.target.value)}
-                    size="small"
-                  >
-                    <MenuItem value="dias">Dias</MenuItem>
-                    <MenuItem value="meses">Meses</MenuItem>
-                    <MenuItem value="anos">Anos</MenuItem>
-                  </Select>
-                </Box>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={handleGenerateDescription}
-                >
-                  Gerar Descrição
-                </Button>
-              </Grid>
-            </Grid>
-          </Grid>
-
-
-        </TabPanel>
-
-        <TabPanel value={tab} index={1}>
-          <Grid container spacing={2}>
+      </Container>
+      {/* Ficha tecnina com produto  */}
+      <TabPanel value={tab} index={0}>
+        {/* Imagens upload  */}
+        <Grid >
+          {/* Carrossel de pré-visualização */}
+          {newProduct.imagens.length > 0 && (
             <Grid item xs={12}>
-              <Typography>
-                {newProduct?.titulo}
-              </Typography>
-              <Typography>
-                última alteração em :data/hora { }
-              </Typography>
+              <Swiper
+                spaceBetween={10}
+                slidesPerView={3}
+                style={{ height: "150px", marginTop: "20px" }}
+              >
+                {newProduct.imagens.map((img, idx) => (
+                  <SwiperSlide key={idx}>
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        cursor: "pointer",
+                        border: "1px solid #ccc",
+                      }}
+                      onClick={() => handleImageClick(idx)}
+                    >
+                      <Image
+                        src={URL.createObjectURL(img)}
+                        alt={`Imagem ${idx + 1}`}
+                        width={400}
+                        height={400}
+                      // style={{ maxWidth: "100%", maxHeight: "100%" }}
+                      />
+                    </Box>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
             </Grid>
+          )}
+          {/* Modal para exibir a imagem em tamanho grande */}
+          <Modal open={!!selectedImage} onClose={handleCloseModal}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 2,
+              }}
+            >
+              {selectedImage && (
+                <img
+                  src={selectedImage}
+                  alt="Imagem ampliada"
+                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+                />
+              )}
+            </Box>
+          </Modal>
+          <Grid item xs={12}>
 
-            <Grid item xs={2}>
-              <TextField
-                label="Estoque Local"
-                type="number"
-                fullWidth
-                value={newProduct.estoque}
-                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
+            <FormHelperText>
+              {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
+            </FormHelperText>
+            <Button
+              variant="contained"
+              component="label"
+              color="primary"
+              disabled={newProduct.imagens.length >= 6}
+            >
+              Upload de Imagens
+              <input
+                type="file"
+                hidden
+                accept=".jpg, .jpeg, .png"
+                multiple
+                onChange={handleImageUpload}
               />
-            </Grid>
-            <Grid item xs={2}>
+            </Button>
+          </Grid>
+        </Grid>
+        {/* Informações do produto  */}
+        <Grid xs={9}>
+          <Grid container p={1} spacing={2}>
+            <Grid item xs={6}>
               <TextField
-                label="Estoque minimo"
-                type="number"
+                label="Título"
                 fullWidth
-                value={newProduct.estoque}
-                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <TextField
-                label="Estoque Máximo"
-                type="number"
-                fullWidth
-                value={newProduct.estoque}
-                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <TextField
-                label="Crossdocking"
-                type="number"
-                fullWidth
-                value={newProduct.estoque}
-                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Localização"
-                type="number"
-                fullWidth
-                value={newProduct.estoque}
-                onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
+                value={newProduct.modelo}
+                required
+                onChange={(e) => handleChange("modelo", e.target.value)}
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
-                label="Estoque em CD"
-                type="number"
-                fullWidth
-                value={newProduct?.estoqueCd}
-                onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
-              />
+              {/* {espaço vago} */}
             </Grid>
-            <Grid item xs={3}>
-              <TextField
-                label="Estoque Mínimo"
-                type="number"
-                fullWidth
-                value={newProduct?.estoqueCd}
-                onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                label="Estoque máximo"
-                type="number"
-                fullWidth
-                value={newProduct?.estoqueCd}
-                onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-          </Grid>
-        </TabPanel>
-        <TabPanel value={tab} index={2}>
-          <Grid container spacing={2}>
 
-            <Grid item xs={12}>
+            <Grid item xs={4}>
               <TextField
                 label="Código SKU"
                 fullWidth
@@ -547,104 +320,289 @@ export default function CriacaoProduto() {
                 onChange={(e) => handleChange("sku", e.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={4}>
               <TextField
                 label="Código EAN"
                 fullWidth
-                value={newProduct.sku}
-                onChange={(e) => handleChange("sku", e.target.value)}
+                value={newProduct.ean}
+                onChange={(e) => handleChange("ean", e.target.value)}
               />
             </Grid>
-          </Grid>
-        </TabPanel>
-        <Box>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Button
-                variant="contained"
-                component="label"
-                color="primary"
-                disabled={newProduct.imagens.length >= 6}
-              >
-                Upload de Imagens
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                />
-              </Button>
-              <FormHelperText>
-                {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
-              </FormHelperText>
+            <Grid item xs={4}>
+              <TextField
+                label="Unidade"
+                fullWidth
+                value={newProduct.unidade}
+                onChange={(e) => handleChange("unidade", e.target.value)}
+              />
             </Grid>
 
-            {/* Carrossel de pré-visualização */}
-            {newProduct.imagens.length > 0 && (
-              <Grid item xs={12}>
-                <Swiper
-                  spaceBetween={10}
-                  slidesPerView={3}
-                  style={{ height: "150px", marginTop: "20px" }}
+            <Grid item xs={4}>
+              <TextField
+                label="Altura (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.altura}
+                onChange={(e) => handleChange("altura", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Largura (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.largura}
+                onChange={(e) => handleChange("largura", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Profundidade (cm)"
+                type="number"
+                fullWidth
+                value={newProduct.profundidade}
+                onChange={(e) => handleChange("profundidade", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Modelo"
+                fullWidth
+                value={newProduct.titulo}
+                onChange={(e) => handleChange("modelo", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Marca"
+                fullWidth
+                value={newProduct.marca}
+                onChange={(e) => handleChange("marca", e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <TextField
+                label="Peso Líquido (g)"
+                type="number"
+                fullWidth
+                value={newProduct.pesoLiquido}
+                onChange={(e) => handleChange("pesoLiquido", parseInt(e.target.value, 10))}
+              />
+            </Grid>
+{/* Garantia  */}
+            <Grid item xs={6}>
+              <Typography variant="h6" gutterBottom>
+                Garantia
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                {garantiaTipo === 'garantiaFabrica' && garantiaValor
+                  ? `Você oferece garantia de fábrica por ${garantiaValor} ${garantiaPeriodo}.`
+                  : garantiaTipo === 'garantiaVendedor' && garantiaValor
+                    ? `Você oferece garantia do vendedor por ${garantiaValor} ${garantiaPeriodo}.`
+                    : 'Nenhuma garantia selecionada.'}
+              </Typography>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  name="garantia"
+                  value={garantiaTipo}
+                  onChange={handleTipoChange}
                 >
-                  {newProduct.imagens.map((img, idx) => (
-                    <SwiperSlide key={idx}>
-                      <Box
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          cursor: "pointer",
-                          border: "1px solid #ccc",
-                        }}
-                        onClick={() => handleImageClick(idx)}
-                      >
-                        <img
-                          src={URL.createObjectURL(img)}
-                          alt={`Imagem ${idx + 1}`}
-                          style={{ maxWidth: "100%", maxHeight: "100%" }}
-                        />
-                      </Box>
-                    </SwiperSlide>
-                  ))}
-                </Swiper>
-              </Grid>
-            )}
-            {/* Modal para exibir a imagem em tamanho grande */}
-            <Modal open={!!selectedImage} onClose={handleCloseModal}>
-              <Box
-                sx={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  bgcolor: "background.paper",
-                  border: "2px solid #000",
-                  boxShadow: 24,
-                  p: 2,
-                }}
-              >
-                {selectedImage && (
-                  <img
-                    src={selectedImage}
-                    alt="Imagem ampliada"
-                    style={{ maxWidth: "100%", maxHeight: "100%" }}
+                  <FormControlLabel
+                    value="garantiaVendedor"
+                    control={<Radio />}
+                    label="Garantia do vendedor"
                   />
-                )}
-              </Box>
-            </Modal>
+                  <FormControlLabel
+                    value="garantiaFabrica"
+                    control={<Radio />}
+                    label="Garantia de fábrica"
+                  />
 
-            <Grid item xs={12}>
-              <Button variant="contained" color="primary" onClick={saveProduct}>
-                Salvar Produto
-              </Button>
+                  <FormControlLabel
+                    value="semGarantia"
+                    control={<Radio />}
+                    label="Sem garantia"
+                  />
+
+                </RadioGroup>
+              </FormControl>
+            </Grid>
+
+            <Grid p={4} xs={12} spacing={2}>
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
+                    Lista de preços
+                  </Typography>
+
+                </AccordionSummary>
+                <AccordionDetails>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                </AccordionDetails>
+
+              </Accordion>
+
+            </Grid>
+
+            <Grid p={4} spacing={2} xs={12}>
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
+                    Descrição
+                  </Typography>
+
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Descrição do Produto"
+                      multiline
+                      fullWidth
+                      value={newProduct.descricao}
+                      onChange={(e) => handleChange("descricao", e.target.value)}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={handleGenerateDescription}
+                    >
+                      Gerar Descrição
+                    </Button>
+                  </Grid>
+                </AccordionDetails>
+
+              </Accordion>
+
             </Grid>
           </Grid>
-        </Box>
-      </Container>
+          <Grid />
+        </Grid>
+
+
+      </TabPanel>
+      {/*controle de  Estoque produto  */}
+      <TabPanel value={tab} index={1}>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Typography>
+              {newProduct?.titulo}
+            </Typography>
+            <Typography>
+              última alteração em :data/hora { }
+            </Typography>
+          </Grid>
+
+          <Grid item xs={2}>
+            <TextField
+              label="Estoque Local"
+              type="number"
+              fullWidth
+              value={newProduct.estoque}
+              onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              label="Estoque minimo"
+              type="number"
+              fullWidth
+              value={newProduct.estoqueMin}
+              onChange={(e) => handleChange("estoqueMin", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              label="Estoque Máximo"
+              type="number"
+              fullWidth
+              value={newProduct.estoqueMax}
+              onChange={(e) => handleChange("estoqueMax", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={2}>
+            <TextField
+              label="Crossdocking"
+              type="number"
+              fullWidth
+              disabled
+              value={newProduct.crossdocking}
+              onChange={(e) => handleChange("crossdocking", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              label="Localização"
+              type="Text"
+              fullWidth
+              disabled
+              value={newProduct.localizacao}
+              onChange={(e) => handleChange("localizacao", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              label="Estoque em CD"
+              type="number"
+              fullWidth
+              value={newProduct?.estoqueCd}
+              onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <TextField
+              label="Estoque Mínimo"
+              type="number"
+              fullWidth
+              value={newProduct?.estoqueCdMin}
+              onChange={(e) => handleChange("estoqueCdMin", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+          <Grid item xs={3}>
+            <TextField
+              label="Estoque máximo"
+              type="number"
+              fullWidth
+              value={newProduct?.estoqueCdMax}
+              onChange={(e) => handleChange("estoqueCdMax", parseInt(e.target.value, 10))}
+            />
+          </Grid>
+        </Grid>
+      </TabPanel>
+      {/*controle tributação do produto  */}
+      <TabPanel value={tab} index={2}>
+        <Grid container spacing={2}>
+
+          <Grid item xs={12}>
+            <TextField
+              label="Código SKU"
+              fullWidth
+              value={newProduct.sku}
+              onChange={(e) => handleChange("sku", e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Código EAN"
+              fullWidth
+              value={newProduct.ean}
+              onChange={(e) => handleChange("ean", e.target.value)}
+            />
+          </Grid>
+        </Grid>
+      </TabPanel>
+
+
+
     </>
   );
 }
