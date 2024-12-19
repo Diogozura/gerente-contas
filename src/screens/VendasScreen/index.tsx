@@ -10,6 +10,7 @@ import Head from "next/head";
 import vendas from "../../mock/vendas.json"; // Replace with your data source
 import Image from "next/image";
 import moment from "moment";
+import SimularVenda from "./simuladoVenda";
 
 // ... (rest of your imports)
 
@@ -34,11 +35,12 @@ export default function Vendas({ data }) {
         <Typography variant="body1" component="p" textAlign="center">
           Vá até o marketplace para seguir com a venda
         </Typography>
-
+        <SimularVenda/>
         {vendasUltimas24h.length === 0 ? (
           <Typography variant="body1" textAlign="center">
             Não houve vendas nas últimas 24 horas.
           </Typography>
+          
         ) : (
           vendasUltimas24h.map((item) => (
             <Paper key={item.id} elevation={1} sx={{ p: 3, mb: 2 }}>
@@ -53,6 +55,7 @@ export default function Vendas({ data }) {
                   <Typography variant="body2" component="p">
                     Vendido há {moment(item.data).fromNow()}
                   </Typography>
+                  
                 </Grid>
               </Grid>
             </Paper>

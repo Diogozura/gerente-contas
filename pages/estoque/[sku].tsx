@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Container, Typography, Box, Button } from "@mui/material";
+import { Container, Typography, Box, TextField, Button, Grid } from "@mui/material";
 import Bread from "../../src/components/Breadcrumbs";
 
 interface Product {
@@ -15,8 +15,17 @@ export default function ProductDetail() {
   const router = useRouter();
   const { sku } = router.query;
   const [product, setProduct] = useState<Product | null>(null);
+  const [isEditable, setIsEditable] = useState(false); // Controla se o formulário é editável
 
   useEffect(() => {
+    // Verifica permissões no localStorage
+    const userData = localStorage.getItem("dadosUsuarioLogado");
+    if (userData) {
+      const user = JSON.parse(userData);
+      setIsEditable(user.permissao === "editar"); // Exemplo: 'editar' ou 'visualizar'
+    }
+
+    // Carrega os dados do produto
     if (sku) {
       const storedProducts = localStorage.getItem("produtos");
       if (storedProducts) {
@@ -34,23 +43,95 @@ export default function ProductDetail() {
       </Container>
     );
   }
-  const nav ={
-    'principal': 'estoque',
-    'atual': 'Produto'
-};
+
+  const nav = {
+    principal: "estoque",
+    atual: "Produto",
+  };
+
+  const handleChange = (field: keyof Product, value: string | number) => {
+    setProduct((prev) =>
+      prev
+        ? {
+            ...prev,
+            [field]: value,
+          }
+        : null
+    );
+  };
+
+  const handleSave = () => {
+    const storedProducts = localStorage.getItem("produtos");
+    if (storedProducts && product) {
+      const products: Product[] = JSON.parse(storedProducts);
+      const updatedProducts = products.map((p) => (p.id === product.id ? product : p));
+      localStorage.setItem("produtos", JSON.stringify(updatedProducts));
+      alert("Produto atualizado com sucesso!");
+    }
+  };
+
   return (
     <Container>
-       <Bread nav={nav}/>
+      <Bread nav={nav} />
       <Typography variant="h4" gutterBottom>
         Detalhes do Produto
       </Typography>
       <Box>
-        <Typography><strong>ID:</strong> {product.id}</Typography>
-        <Typography><strong>Título:</strong> {product.titulo}</Typography>
-        <Typography><strong>SKU:</strong> {product.sku}</Typography>
-        <Typography><strong>Estoque:</strong> {product.estoque}</Typography>
-        <Typography><strong>Estoque em CD:</strong> {product.estoqueCd}</Typography>
-        <Button>Nova compra</Button>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Título"
+              value={product.titulo}
+              fullWidth
+              onChange={(e) => handleChange("titulo", e.target.value)}
+              disabled={!isEditable} // Campo editável apenas se permitido
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="SKU"
+              value={product.sku}
+              fullWidth
+              onChange={(e) => handleChange("sku", e.target.value)}
+              disabled={!isEditable}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Estoque"
+              value={product.estoque}
+              fullWidth
+              type="number"
+              onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
+              disabled={!isEditable}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Estoque em CD"
+              value={product.estoqueCd}
+              fullWidth
+              type="number"
+              onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
+              disabled={!isEditable}
+            />
+          </Grid>
+        </Grid>
+        {isEditable && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSave}
+            style={{ marginTop: "16px" }}
+          >
+            Salvar Alterações
+          </Button>
+        )}
+        {!isEditable && (
+          <Button variant="outlined" disabled style={{ marginTop: "16px" }}>
+            Somente visualização
+          </Button>
+        )}
       </Box>
     </Container>
   );

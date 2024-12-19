@@ -26,6 +26,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   AccordionActions,
+  IconButton,
 } from "@mui/material";
 import Bread from "../../components/Breadcrumbs";
 // import Swiper from "swiper";
@@ -35,8 +36,8 @@ import Head from "next/head";
 import { styled } from '@mui/system';
 import Image from "next/image";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-
-
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import InputMoney from "../../components/common/InputMoney";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,7 +72,7 @@ export default function CriacaoProduto() {
     id: 0,
     titulo: "",
     sku: "",
-    ean:"",
+    ean: "",
     estoque: 0,
     estoqueMin: 0,
     estoqueMax: 0,
@@ -79,18 +80,19 @@ export default function CriacaoProduto() {
     estoqueCd: 0,
     estoqueCdMin: 0,
     estoqueCdMax: 0,
-    localizacao:'',
+    localizacao: '',
     dataCompra: "",
     marca: "",
     modelo: "",
     altura: 0,
     largura: 0,
-    unidade:"",
+    unidade: "",
     profundidade: 0,
     pesoLiquido: 0,
     pesoBruto: 0,
     descricao: "",
     imagens: [] as File[],
+    listaPrecos: [] as { variacao: string; precoMinimo: number }[],
   });
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -98,6 +100,8 @@ export default function CriacaoProduto() {
   const [garantiaValor, setGarantiaValor] = useState('');
   const [garantiaPeriodo, setGarantiaPeriodo] = useState('dias');
   const [tab, setTab] = useState(0);
+
+
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -108,7 +112,15 @@ export default function CriacaoProduto() {
       ...prev,
       [field]: typeof value === "number" && value < 0 ? 0 : value,
     }));
+
   };
+  // Campos obrigatórios
+  const camposObrigatorios = ['titulo', 'sku'];
+
+  // Verifica se todos os campos obrigatórios estão preenchidos
+  const isFormValid = camposObrigatorios.every(
+    (campo) => newProduct[campo]?.toString().trim() !== ''
+  );
 
   const handleTipoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setGarantiaTipo(event.target.value);
@@ -116,6 +128,7 @@ export default function CriacaoProduto() {
       setGarantiaValor('');
     }
   };
+
   const handleGenerateDescription = () => {
     const { titulo, marca, modelo, altura, largura, profundidade, pesoLiquido } = newProduct;
     const descricao = `Produto: ${titulo},\n Marca: ${marca},\n Modelo: ${modelo},\n Dimensões: ${altura}x${largura}x${profundidade} cm,\n Peso Líquido: ${pesoLiquido} g.\n`;
@@ -132,48 +145,22 @@ export default function CriacaoProduto() {
     localStorage.setItem("produtos", JSON.stringify(updatedProducts));
     router.push("/estoque");
   };
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  // Upload de imagens corrigido
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
-    const validImages: File[] = [];
-    const errors: string[] = [];
-
-    for (const file of Array.from(files)) {
-      const img = await getImageDimensions(file);
-      if (img.width >= 500 && img.height >= 500) {
-        validImages.push(file);
-      } else {
-        errors.push(`A imagem "${file.name}" não atende ao tamanho mínimo de 500x500 pixels.`);
-      }
+    const imagensValidas = [...newProduct.imagens];
+    for (let i = 0; i < files.length; i++) {
+      if (imagensValidas.length < 6) imagensValidas.push(files[i]);
     }
 
-    const totalImages = newProduct.imagens.length + validImages.length;
-
-    if (totalImages > 6) {
-      errors.push("Você pode enviar no máximo 6 imagens.");
-    }
-
-    if (errors.length > 0) {
-      alert(errors.join("\n"));
-    } else {
-      setNewProduct((prev) => ({
-        ...prev,
-        imagens: [...prev.imagens, ...validImages].slice(0, 6), // Limita a 6 imagens.
-      }));
-    }
-  };
-
-  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
-      img.onload = () => {
-        resolve({ width: img.width, height: img.height });
-        URL.revokeObjectURL(img.src);
-      };
-      img.onerror = reject;
-    });
+    setNewProduct((prev) => ({
+      ...prev,
+      imagens: imagensValidas,
+    }));
   };
   const handleImageClick = (index: number) => {
     const image = newProduct.imagens[index];
@@ -189,6 +176,27 @@ export default function CriacaoProduto() {
     principal: "estoque",
     atual: "criacao-produto",
   };
+  const [variacao, setVariacao] = useState("");
+  const [precoMinimo, setPrecoMinimo] = useState<number>(0);
+  // Adicionar item à lista de preços
+  const adicionarListaPreco = () => {
+    if (variacao && precoMinimo) {
+      setNewProduct((prev) => ({
+        ...prev,
+        listaPrecos: [...prev.listaPrecos, { variacao, precoMinimo }],
+      }));
+      setVariacao("");
+      setPrecoMinimo(0);
+    }
+  };
+
+  // Remover item da lista de preços
+  const removerListaPreco = (index: number) => {
+    setNewProduct((prev) => ({
+      ...prev,
+      listaPrecos: prev.listaPrecos.filter((_, i) => i !== index),
+    }));
+  };
 
   return (
     <>
@@ -201,7 +209,7 @@ export default function CriacaoProduto() {
           Criar Produto
         </Typography>
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" onClick={saveProduct}>
+          <Button variant="contained" color="primary" disabled={!isFormValid} onClick={saveProduct}>
             Salvar Produto
           </Button>
         </Grid>
@@ -209,7 +217,7 @@ export default function CriacaoProduto() {
         <Tabs value={tab} onChange={handleTabChange} aria-label="product tabs" centered>
           <Tab label="Ficha do Produto" id="tab-0" aria-controls="tabpanel-0" />
           <Tab label="Estoque" id="tab-1" aria-controls="tabpanel-1" />
-          <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" disabled/>
+          <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" disabled />
         </Tabs>
       </Container>
       {/* Ficha tecnina com produto  */}
@@ -303,9 +311,9 @@ export default function CriacaoProduto() {
               <TextField
                 label="Título"
                 fullWidth
-                value={newProduct.modelo}
+                value={newProduct.titulo}
                 required
-                onChange={(e) => handleChange("modelo", e.target.value)}
+                onChange={(e) => handleChange("titulo", e.target.value)}
               />
             </Grid>
             <Grid item xs={6}>
@@ -368,7 +376,7 @@ export default function CriacaoProduto() {
               <TextField
                 label="Modelo"
                 fullWidth
-                value={newProduct.titulo}
+                value={newProduct.modelo}
                 onChange={(e) => handleChange("modelo", e.target.value)}
               />
             </Grid>
@@ -389,7 +397,7 @@ export default function CriacaoProduto() {
                 onChange={(e) => handleChange("pesoLiquido", parseInt(e.target.value, 10))}
               />
             </Grid>
-{/* Garantia  */}
+            {/* Garantia  */}
             <Grid item xs={6}>
               <Typography variant="h6" gutterBottom>
                 Garantia
@@ -438,10 +446,63 @@ export default function CriacaoProduto() {
                   <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
                     Lista de preços
                   </Typography>
-
+                  <Typography variant="body1" component={'p'} >
+                    Crie variações de preços para diferentes tipos ou canais de venda
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  {/* Lista de Preços */}
+                  <Box mt={3}>
+                    <Typography variant="h6">Lista de Preços</Typography>
+                    <Grid container spacing={2} alignItems="center">
+                      <Grid item xs={4}>
+                        <TextField
+                          label="Variação"
+                          fullWidth
+                          value={variacao}
+                          onChange={(e) => setVariacao(e.target.value)}
+                        />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <InputMoney
+                          label="Preço Mínimo"
+                          fullWidth
+                          value={precoMinimo}
+                          onChange={(newValue) => setPrecoMinimo(newValue)}
+                        />
+
+                      </Grid>
+                      <Grid item xs={2}>
+                        <Button variant="contained" onClick={adicionarListaPreco}>
+                          Adicionar
+                        </Button>
+                      </Grid>
+                    </Grid>
+
+                    {/* Renderizar Lista de Preços */}
+                    {newProduct.listaPrecos.map((item, index) => (
+                      <Grid
+                        key={index}
+                        container
+                        spacing={2}
+                        alignItems="center"
+                        mt={1}
+                        sx={{ borderBottom: "1px solid #ccc", pb: 1 }}
+                      >
+                        <Grid item xs={4}>
+                          <Typography>{item.variacao}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Typography>R$ {item.precoMinimo.toLocaleString('pt-br', {style: 'decimal', minimumSignificantDigits: 3})}</Typography>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <IconButton onClick={() => removerListaPreco(index)}>
+                            <DeleteOutlineOutlinedIcon />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    ))}
+                  </Box>
                 </AccordionDetails>
 
               </Accordion>
@@ -458,6 +519,7 @@ export default function CriacaoProduto() {
                   <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
                     Descrição
                   </Typography>
+
 
                 </AccordionSummary>
                 <AccordionDetails>

@@ -1,51 +1,87 @@
-/* eslint-disable react/no-children-prop */
-import React from "react";
-import { Box, Container, Divider, Grid, Typography } from "@mui/material";
-import Head from "next/head";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { Container, TextField, Button, Typography, Box, MenuItem } from "@mui/material";
 
+interface User {
+  nome: string;
+  email: string;
+  telefone: string;
+  permissao: string;
+}
 
+export default function CreateUser() {
+  const router = useRouter();
+  const [user, setUser] = useState<User>({
+    nome: "Usuário Fake",
+    email: "usuario@exemplo.com",
+    telefone: "(11) 99999-9999",
+    permissao: "visualizar", // Default: "editar" ou "visualizar"
+  });
 
-// export const getServerSideProps = requireAuthentication(async (ctx) => {
-//   // const token = ctx.req.token;
-//   // try {
-//   //   const dadosSala = await authService.dadosSala(token);
+  const handleChange = (field: keyof User, value: string) => {
+    setUser((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
 
-//   //   return {
-//   //     props: {
-//   //       dadosSala,
-//   //     },
-//   //   };
-//   // } catch (error) {
-//   //   return {
-//   //     redirect: {
-      
-//   //       permanent: true,
-//   //     },
-//   //   };
-//   // }
-// });
+  const handleSubmit = () => {
+    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(user));
+    alert("Dados do usuário salvos com sucesso!");
+    router.push("/"); // Redireciona para a página inicial (ou outra página desejada)
+  };
 
-export default function Dashboard(props) {
-
-    return (
-        <>
-           <Head>
-            <title>Hubeefive - Perfil</title>
-        </Head>
-        <Container >
-        <Box bgcolor="#f4f4f4" padding={10}>
-        <Typography variant="h3" component="h2" textTransform="uppercase" textAlign="center">
-          Dados do usuario logado
-        </Typography>
-       
-
-      
+  return (
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        Criar Dados do Usuário
+      </Typography>
+      <Box
+        component="form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        noValidate
+        sx={{ mt: 2 }}
+      >
+        <TextField
+          label="Nome"
+          value={user.nome}
+          fullWidth
+          onChange={(e) => handleChange("nome", e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Email"
+          type="email"
+          value={user.email}
+          fullWidth
+          onChange={(e) => handleChange("email", e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          label="Telefone"
+          value={user.telefone}
+          fullWidth
+          onChange={(e) => handleChange("telefone", e.target.value)}
+          sx={{ mb: 2 }}
+        />
+        <TextField
+          select
+          label="Permissão"
+          value={user.permissao}
+          fullWidth
+          onChange={(e) => handleChange("permissao", e.target.value)}
+          sx={{ mb: 2 }}
+        >
+          <MenuItem value="visualizar">Visualizar</MenuItem>
+          <MenuItem value="editar">Editar</MenuItem>
+        </TextField>
+        <Button variant="contained" color="primary" type="submit">
+          Salvar Usuário
+        </Button>
       </Box>
-      <Divider />
-        </Container>
-
-     
-
-        </>
-    )
+    </Container>
+  );
 }
