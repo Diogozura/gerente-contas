@@ -24,6 +24,8 @@ interface Product {
   sku: string;
   estoque: number;
   estoqueCd: number;
+  estoqueMin:number;
+  estoqueCdMin:number;
 }
 
 export default function Estoque() {
@@ -73,6 +75,7 @@ export default function Estoque() {
   };
 
   const handleDeleteSelected = () => {
+   
     if (selectedIds.length === 0) {
       alert("Selecione pelo menos um produto para excluir.");
       return;
@@ -81,6 +84,11 @@ export default function Estoque() {
       setProducts((prev) => prev.filter((product) => !selectedIds.includes(product.id)));
       setSelectedIds([]);
     }
+  };
+  const handleDeleteProduct = (id: number) => {
+    const updatedProducts = products.filter((product) => product.id !== id);
+    setProducts(updatedProducts);
+    localStorage.setItem("produtos", JSON.stringify(updatedProducts));
   };
 
   return (
@@ -146,11 +154,8 @@ export default function Estoque() {
         products={filteredProducts} // Use os produtos filtrados
         selectedIds={selectedIds}
         onSelectAll={handleSelectAll}
-        onSelectOne={handleSelectOne} onEdit={function (product: Product): void {
-          throw new Error("Function not implemented.");
-        } } onDelete={function (id: number): void {
-          throw new Error("Function not implemented.");
-        } }      />
+        onSelectOne={handleSelectOne} 
+        onDelete={handleDeleteProduct}      />
     </>
   );
 }
