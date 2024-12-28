@@ -1,0 +1,7 @@
+ [
+    { "title": "Mercado livre", "src": "/marketingplaces/mercadoLivre.png", "alt": "Mercado Livre" },
+    { "title": "Shopee", "src": "/marketingplaces/shopee.png", "alt": "Shopee" },
+    { "title": "Magalu", "src": "/marketingplaces/magalu.png", "alt": "Magalu" },
+    { "title": "Americanas", "src": "/marketingplaces/americanas.png", "alt": "Americanas" },
+    { "title": "Amazon", "src": "/marketingplaces/amazon.png", "alt": "Amazon" }
+]

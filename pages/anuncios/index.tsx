@@ -1,2 +1,2 @@
 // export { default, getServerSideProps } from "../src/screens/HomePageHubInterna";
-export { default } from "../src/screens/Anuncios";
+export { default } from "../../src/screens/Anuncios";

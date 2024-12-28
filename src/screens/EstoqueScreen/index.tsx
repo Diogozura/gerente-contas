@@ -90,6 +90,13 @@ export default function Estoque() {
     setProducts(updatedProducts);
     localStorage.setItem("produtos", JSON.stringify(updatedProducts));
   };
+  const handleEditProduct = (updatedProduct: Product) => {
+    const updatedProducts = products.map((product) =>
+      product.id === updatedProduct.id ? updatedProduct : product
+    );
+    setProducts(updatedProducts);
+    localStorage.setItem("produtos", JSON.stringify(updatedProducts));
+  };
 
   return (
     <>
@@ -154,8 +161,8 @@ export default function Estoque() {
         products={filteredProducts} // Use os produtos filtrados
         selectedIds={selectedIds}
         onSelectAll={handleSelectAll}
-        onSelectOne={handleSelectOne} 
-        onDelete={handleDeleteProduct}      />
+        onSelectOne={handleSelectOne}
+        onDelete={handleDeleteProduct} onEdit={handleEditProduct}          />
     </>
   );
 }
