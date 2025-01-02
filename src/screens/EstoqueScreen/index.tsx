@@ -24,8 +24,8 @@ interface Product {
   sku: string;
   estoque: number;
   estoqueCd: number;
-  estoqueMin:number;
-  estoqueCdMin:number;
+  estoqueMin: number;
+  estoqueCdMin: number;
 }
 
 export default function Estoque() {
@@ -75,7 +75,7 @@ export default function Estoque() {
   };
 
   const handleDeleteSelected = () => {
-   
+
     if (selectedIds.length === 0) {
       alert("Selecione pelo menos um produto para excluir.");
       return;
@@ -98,14 +98,32 @@ export default function Estoque() {
     localStorage.setItem("produtos", JSON.stringify(updatedProducts));
   };
 
+  const exportToCSV = () => {
+    const selectedProducts = products.filter((product) => selectedIds.includes(product.id));
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [
+        ["ID", "Título", "SKU", "Estoque", "Estoque em CD"],
+        ...selectedProducts.map((product) => [
+          product.id,
+          product.titulo,
+          product.sku,
+          product.estoque,
+          product.estoqueCd,
+        ]),
+      ]
+        .map((row) => row.join(","))
+        .join("\n");
+
+    const blob = new Blob([decodeURIComponent(encodeURI(csvContent))], {
+      type: "text/csv;charset=utf-8;",
+    });
+    saveAs(blob, "produtos_selecionados.csv");
+  };
+
   return (
     <>
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
-        <Grid item>
-          <Button variant="contained" color="primary" onClick={() => router.push("/estoque/criacao-kit-produto")}>
-            Cadastro de kit 
-          </Button>
-        </Grid>
         <Grid item>
           <Button variant="contained" color="primary" onClick={() => router.push("/estoque/criacao-produto")}>
             Cadastro de Produto Individual
@@ -115,6 +133,16 @@ export default function Estoque() {
           <Button variant="contained" component="label" color="primary">
             Cadastro de Produto Em Massa
             <Input type="file" sx={{ display: "none" }} />
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={selectedIds.length === 0}
+            onClick={exportToCSV}
+          >
+            Exportar Produtos
           </Button>
         </Grid>
       </Grid>
@@ -162,7 +190,7 @@ export default function Estoque() {
         selectedIds={selectedIds}
         onSelectAll={handleSelectAll}
         onSelectOne={handleSelectOne}
-        onDelete={handleDeleteProduct} onEdit={handleEditProduct}          />
+        onDelete={handleDeleteProduct} onEdit={handleEditProduct} />
     </>
   );
 }
