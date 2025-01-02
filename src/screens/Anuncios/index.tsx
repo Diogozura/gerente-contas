@@ -9,7 +9,7 @@ import LineChart from "../../components/charts/LineChart";
 import {  Button, Container, Divider, Grid, Modal, Paper, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import ListaDeNotificacao from "./listaNotificações";
-
+import { useRouter } from "next/router";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -33,13 +33,14 @@ import ListaDeNotificacao from "./listaNotificações";
 // });
 interface Anuncio {
   titulo: string;
+  slug: string;
   produtos: [];
   marketingPlaces: [];
 }
 export default function Dashboard(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [storedAnuncios, setStoredAnuncios] = React.useState<Anuncio[]>([])
-
+const router = useRouter();
   React.useEffect(() => {
     const storedAnuncios = localStorage.getItem("anuncios");
     if (storedAnuncios && storedAnuncios !== "[]") {
@@ -56,6 +57,12 @@ export default function Dashboard(props) {
             <title>Hubeefive - Anúncios</title>
         </Head>
         <Container >
+
+        <Grid item>
+           <Button variant="contained" color="primary" onClick={() => router.push("/anuncios/criar-anuncio")}>
+          Criar anuncio
+          </Button>
+        </Grid>
         {storedAnuncios.map((e, index) => (
     <Paper
       key={index}
@@ -66,7 +73,7 @@ export default function Dashboard(props) {
       }}
     >
       <Typography variant="h3" component="h2">
-        <Link href={'/anuncio/view?'}> {e.titulo} </Link>
+        <Link href={`/anuncios/${e.slug}`}> {e.titulo} </Link>
       </Typography>
 
       {/* Renderiza os produtos */}
@@ -81,7 +88,7 @@ export default function Dashboard(props) {
 
       {/* Renderiza os marketing places */}
       <Typography variant="body1" component="p">
-        <strong>Marketing Places:</strong> {e.marketingPlaces?.join(", ")}
+        <strong>🔗</strong> {e.marketingPlaces?.join(", ")}
       </Typography>
     </Paper>
   ))}

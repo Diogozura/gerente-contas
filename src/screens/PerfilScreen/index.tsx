@@ -28,7 +28,7 @@ export default function CreateUser() {
   const handleSubmit = () => {
     localStorage.setItem("dadosUsuarioLogado", JSON.stringify(user));
     alert("Dados do usuário salvos com sucesso!");
-    router.push("/"); // Redireciona para a página inicial (ou outra página desejada)
+   
   };
 
   return (

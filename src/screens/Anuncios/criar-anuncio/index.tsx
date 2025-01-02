@@ -16,6 +16,14 @@ interface TabPanelProps {
     index: number;
     value: number;
 }
+function generateSlug(titulo) {
+    return titulo
+      .toLowerCase() // Converte para minúsculas
+      .trim() // Remove espaços extras nas extremidades
+      .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
+      .replace(/\s+/g, '-') // Substitui espaços por hífens
+      .replace(/-+/g, '-'); // Remove hífens repetidos
+  }
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
@@ -49,12 +57,13 @@ export default function CriarAnuncio() {
     const [selectedProductIds, setSelectedProductIds] = React.useState<number[]>([]);
     const [newAnuncio, setNewAnuncio] = React.useState({
         titulo: "",
+        slug:"",
         marketingPlaces: [] as string[],
         produto: [] as { titulo: string; sku: string }[],
     });
 
     const nav = {
-        principal: "anuncio",
+        principal: "anuncios",
         atual: "criacao-anuncio",
     };
     React.useEffect(() => {
@@ -66,12 +75,14 @@ export default function CriarAnuncio() {
     }, []);
 
     const handleChange = (field: string, value: any) => {
-        setNewAnuncio((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
+        setNewAnuncio((prev) => {
+            const updatedAnuncio = { ...prev, [field]: value };
+            if (field === "titulo") {
+                updatedAnuncio.slug = generateSlug(value); // Atualiza o slug baseado no título
+            }
+            return updatedAnuncio;
+        });
     };
-
     const handleProductChange = (selectedProducts: Product[]) => {
         const formattedProducts = selectedProducts?.map((product) => ({
             titulo: product.titulo,
