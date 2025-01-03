@@ -6,10 +6,12 @@ import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
 import LineChart from "../../components/charts/LineChart";
-import {  Button, Container, Divider, Grid, Modal, Paper, TextField, Typography } from "@mui/material";
+import {  Box, Button, Container, Divider, Grid, Modal, Paper, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import ListaDeNotificacao from "./listaNotificações";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import FiltroTexto from "../../components/common/FiltroText";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -40,6 +42,9 @@ interface Anuncio {
 export default function Dashboard(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [storedAnuncios, setStoredAnuncios] = React.useState<Anuncio[]>([])
+  const [textoFiltro, setTextoFiltro] = React.useState("");
+  const [filteredProducts, setFilteredProducts] = React.useState<Anuncio[]>([]); // Produtos filtrados
+    
 const router = useRouter();
   React.useEffect(() => {
     const storedAnuncios = localStorage.getItem("anuncios");
@@ -49,49 +54,80 @@ const router = useRouter();
       setOpenModal(true)
     }
   }, []);
+
+   React.useEffect(() => {
+      // Atualiza os produtos filtrados sempre que os filtros ou os produtos mudarem
+      const filtered = storedAnuncios.filter((product) => {
+        const matchText =
+          product.titulo.toLowerCase().includes(textoFiltro.toLowerCase()) 
+
+        return matchText;
+      });
+      setFilteredProducts(filtered);
+    }, [storedAnuncios, textoFiltro]);
  
-  console.log('storedAnuncios', storedAnuncios)
+    const produtosFiltrados = storedAnuncios.filter((produto) =>
+      produto.titulo.toLowerCase().includes(textoFiltro.toLowerCase())
+     
+    );
     return (
         <>
            <Head>
             <title>Hubeefive - Anúncios</title>
         </Head>
+        <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={6} sx={{ mb: 4 }}>
+          <Grid item>
+            <Button variant="contained" color="primary" onClick={() => router.push("/anuncios/criar-anuncio")}>
+            Criar anuncio
+            </Button>
+          </Grid>
+      </Grid>
         <Container >
-
-        <Grid item>
-           <Button variant="contained" color="primary" onClick={() => router.push("/anuncios/criar-anuncio")}>
-          Criar anuncio
-          </Button>
-        </Grid>
-        {storedAnuncios.map((e, index) => (
-    <Paper
-      key={index}
-      style={{
-        padding: 16,
+          <Grid display={'flex'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+          mb={2}
+          >
+          
+        <FiltroTexto
+            label="Filtrar por título ou SKU"
+            value={textoFiltro}
+            onChange={setTextoFiltro}
+          />
+          <Typography  variant="body1" component={'p'}>Total de anúncios : <strong> {produtosFiltrados.length}</strong></Typography>
+          </Grid>
        
-        marginBottom: 16,
-      }}
-    >
-      <Typography variant="h3" component="h2">
-        <Link href={`/anuncios/${e.slug}`}> {e.titulo} </Link>
-      </Typography>
+        {produtosFiltrados.map((e, index) => (
+            <Paper
+              key={index}
+              style={{
+                padding: 16,
+              
+                marginBottom: 16,
+              }}
+            >
+              <Box display={'flex'} alignItems={'center'}><Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"}/>
+              <Typography variant="h3" component="h2">
+                <Link href={`/anuncios/${e.slug}`}> {e.titulo} </Link>
+              </Typography></Box>
+              
 
-      {/* Renderiza os produtos */}
-      <Typography variant="body1" component="p">
-        <strong>Produtos:</strong>
-      </Typography>
-      {e.produtos?.map((produto: { titulo: string; sku: string }, idx: number) => (
-        <Typography key={idx} variant="body2" component="p">
-          {`- ${produto.titulo} (SKU: ${produto.sku})`}
-        </Typography>
-      ))}
+              {/* Renderiza os produtos */}
+              <Typography variant="body1" component="p">
+                <strong>Produtos:</strong>
+              </Typography>
+              {e.produtos?.map((produto: { titulo: string; sku: string }, idx: number) => (
+                <Typography key={idx} variant="body2" component="p">
+                  {`- ${produto.titulo} (SKU: ${produto.sku})`}
+                </Typography>
+              ))}
 
-      {/* Renderiza os marketing places */}
-      <Typography variant="body1" component="p">
-        <strong>🔗</strong> {e.marketingPlaces?.join(", ")}
-      </Typography>
-    </Paper>
-  ))}
+              {/* Renderiza os marketing places */}
+              <Typography variant="body1" component="p">
+                <strong>🔗</strong> {e.marketingPlaces?.join(", ")}
+              </Typography>
+            </Paper>
+          ))}
         </Container>
 
      
