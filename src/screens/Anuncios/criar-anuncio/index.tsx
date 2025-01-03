@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, Chip, Container, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import Bread from "../../../components/Breadcrumbs";
 import React from "react";
@@ -7,6 +7,7 @@ import mockMarketingPlaces from "../../../mock/marketingPlacesSelecionar.json";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -18,12 +19,12 @@ interface TabPanelProps {
 }
 function generateSlug(titulo) {
     return titulo
-      .toLowerCase() // Converte para minúsculas
-      .trim() // Remove espaços extras nas extremidades
-      .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
-      .replace(/\s+/g, '-') // Substitui espaços por hífens
-      .replace(/-+/g, '-'); // Remove hífens repetidos
-  }
+        .toLowerCase() // Converte para minúsculas
+        .trim() // Remove espaços extras nas extremidades
+        .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
+        .replace(/\s+/g, '-') // Substitui espaços por hífens
+        .replace(/-+/g, '-'); // Remove hífens repetidos
+}
 function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 
@@ -57,10 +58,11 @@ export default function CriarAnuncio() {
     const [selectedProductIds, setSelectedProductIds] = React.useState<number[]>([]);
     const [newAnuncio, setNewAnuncio] = React.useState({
         titulo: "",
-        slug:"",
+        slug: "",
         marketingPlaces: [] as string[],
         produto: [] as { titulo: string; sku: string }[],
     });
+    const [produtoSelecionado, setProdutoSelecionado] = React.useState([]);
 
     const nav = {
         principal: "anuncios",
@@ -84,6 +86,7 @@ export default function CriarAnuncio() {
         });
     };
     const handleProductChange = (selectedProducts: Product[]) => {
+
         const formattedProducts = selectedProducts?.map((product) => ({
             titulo: product.titulo,
             sku: product.sku,
@@ -92,6 +95,7 @@ export default function CriarAnuncio() {
             ...prev,
             produtos: formattedProducts,
         }));
+        setProdutoSelecionado(selectedProducts)
     };
 
     const handleSaveAnnouncement = () => {
@@ -100,89 +104,227 @@ export default function CriarAnuncio() {
         router.back()
         alert("Anúncio salvo com sucesso!");
     };
+
+    console.log('produtoSelecionado', produtoSelecionado)
     return (
         <>
             <Head>
                 <title>Hubeefive - Criar anuncio</title>
             </Head>
-            <Container >
+            <Container sx={{ padding: '30px 0' }} >
                 <Bread nav={nav} />
                 <Typography variant="h4" gutterBottom>
                     Criar Anuncio
                 </Typography>
-                <Grid item xs={6}>
-                    <TextField
-                        label="Titulo do anuncio"
-                        type="text"
-                        fullWidth
-                        value={newAnuncio.titulo}
-                        onChange={(e) => handleChange("titulo", e.target.value)}
-                    />
-                </Grid>
-                <Grid item xs={6}>
-                    <Autocomplete
-                        multiple
-                        id="checkboxes-tags-demo"
-                        options={marketingPlaces}
-                        disableCloseOnSelect
-                        onChange={(event, value) => handleChange("marketingPlaces", value.map((place) => place.title))}
-                        getOptionLabel={(option) => option.title}
-                        renderOption={(props, option, { selected }) => {
-                            const { key, ...optionProps } = props;
-                            return (
-                                <li key={key} {...optionProps}>
-                                    <Checkbox
-                                        icon={icon}
-                                        checkedIcon={checkedIcon}
-                                        style={{ marginRight: 8 }}
-                                        checked={selected}
-                                    />
-                                    {option.title}
-                                </li>
-                            );
-                        }}
-                        style={{ width: 500 }}
-                        renderInput={(params) => (
-                            <TextField {...params} label="Marketing places" placeholder="Selecione... " />
-                        )}
-                    />
+                <Grid container spacing={2}>
+
+
+                    <Grid item xs={8}>
+                        <TextField
+                            label="Titulo do anuncio"
+                            type="text"
+                            fullWidth
+                            value={newAnuncio.titulo}
+                            onChange={(e) => handleChange("titulo", e.target.value)}
+                        />
+                    </Grid>
+                    <Grid item xs={6}>
+                        <Autocomplete
+                            multiple
+                            id="checkboxes-tags-demo"
+                            options={marketingPlaces}
+                            disableCloseOnSelect
+                            onChange={(event, value) => handleChange("marketingPlaces", value.map((place) => place.title))}
+                            getOptionLabel={(option) => option.title}
+                            renderOption={(props, option, { selected }) => {
+                                const { key, ...optionProps } = props;
+                                return (
+                                    <li key={key} {...optionProps}>
+                                        <Checkbox
+                                            icon={icon}
+                                            checkedIcon={checkedIcon}
+                                            style={{ marginRight: 8 }}
+                                            checked={selected}
+                                        />
+                                        {option.title}
+                                    </li>
+                                );
+                            }}
+                            style={{ width: 500 }}
+                            renderInput={(params) => (
+                                <TextField {...params} label="Marketing places" placeholder="Selecione... " />
+                            )}
+                        />
+                    </Grid>
+
+                    <Grid item xs={6}>
+                        <Autocomplete
+                            freeSolo
+                            options={products}
+                            getOptionLabel={(option) => (typeof option === "string" ? option : option.titulo)}
+                            onChange={(event, value) => {
+                                if (value && typeof value !== "string") {
+                                    handleProductChange([value]); // Adiciona o produto selecionado
+                                }
+                            }}
+                            onInputChange={(event, value) => {
+                                const matchingProduct = products.find((product) => product.titulo === value);
+                                if (matchingProduct) {
+                                    handleProductChange([matchingProduct]); // Adiciona o produto ao encontrar no input
+                                }
+                            }}
+                            renderInput={(params) => <TextField {...params} label="Produto" />}
+                        />
+                    </Grid>
                 </Grid>
 
-                <Grid item xs={6}>
-                    <Autocomplete
-                        freeSolo
-                        options={products}
-                        getOptionLabel={(option) => (typeof option === "string" ? option : option.titulo)}
-                        onChange={(event, value) => {
-                            if (value && typeof value !== "string") {
-                                handleProductChange([value]); // Adiciona o produto selecionado
-                            }
-                        }}
-                        onInputChange={(event, value) => {
-                            const matchingProduct = products.find((product) => product.titulo === value);
-                            if (matchingProduct) {
-                                handleProductChange([matchingProduct]); // Adiciona o produto ao encontrar no input
-                            }
-                        }}
-                        renderInput={(params) => <TextField {...params} label="Produto" />}
-                    />
+                <Divider sx={{ m: 2 }} />
+                {/* Ficha tecnina com produto  */}
+
+                <Grid container spacing={2}>
+                    <Grid item xs={12} textAlign={'center'}>
+                        <Typography variant="h4" component={'h2'}>Informações do produto</Typography>
+                    </Grid>
+                    <Grid item xs={2} textAlign={'center'}>
+                        <Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"} />
+                    </Grid>
+
+                    {produtoSelecionado.map((product) => (
+                        <>
+                            <Grid item xs={10} display={'grid'} alignItems={'center'}>
+                                <TextField
+                                    label="Titulo do anuncio"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.titulo}
+                                  
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="SKU"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.sku}
+                                  
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="EAN"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.ean}
+                                    
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Marca"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.marca}
+                                    
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Modelo"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.modelo}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Unidade"
+                                    type="text"
+                                    fullWidth
+                                    disabled
+                                    value={product?.unidade}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="Estoque total"
+                                    type="number"
+                                    fullWidth
+                                    disabled
+                                    value={product?.estoque}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    label="altura"
+                                    type="number"
+                                    fullWidth
+                                    disabled
+                                    value={product?.altura}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    label="largura"
+                                    type="number"
+                                    fullWidth
+                                    disabled
+                                    value={product?.largura}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={4}>
+                                <TextField
+                                    label="Profundidade"
+                                    type="number"
+                                    fullWidth
+                                    disabled
+                                    value={product?.profundidade}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={6}>
+                                <TextField
+                                    label="peso"
+                                    type="number"
+                                    fullWidth
+                                    disabled
+                                    value={product?.pesoLiquido}
+                                   
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    label="Descrição"
+                                    type="text"
+                                    fullWidth
+                                    multiline
+                                    disabled
+                                    value={product?.descricao}
+                                   
+                                />
+                            </Grid>
+                        </>
+                    ))}
+
                 </Grid>
+
                 <Button variant="contained" color="primary" onClick={handleSaveAnnouncement}>
                     Salvar Anúncio
                 </Button>
 
             </Container>
-            {/* Ficha tecnina com produto  */}
 
 
         </>
     )
 }
 
-// const marketingPlaces = [
-//     { title: 'Mercado livre', logo: '/marketingplaces/mercadoLivre.png', alt: 'Mercado Livre' },
-//     { title: 'Shopee', src: "/marketingplaces/shopee.png", alt: "Shopee" },
-//     { title: 'Magalu', src: "/marketingplaces/magalu.png", alt: "Magalu" },
-//     { title: 'Americanas', src: "/marketingplaces/americanas.png", alt: "Americanas" },
-//     { title: 'Amazon', src: "/marketingplaces/amazon.png", alt: "Amazon" }
-// ]
