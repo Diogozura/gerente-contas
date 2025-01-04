@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormHelperText, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import Bread from "../../../components/Breadcrumbs";
 import React from "react";
@@ -85,27 +85,46 @@ export default function CriarAnuncio() {
             return updatedAnuncio;
         });
     };
-    const handleProductChange = (selectedProducts: Product[]) => {
+    const [errors, setErrors] = React.useState({ titulo: false, marketingPlaces: false, produto: false });
 
-        const formattedProducts = selectedProducts?.map((product) => ({
+    const handleProductChange = (selectedProducts: Product[]) => {
+        const formattedProducts = selectedProducts.map((product) => ({
             titulo: product.titulo,
             sku: product.sku,
         }));
+
+        setProdutoSelecionado(selectedProducts);
         setNewAnuncio((prev) => ({
             ...prev,
-            produtos: formattedProducts,
+            produto: formattedProducts,
         }));
-        setProdutoSelecionado(selectedProducts)
     };
 
+
+    // Verifica se todos os campos obrigatórios estão preenchidos
+
+    console.log('marketingPlaces', newAnuncio.marketingPlaces.length)
+    console.log('produtoSelecionado', produtoSelecionado.length)
     const handleSaveAnnouncement = () => {
+        const isTituloValid = newAnuncio.titulo.trim() !== "";
+        const isMarketingPlacesValid = newAnuncio.marketingPlaces.length > 0 ;
+        const isProductValid = produtoSelecionado.length >= 1 ;
+
+        setErrors({
+            titulo: !isTituloValid,
+            marketingPlaces: !isMarketingPlacesValid,
+            produto: !isProductValid,
+        });
+
+        if (!isTituloValid || !isMarketingPlacesValid || !isProductValid) {
+            return; // Impede a submissão se houver erro
+        }
         const storedAnnouncements = JSON.parse(localStorage.getItem("anuncios") || "[]");
         localStorage.setItem("anuncios", JSON.stringify([...storedAnnouncements, newAnuncio]));
         router.back()
+        // Salvar anúncio (lógica de salvamento aqui)
         alert("Anúncio salvo com sucesso!");
     };
-
-    console.log('produtoSelecionado', produtoSelecionado)
     return (
         <>
             <Head>
@@ -120,61 +139,61 @@ export default function CriarAnuncio() {
 
 
                     <Grid item xs={8}>
-                        <TextField
-                            label="Titulo do anuncio"
-                            type="text"
-                            fullWidth
-                            value={newAnuncio.titulo}
-                            onChange={(e) => handleChange("titulo", e.target.value)}
-                        />
+                        <FormControl fullWidth error={errors.titulo} sx={{ marginBottom: 2 }}>
+                            <TextField
+                                label="Título do Anúncio"
+                                value={newAnuncio.titulo}
+                                onChange={(e) => handleChange("titulo", e.target.value)}
+                            />
+                            {errors.titulo && <FormHelperText>O título é obrigatório.</FormHelperText>}
+                        </FormControl>
                     </Grid>
                     <Grid item xs={6}>
-                        <Autocomplete
-                            multiple
-                            id="checkboxes-tags-demo"
-                            options={marketingPlaces}
-                            disableCloseOnSelect
-                            onChange={(event, value) => handleChange("marketingPlaces", value.map((place) => place.title))}
-                            getOptionLabel={(option) => option.title}
-                            renderOption={(props, option, { selected }) => {
-                                const { key, ...optionProps } = props;
-                                return (
-                                    <li key={key} {...optionProps}>
-                                        <Checkbox
-                                            icon={icon}
-                                            checkedIcon={checkedIcon}
-                                            style={{ marginRight: 8 }}
-                                            checked={selected}
-                                        />
-                                        {option.title}
-                                    </li>
-                                );
-                            }}
-                            style={{ width: 500 }}
-                            renderInput={(params) => (
-                                <TextField {...params} label="Marketing places" placeholder="Selecione... " />
-                            )}
-                        />
+                        <FormControl fullWidth error={errors.marketingPlaces} sx={{ marginBottom: 2 }}>
+                            <Autocomplete
+                                multiple
+                                id="checkboxes-tags-demo"
+                                options={marketingPlaces}
+                                disableCloseOnSelect
+                                onChange={(event, value) => handleChange("marketingPlaces", value.map((place) => place.title))}
+                                getOptionLabel={(option) => option.title}
+                                renderOption={(props, option, { selected }) => {
+                                    const { key, ...optionProps } = props;
+                                    return (
+                                        <li key={key} {...optionProps}>
+                                            <Checkbox
+                                                icon={icon}
+                                                checkedIcon={checkedIcon}
+                                                style={{ marginRight: 8 }}
+                                                checked={selected}
+                                            />
+                                            {option.title}
+                                        </li>
+                                    );
+                                }}
+                                style={{ width: 500 }}
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Marketing places" placeholder="Selecione... "  error={errors.marketingPlaces} helperText={errors.marketingPlaces && "Selecione pelo menos um marketing place."}/>
+                                )}
+                            />
+                        </FormControl>
                     </Grid>
 
                     <Grid item xs={6}>
-                        <Autocomplete
-                            freeSolo
-                            options={products}
-                            getOptionLabel={(option) => (typeof option === "string" ? option : option.titulo)}
-                            onChange={(event, value) => {
-                                if (value && typeof value !== "string") {
-                                    handleProductChange([value]); // Adiciona o produto selecionado
-                                }
-                            }}
-                            onInputChange={(event, value) => {
-                                const matchingProduct = products.find((product) => product.titulo === value);
-                                if (matchingProduct) {
-                                    handleProductChange([matchingProduct]); // Adiciona o produto ao encontrar no input
-                                }
-                            }}
-                            renderInput={(params) => <TextField {...params} label="Produto" />}
-                        />
+                        <FormControl fullWidth error={errors.produto} sx={{ marginBottom: 2 }}>
+                            <Autocomplete
+                                value={produtoSelecionado[0] || null}
+                                options={products}
+                                getOptionLabel={(option) => option.titulo || ""}
+                                onChange={(event, value) => {
+                                    if (value) handleProductChange([value]);
+                                }}
+                                renderInput={(params) => (
+                                    <TextField {...params} label="Produto" error={errors.produto} helperText={errors.produto && "Selecione pelo menos um produto."} />
+                                )}
+                            />
+                            
+                        </FormControl>
                     </Grid>
                 </Grid>
 
@@ -198,7 +217,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.titulo}
-                                  
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -208,7 +227,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.sku}
-                                  
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -218,7 +237,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.ean}
-                                    
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -228,7 +247,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.marca}
-                                    
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -238,7 +257,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.modelo}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -248,7 +267,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.unidade}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -258,7 +277,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.estoque}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -268,7 +287,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.altura}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -278,7 +297,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.largura}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={4}>
@@ -288,7 +307,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.profundidade}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={6}>
@@ -298,7 +317,7 @@ export default function CriarAnuncio() {
                                     fullWidth
                                     disabled
                                     value={product?.pesoLiquido}
-                                   
+
                                 />
                             </Grid>
                             <Grid item xs={12}>
@@ -309,7 +328,7 @@ export default function CriarAnuncio() {
                                     multiline
                                     disabled
                                     value={product?.descricao}
-                                   
+
                                 />
                             </Grid>
                         </>
@@ -317,7 +336,12 @@ export default function CriarAnuncio() {
 
                 </Grid>
 
-                <Button variant="contained" color="primary" onClick={handleSaveAnnouncement}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSaveAnnouncement}
+                   
+                >
                     Salvar Anúncio
                 </Button>
 

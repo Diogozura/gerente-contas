@@ -12,6 +12,7 @@ import ListaDeNotificacao from "./listaNotificações";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import FiltroTexto from "../../components/common/FiltroText";
+import { Delete } from "@mui/icons-material";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -36,7 +37,7 @@ import FiltroTexto from "../../components/common/FiltroText";
 interface Anuncio {
   titulo: string;
   slug: string;
-  produtos: [];
+  produto: [];
   marketingPlaces: [];
 }
 export default function Dashboard(props) {
@@ -70,6 +71,13 @@ const router = useRouter();
       produto.titulo.toLowerCase().includes(textoFiltro.toLowerCase())
      
     );
+    const handleDelete = (slug: string) => {
+      const updatedAnuncios = storedAnuncios.filter((anuncio) => anuncio.slug !== slug);
+      setStoredAnuncios(updatedAnuncios); // Atualiza o estado
+      localStorage.setItem("anuncios", JSON.stringify(updatedAnuncios)); // Atualiza o localStorage
+    };
+
+    console.log('produtosFiltrados', produtosFiltrados.map((e)=> e?.produto))
     return (
         <>
            <Head>
@@ -102,23 +110,26 @@ const router = useRouter();
               key={index}
               style={{
                 padding: 16,
-              
+                display:'flex',
+                justifyContent:'space-between',
+                alignItems:'center',
                 marginBottom: 16,
               }}
             >
-              <Box display={'flex'} alignItems={'center'}><Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"}/>
-              <Typography variant="h3" component="h2">
+              <Box>
+              <Box display={'flex'} alignItems={'center'}>
+                <Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"}/>
+                <Typography variant="h3" component="h2">
                 <Link href={`/anuncios/${e.slug}`}> {e.titulo} </Link>
               </Typography></Box>
-              
-
+              <Box>
               {/* Renderiza os produtos */}
               <Typography variant="body1" component="p">
                 <strong>Produtos:</strong>
               </Typography>
-              {e.produtos?.map((produto: { titulo: string; sku: string }, idx: number) => (
+              {e.produto?.map((produtos: { titulo: string; sku: string }, idx: number) => (
                 <Typography key={idx} variant="body2" component="p">
-                  {`- ${produto.titulo} (SKU: ${produto.sku})`}
+                  {`- ${produtos.titulo} (SKU: ${produtos.sku})`}
                 </Typography>
               ))}
 
@@ -126,6 +137,25 @@ const router = useRouter();
               <Typography variant="body1" component="p">
                 <strong>🔗</strong> {e.marketingPlaces?.join(", ")}
               </Typography>
+              </Box>
+             
+
+           
+             
+              
+
+              </Box>
+              <Box>
+              <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDelete(e.slug)}
+            sx={{ m: 1 }}
+          >
+            <Delete color="action"/>
+          </Button>
+              </Box>
+              
             </Paper>
           ))}
         </Container>
