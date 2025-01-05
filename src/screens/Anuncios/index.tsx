@@ -5,7 +5,7 @@ import Link from "next/link";
 import { authService } from "../../services/auth/authService";
 import CustomModal from "../../components/common/CustomModal";
 import { requireAuthentication } from "../../helpers/auth";
-import LineChart from "../../components/charts/LineChart";
+import LineChart from "../../components/ui/charts/LineChart";
 import {  Box, Button, Container, Divider, Grid, Modal, Paper, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import ListaDeNotificacao from "./listaNotificações";

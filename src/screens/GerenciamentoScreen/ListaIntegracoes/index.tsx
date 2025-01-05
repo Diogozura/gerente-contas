@@ -5,8 +5,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
 import React, { useState } from "react";
-import CustomModal from "../../../components/CustomModal";
-import { ModalVinculo } from "../../../components/Modal";
+import CustomModal from "../../../components/ui/CustomModal";
+import { ModalVinculo } from "../../../components/ui/Modal";
 
 export default function ListaIntegracao({ dadosIntegracao }) {
   const [editIndex, setEditIndex] = useState<number | null>(null);

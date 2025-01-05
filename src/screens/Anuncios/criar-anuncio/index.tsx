@@ -1,6 +1,6 @@
 import { Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormHelperText, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
 import Head from "next/head";
-import Bread from "../../../components/Breadcrumbs";
+import Bread from "../../../components/ui/Breadcrumbs";
 import React from "react";
 import mockMarketingPlaces from "../../../mock/marketingPlacesSelecionar.json";
 
@@ -199,7 +199,6 @@ export default function CriarAnuncio() {
 
                 <Divider sx={{ m: 2 }} />
                 {/* Ficha tecnina com produto  */}
-
                 <Grid container spacing={2}>
                     <Grid item xs={12} textAlign={'center'}>
                         <Typography variant="h4" component={'h2'}>Informações do produto</Typography>

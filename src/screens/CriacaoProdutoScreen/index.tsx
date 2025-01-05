@@ -28,7 +28,7 @@ import {
   AccordionActions,
   IconButton,
 } from "@mui/material";
-import Bread from "../../components/Breadcrumbs";
+import Bread from "../../components/ui/Breadcrumbs";
 // import Swiper from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";

@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Container, Typography, Box, TextField, Button, Grid } from "@mui/material";
-import Bread from "../../src/components/Breadcrumbs";
+import Bread from "../../src/components/ui/Breadcrumbs";
+import DetalhesProduto from "../../src/components/forms/DetalhesProduto";
 
 interface Product {
   slug: string | string[];
@@ -80,6 +81,7 @@ export default function ProductDetail() {
       <Box>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
+            <DetalhesProduto/>
             <TextField
               label="Título"
               value={product.titulo}

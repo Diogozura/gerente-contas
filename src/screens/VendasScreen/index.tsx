@@ -4,7 +4,7 @@ import Link from "next/link";
 import { authService } from "../../services/auth/authService"; // Assuming authentication service
 import CustomModal from "../../components/common/CustomModal";
 // import { requireAuthentication } (../../helpers/auth"); // Assuming authentication helper
-import LineChart from "../../components/charts/LineChart"; // Assuming LineChart component
+import LineChart from "../../components/ui/charts/LineChart"; // Assuming LineChart component
 import { Box, Container, Divider, Grid, Paper, Typography } from "@mui/material";
 import Head from "next/head";
 import vendas from "../../mock/vendas.json"; // Replace with your data source

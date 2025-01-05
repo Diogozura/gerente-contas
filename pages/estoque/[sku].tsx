@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Container, Typography, Box, TextField, Button, Grid } from "@mui/material";
-import Bread from "../../src/components/Breadcrumbs";
+import Bread from "../../src/components/ui/Breadcrumbs";
 
 interface Product {
   id: number;
