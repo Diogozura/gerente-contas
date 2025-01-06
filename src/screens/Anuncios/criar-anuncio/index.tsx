@@ -3,20 +3,23 @@ import Head from "next/head";
 import Bread from "../../../components/ui/Breadcrumbs";
 import React from "react";
 import mockMarketingPlaces from "../../../mock/marketingPlacesSelecionar.json";
-
+import { Product } from "@/types/product";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { useRouter } from "next/router";
 import Image from "next/image";
+import { TabPanelProps } from "@/types/tabPanelProps";
+import DetalhesAnuncio from "@/components/forms/DetalhesAnuncio";
+import DetalhesProduto from "@/components/forms/DetalhesProduto";
+import Garantia from "@/components/forms/Garantia";
+import ListaPreco from "@/components/forms/ListaPreco";
+import Tributacao from "@/components/forms/Tributacao";
+import Estoque from "@/components/forms/Estoque";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
-interface TabPanelProps {
-    children?: React.ReactNode;
-    index: number;
-    value: number;
-}
+
 function generateSlug(titulo) {
     return titulo
         .toLowerCase() // Converte para minúsculas
@@ -40,15 +43,7 @@ function TabPanel(props: TabPanelProps) {
         </div>
     );
 }
-interface Product {
-    id: number;
-    titulo: string;
-    sku: string;
-    estoque: number;
-    estoqueCd: number;
-    estoqueMin: number;
-    estoqueCdMin: number;
-}
+
 export default function CriarAnuncio() {
     const router = useRouter()
 
@@ -103,8 +98,7 @@ export default function CriarAnuncio() {
 
     // Verifica se todos os campos obrigatórios estão preenchidos
 
-    console.log('marketingPlaces', newAnuncio.marketingPlaces.length)
-    console.log('produtoSelecionado', produtoSelecionado.length)
+   
     const handleSaveAnnouncement = () => {
         const isTituloValid = newAnuncio.titulo.trim() !== "";
         const isMarketingPlacesValid = newAnuncio.marketingPlaces.length > 0 ;
@@ -135,6 +129,7 @@ export default function CriarAnuncio() {
                 <Typography variant="h4" gutterBottom>
                     Criar Anuncio
                 </Typography>
+          
                 <Grid container spacing={2}>
 
 
@@ -339,7 +334,7 @@ export default function CriarAnuncio() {
                     variant="contained"
                     color="primary"
                     onClick={handleSaveAnnouncement}
-                   
+                    
                 >
                     Salvar Anúncio
                 </Button>

@@ -11,6 +11,13 @@ import vendas from "../../mock/vendas.json"; // Replace with your data source
 import Image from "next/image";
 import moment from "moment";
 import SimularVenda from "./simuladoVenda";
+import DetalhesAnuncio from "@/components/forms/DetalhesAnuncio";
+import DetalhesProduto from "@/components/forms/DetalhesProduto";
+
+import Garantia from "@/components/forms/Garantia";
+import ListaPreco from "@/components/forms/ListaPreco";
+import Tributacao from "@/components/forms/Tributacao";
+import Estoque from '@/components/forms/Estoque';
 
 // ... (rest of your imports)
 
@@ -30,17 +37,17 @@ export default function Vendas({ data }) {
     <Container maxWidth="lg" sx={{ p: 5, borderRadius: "10px" }}>
       <Box bgcolor="#f4f4f4" padding={10}>
         <Typography variant="h3" component="h2" textTransform="uppercase" textAlign="center">
-          NOTIFICAÇÕES de vendas 
+          NOTIFICAÇÕES de vendas
         </Typography>
         <Typography variant="body1" component="p" textAlign="center">
           Vá até o marketplace para seguir com a venda
         </Typography>
-        <SimularVenda/>
+        <SimularVenda />
         {vendasUltimas24h.length === 0 ? (
           <Typography variant="body1" textAlign="center">
             Não houve vendas nas últimas 24 horas.
           </Typography>
-          
+
         ) : (
           vendasUltimas24h.map((item) => (
             <Paper key={item.id} elevation={1} sx={{ p: 3, mb: 2 }}>
@@ -49,13 +56,13 @@ export default function Vendas({ data }) {
                   <Image src={item.img} alt={item.titulo} width={100} height={46} style={{ objectFit: "contain" }} />
                 </Grid>
                 <Grid item xs={7}>
-                   {item.descricao} / {item.sku}
+                  {item.descricao} / {item.sku}
                 </Grid>
                 <Grid item xs={3}>
                   <Typography variant="body2" component="p">
                     Vendido há {moment(item.data).fromNow()}
                   </Typography>
-                  
+
                 </Grid>
               </Grid>
             </Paper>
@@ -63,6 +70,23 @@ export default function Vendas({ data }) {
         )}
       </Box>
       <Divider />
+      <Typography>Detalhes Anuncios</Typography>
+      <DetalhesAnuncio view={false} />
+      <Divider sx={{ m: 5 }} />
+      <Typography>Detalhes Produto</Typography>
+      <DetalhesProduto view={false} />
+      <Divider sx={{ m: 5 }} />
+      <Typography>Detalhes Estoque</Typography>
+      <Estoque view={false} />
+      <Divider sx={{ m: 5 }} />
+      <Typography>Detalhes Garantia</Typography>
+      <Garantia view={false} />
+      <Divider sx={{ m: 5 }} />
+      <Typography>Detalhes Lista preços</Typography>
+      <ListaPreco view={false} />
+      <Divider sx={{ m: 5 }} />
+      <Typography>Detalhes Tributação</Typography>
+      <Tributacao view={false} />
       {/* Rest of your content... */}
     </Container>
   );

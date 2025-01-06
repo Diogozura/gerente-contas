@@ -2,3 +2,6 @@ a {
     color: inherit; /* Herda a cor do pai (normalmente o tema primary) */
     text-decoration: none; /* Remove o underline padrão */
   }
+  a:hover {
+    text-decoration: underline; /* Remove o underline padrão */
+  }

@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import FiltroTexto from "../../components/common/FiltroText";
 import { Delete } from "@mui/icons-material";
+import { Anuncio } from "@/types/anuncio";
 
 
 // export const getServerSideProps = requireAuthentication(async (ctx) => {
@@ -34,12 +35,7 @@ import { Delete } from "@mui/icons-material";
 //   //   };
 //   // }
 // });
-interface Anuncio {
-  titulo: string;
-  slug: string;
-  produto: [];
-  marketingPlaces: [];
-}
+
 export default function Dashboard(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [storedAnuncios, setStoredAnuncios] = React.useState<Anuncio[]>([])
@@ -90,7 +86,7 @@ const router = useRouter();
             </Button>
           </Grid>
       </Grid>
-        <Container >
+        <Container>
           <Grid display={'flex'}
           alignItems={'center'}
           justifyContent={'space-between'}
@@ -119,8 +115,8 @@ const router = useRouter();
               <Box>
               <Box display={'flex'} alignItems={'center'}>
                 <Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"}/>
-                <Typography variant="h3" component="h2">
-                <Link href={`/anuncios/${e.slug}`}> {e.titulo} </Link>
+                <Typography variant="h3" component="h2" color={'primary'}>
+                <Link href={`/anuncios/${e.slug}`} > {e.titulo} </Link>
               </Typography></Box>
               <Box>
               {/* Renderiza os produtos */}
@@ -148,11 +144,11 @@ const router = useRouter();
               <Box>
               <Button
             variant="contained"
-            color="error"
+           color="inherit"
             onClick={() => handleDelete(e.slug)}
             sx={{ m: 1 }}
           >
-            <Delete color="action"/>
+            <Delete />
           </Button>
               </Box>
               

@@ -28,7 +28,7 @@ interface Product {
   estoqueCdMin: number;
 }
 
-export default function Estoque() {
+export default function Estoque({view}) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Produtos filtrados
   const [selectedIds, setSelectedIds] = useState<number[]>([]);

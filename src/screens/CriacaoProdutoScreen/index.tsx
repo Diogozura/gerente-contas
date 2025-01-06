@@ -38,12 +38,9 @@ import Image from "next/image";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import InputMoney from "../../components/common/InputMoney";
+import { TabPanelProps } from "@/types/tabPanelProps";
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
+
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -466,11 +463,9 @@ export default function CriacaoProduto() {
                       <Grid item xs={4}>
                         <InputMoney
                           label="Preço Mínimo"
-                          fullWidth
-                          value={precoMinimo}
-                          onChange={(newValue) => setPrecoMinimo(newValue)}
+                          name="PrecoMinimo"
                         />
-
+                  
                       </Grid>
                       <Grid item xs={2}>
                         <Button variant="contained" onClick={adicionarListaPreco}>

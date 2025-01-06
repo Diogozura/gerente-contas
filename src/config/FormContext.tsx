@@ -1,22 +1,27 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
+// Tipos para valores do formulário
 interface FormContextProps {
-  formValues: { [key: string]: any };
-  setFormValues: (formName: string, values: { [key: string]: any }) => void;
+  formValues: Record<string, Record<string, any>>; // Estrutura do tipo { formName: { key: value } }
+  setFormValues: (formName: string, values: Record<string, any>) => void; // Atualiza valores do formulário
 }
 
+// Tipos para valores monetários
 interface CurrencyContextProps {
   value: number; // Valor bruto
   formattedValue: string; // Valor formatado
-  setValue: (value: number) => void; // Função para atualizar o valor bruto
-  handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Função para lidar com mudanças
+  setValue: (value: number) => void; // Atualiza valor bruto
+  handleCurrencyChange: (event: React.ChangeEvent<HTMLInputElement>) => void; // Lida com mudanças no campo
 }
 
-interface CombinedContextProps extends FormContextProps, CurrencyContextProps {}
+// Combina os dois contextos
+type CombinedContextProps = FormContextProps & CurrencyContextProps;
 
+// Criação do Contexto
 const FormContext = createContext<CombinedContextProps | undefined>(undefined);
 
-export const useFormContext = () => {
+// Hook para usar o contexto
+export const useFormContext = (): CombinedContextProps => {
   const context = useContext(FormContext);
   if (!context) {
     throw new Error('useFormContext must be used within a FormProvider');
@@ -24,24 +29,25 @@ export const useFormContext = () => {
   return context;
 };
 
+// Provedor do Contexto
 export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  // Form Values
-  const [formValues, setFormValuesState] = useState<{ [key: string]: any }>({});
+  // Estado dos valores do formulário
+  const [formValues, setFormValuesState] = useState<Record<string, Record<string, any>>>({});
 
-  const setFormValues = (formName: string, values: { [key: string]: any }) => {
-    setFormValuesState((prevValues) => ({
-      ...prevValues,
+  const setFormValues = (formName: string, values: Record<string, any>) => {
+    setFormValuesState((prev) => ({
+      ...prev,
       [formName]: {
-        ...prevValues[formName],
+        ...prev[formName],
         ...values,
       },
     }));
   };
 
-  // Currency Values
-  const [value, setValue] = useState<number>(0); // Estado do valor bruto
+  // Estado dos valores monetários
+  const [value, setValue] = useState<number>(0);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
     const numericValue = rawValue ? parseFloat(rawValue) / 100 : 0; // Converte para decimal
     setValue(numericValue);
@@ -50,8 +56,9 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const formattedValue = value.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  }); // Valor formatado
+  });
 
+  // Provedor
   return (
     <FormContext.Provider
       value={{
@@ -60,7 +67,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         value,
         formattedValue,
         setValue,
-        handleChange,
+        handleCurrencyChange,
       }}
     >
       {children}

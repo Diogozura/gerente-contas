@@ -3,19 +3,29 @@ import { useEffect, useState } from "react";
 import { Container, Typography, Box, TextField, Button, Grid } from "@mui/material";
 import Bread from "../../src/components/ui/Breadcrumbs";
 import DetalhesProduto from "../../src/components/forms/DetalhesProduto";
+import { useFormContext } from "../../src/config/FormContext";
+
+
+interface ProdutoDetail {
+  titulo:string;
+  sku: string;
+  estoque: number;
+  estoqueCd: number;
+  // Adicione mais campos conforme necessário
+}
 
 interface Product {
   slug: string | string[];
   id: number;
   titulo: string;
-  sku: string;
-  estoque: number;
-  estoqueCd: number;
+  marketingPlaces: string[];
+  produto: ProdutoDetail[];
 }
 
 export default function ProductDetail() {
   const router = useRouter();
   const { slug } = router.query;
+  const {  setFormValues  } = useFormContext();
   const [product, setProduct] = useState<Product | null>(null);
   const [isEditable, setIsEditable] = useState(false); // Controla se o formulário é editável
 
@@ -33,7 +43,24 @@ export default function ProductDetail() {
       if (storedProducts) {
         const products: Product[] = JSON.parse(storedProducts);
         const foundProduct = products.find((p) => p?.slug === slug);
-        setProduct(foundProduct || null);
+        console.log('foundProduct', foundProduct)
+
+        if (foundProduct) {
+          setProduct(foundProduct);
+
+          // Pega o primeiro produto do array, ajustando conforme necessário
+          const produtoDetail: ProdutoDetail = foundProduct.produto?.[0] || { sku: "", titulo: "", estoque: 0, estoqueCd: 0 };
+
+
+          // Passa os dados para o contexto
+          setFormValues("meuFormulario", {
+            marketingPlaces: foundProduct.marketingPlaces || [],
+            sku: produtoDetail?.sku || "",
+            titulo: produtoDetail?.titulo || "",
+            estoque: produtoDetail?.estoque || 0,
+            estoqueCd: produtoDetail?.estoqueCd || 0,
+          });
+        }
       }
     }
   }, [slug]);
@@ -53,8 +80,7 @@ export default function ProductDetail() {
 
   const handleChange = (field: keyof Product, value: string | number) => {
     setProduct((prev) =>
-      prev
-        ? {
+      prev ? {
             ...prev,
             [field]: value,
           }
@@ -79,47 +105,8 @@ export default function ProductDetail() {
         Detalhes do Produto
       </Typography>
       <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <DetalhesProduto/>
-            <TextField
-              label="Título"
-              value={product.titulo}
-              fullWidth
-              onChange={(e) => handleChange("titulo", e.target.value)}
-              disabled={!isEditable} // Campo editável apenas se permitido
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="SKU"
-              value={product.sku}
-              fullWidth
-              onChange={(e) => handleChange("sku", e.target.value)}
-              disabled={!isEditable}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Estoque"
-              value={product.estoque}
-              fullWidth
-              type="number"
-              onChange={(e) => handleChange("estoque", parseInt(e.target.value, 10))}
-              disabled={!isEditable}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Estoque em CD"
-              value={product.estoqueCd}
-              fullWidth
-              type="number"
-              onChange={(e) => handleChange("estoqueCd", parseInt(e.target.value, 10))}
-              disabled={!isEditable}
-            />
-          </Grid>
-        </Grid>
+      <DetalhesProduto view={isEditable}/>
+       
         {isEditable && (
           <Button
             variant="contained"
