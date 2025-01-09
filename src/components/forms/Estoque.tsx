@@ -1,8 +1,6 @@
-import { Box, FormControl, FormControlLabel, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, OutlinedInput, Radio, RadioGroup, TextField, Tooltip, Typography } from '@mui/material';
+import { Grid,  TextField, Tooltip } from '@mui/material';
 import React from 'react';
-import MoneyInput from '../common/InputMoney';
-import { FormProvider, useFormContext } from '../../config/FormContext';
-import DeleteIcon from '@mui/icons-material/Delete';
+import {  useFormContext } from '../../config/FormContext';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 
@@ -14,7 +12,8 @@ export default function Estoque({ view }) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValues('estoque', { [name]: value }); // Atualiza valores dinamicamente
+    const numericValue = Math.max(0, Number(value));
+    setFormValues('estoque', { [name]: numericValue }); // Atualiza valores dinamicamente
   };
 
   return (
@@ -29,6 +28,10 @@ export default function Estoque({ view }) {
             disabled={view}
             value={formValues.estoque?.estoqueLocal || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -39,6 +42,10 @@ export default function Estoque({ view }) {
             fullWidth
             value={formValues.estoque?.estoqueMinimo || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -48,6 +55,10 @@ export default function Estoque({ view }) {
             fullWidth
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={6} display="flex" alignItems="center" gap={1}>
@@ -59,6 +70,10 @@ export default function Estoque({ view }) {
             disabled
             value={formValues.estoque?.crossdocking || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
 
             {/* Tooltip com ícone de informação */}
@@ -75,6 +90,10 @@ export default function Estoque({ view }) {
             disabled
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -84,6 +103,10 @@ export default function Estoque({ view }) {
             fullWidth
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -93,6 +116,10 @@ export default function Estoque({ view }) {
             fullWidth
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
         <Grid item xs={4}>
@@ -102,6 +129,10 @@ export default function Estoque({ view }) {
             fullWidth
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
+            InputProps={{
+              inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
+              style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
+            }}
           />
         </Grid>
       </Grid>

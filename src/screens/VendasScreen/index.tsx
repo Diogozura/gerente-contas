@@ -69,24 +69,8 @@ export default function Vendas({ data }) {
           ))
         )}
       </Box>
-      <Divider />
-      <Typography>Detalhes Anuncios</Typography>
-      <DetalhesAnuncio view={false} />
-      <Divider sx={{ m: 5 }} />
-      <Typography>Detalhes Produto</Typography>
-      <DetalhesProduto view={false} />
-      <Divider sx={{ m: 5 }} />
-      <Typography>Detalhes Estoque</Typography>
-      <Estoque view={false} />
-      <Divider sx={{ m: 5 }} />
-      <Typography>Detalhes Garantia</Typography>
-      <Garantia view={false} />
-      <Divider sx={{ m: 5 }} />
-      <Typography>Detalhes Lista preços</Typography>
-      <ListaPreco view={false} />
-      <Divider sx={{ m: 5 }} />
-      <Typography>Detalhes Tributação</Typography>
-      <Tributacao view={false} />
+
+    
       {/* Rest of your content... */}
     </Container>
   );

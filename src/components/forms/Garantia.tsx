@@ -1,20 +1,28 @@
-import { FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from '@mui/material';
+import { FormControl, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material';
 import React from 'react';
 import MoneyInput from '../common/InputMoney';
 import { FormProvider, useFormContext } from '../../config/FormContext';
 
 
 
-export default function Garantia({view}) {
-  const { formValues, setFormValues  } = useFormContext();
-
+export default function Garantia({ view }) {
+  const { formValues, setFormValues } = useFormContext();
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormValues('meuFormulario', { [name]: value }); // Atualiza valores dinamicamente
-  };
+        // Evita números negativos nos campos numéricos
+        const numericValue = e.target.type === "number" ? Math.max(0, Number(value)) : value;
 
+        setFormValues("garantia", { [name]: numericValue });
+ 
+  };
+  // Monitora mudanças no tipo de garantia
+  React.useEffect(() => {
+    if (formValues.garantia?.tipoGarantia === "semGarantia") {
+      setFormValues("garantia", { unidade: "", valor: "" });
+    }
+  }, [formValues.garantia?.tipoGarantia, setFormValues]);
   return (
     <>
       <Grid container spacing={2}>
@@ -27,113 +35,113 @@ export default function Garantia({view}) {
           <Typography>meu form: {JSON.stringify(formValues.meuFormulario || {})}</Typography>
         </Grid> */}
 
-        <Grid item xs={12}>
-        <TextField
-          label="Título"
-          name="titulo"
-          fullWidth
-          disabled={view}
-          value={formValues.meuFormulario?.titulo || ''}
-          required
-          onChange={handleInputChange}
-        />
-        </Grid>
 
-        <Grid item xs={4}>
-          <TextField
-            label="Código SKU"
-            name="sku"
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.sku || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Código EAN"
-            name="codigoEan"
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.codigoEan || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Unidade"
-            name='unidade'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.unidade || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
+        {/* Garantia  */}
+        <Grid item xs={6}>
+          <Typography variant="h6" gutterBottom>
+            Garantia
+          </Typography>
+          <FormControl component="fieldset">
+            <RadioGroup
+              name="tipoGarantia"
+              value={formValues.garantia?.tipoGarantia || ''}
+                onChange={handleInputChange}
+            >
+              <FormControlLabel
+                value="garantiaVendedor"
+                control={<Radio />}
+                label="Garantia do vendedor"
+              />
+              <TextField
+                label='Garantia do vendedor'
+                name="valor"
+                value={formValues.garantia?.valor || ''}
+                onChange={handleInputChange}
+                type="number"
+                variant="outlined"
+                disabled={view}
+                fullWidth
+                sx={{
+                  display:formValues.garantia?.tipoGarantia == 'garantiaVendedor' ? 'block': 'none'
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <TextField
+                      select
+                      name="unidade"
+                      value={formValues.garantia?.unidade || ''}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      disabled={view}
+                      sx={{
+                        width: 120, // Largura do seletor
+                        padding: 0, // Remove padding interno
 
-        <Grid item xs={4}>
-          <TextField
-            label="Altura (cm)"
-            type="number"
-            name='altura'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.altura || ''}
-            onChange={handleInputChange}
-          />
+                        '& .MuiOutlinedInput-root': {
+                          height: '100%', // Garante que o seletor preencha a altura do campo
+                          marginRight: '-14px', // Remove margem direita extra (herdada pelo adornment)
+                        },
+                      }}
+                    >
+                      <MenuItem value="Dias">Dias</MenuItem>
+                      <MenuItem value="Meses">Meses</MenuItem>
+                      <MenuItem value="Anos">Anos</MenuItem>
+                    </TextField>
+                  ),
+                }}
+              />
+              <FormControlLabel
+                value="garantiaFabrica"
+                control={<Radio />}
+                label="Garantia de fábrica"
+              />
+              <TextField
+                label='Garantia de fábrica'
+                name="valor"
+                value={formValues.garantia?.valor || ''}
+                onChange={handleInputChange}
+                type="number"
+                variant="outlined"
+                disabled={view}
+                fullWidth
+                sx={{
+                  display: formValues.garantia?.tipoGarantia == 'garantiaFabrica' ? 'block': 'none'
+                }}
+                InputProps={{
+                  endAdornment: (
+                    <TextField
+                      select
+                      name="unidade"
+                      value={formValues.garantia?.unidade || ''}
+                      onChange={handleInputChange}
+                      variant="outlined"
+                      disabled={view}
+                      sx={{
+                        width: 120, // Largura do seletor
+                        padding: 0, // Remove padding interno
+                        '& .MuiOutlinedInput-root': {
+                          height: '100%', // Garante que o seletor preencha a altura do campo
+                          marginRight: '-14px', // Remove margem direita extra (herdada pelo adornment)
+                        },
+                      }}
+                    >
+                      <MenuItem value="Dias">Dias</MenuItem>
+                      <MenuItem value="Meses">Meses</MenuItem>
+                      <MenuItem value="Anos">Anos</MenuItem>
+                    </TextField>
+                  ),
+                }}
+              />
+              <FormControlLabel
+                value="semGarantia"
+                control={<Radio />}
+                label="Sem garantia"
+              />
+
+            </RadioGroup>
+          </FormControl>
         </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Largura (cm)"
-            type="number"
-            name='largura'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.largura || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Profundidade (cm)"
-            type="number"
-            name='profundidade'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.profundidade || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Modelo"
-            name='modelo'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.modelo || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Marca"
-            name='marca'
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.marca || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <TextField
-            label="Peso Líquido (g)"
-            name='pesoLiquido'
-            type="number"
-            fullWidth
-            disabled={view}
-            value={formValues.meuFormulario?.pesoLiquido || ''}
-            onChange={handleInputChange}
-          />
-        </Grid>
+       
       </Grid>
 
     </>

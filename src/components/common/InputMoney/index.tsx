@@ -14,10 +14,10 @@ export default function MoneyInput({ label, name }: MoneyInputProps) {
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = event.target.value.replace(/\D/g, ''); // Remove caracteres não numéricos
     const numericValue = rawValue ? parseFloat(rawValue) / 100 : 0; // Converte para decimal
-    setFormValues('detalhesProduto', { [name]: numericValue }); // Atualiza apenas este campo no contexto
+    setFormValues('precos', { [name]: numericValue }); // Atualiza apenas este campo no contexto
   };
 
-  const formattedValue = formValues.detalhesProduto?.[name]?.toLocaleString('pt-BR', {
+  const formattedValue = formValues.precos?.[name]?.toLocaleString('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }) || '';
