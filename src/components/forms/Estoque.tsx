@@ -40,6 +40,7 @@ export default function Estoque({ view }) {
             name='estoqueMinimo'
             type="number"
             fullWidth
+            disabled={view}
             value={formValues.estoque?.estoqueMinimo || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -53,6 +54,7 @@ export default function Estoque({ view }) {
             label="Estoque Máximo"
             type="number"
             fullWidth
+            disabled={view}
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -67,7 +69,7 @@ export default function Estoque({ view }) {
             name='crossdocking'
             type="number"
             fullWidth
-            disabled
+            disabled={view}
             value={formValues.estoque?.crossdocking || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -87,7 +89,7 @@ export default function Estoque({ view }) {
             label="Localização"
             type="Text"
             fullWidth
-            disabled
+            disabled={view}
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -101,6 +103,7 @@ export default function Estoque({ view }) {
             label="Estoque em CD"
             type="number"
             fullWidth
+            disabled={view}
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -114,6 +117,7 @@ export default function Estoque({ view }) {
             label="Estoque Mínimo"
             type="number"
             fullWidth
+            disabled={view}
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
             InputProps={{
@@ -127,6 +131,7 @@ export default function Estoque({ view }) {
             label="Estoque máximo"
             type="number"
             fullWidth
+            disabled={view}
             value={formValues.estoque?.tituloAnuncio || ''}
             onChange={handleInputChange}
             InputProps={{

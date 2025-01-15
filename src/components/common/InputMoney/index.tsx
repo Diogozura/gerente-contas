@@ -6,9 +6,10 @@ import { useFormContext } from '../../../config/FormContext';
 interface MoneyInputProps {
   label: string;
   name: string; // Identificador único para o campo
+  variant?: 'outlined' | 'filled' | 'standard'; // Torna `variant` opcional e define os tipos permitidos
 }
 
-export default function MoneyInput({ label, name }: MoneyInputProps) {
+export default function MoneyInput({ label, name, variant = 'outlined' }: MoneyInputProps) {
   const { formValues, setFormValues } = useFormContext();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +28,7 @@ export default function MoneyInput({ label, name }: MoneyInputProps) {
       label={label}
       value={formattedValue}
       onChange={handleInputChange}
+      variant={variant} // Usa o valor passado ou 'outlined' como padrão
       fullWidth
     />
   );

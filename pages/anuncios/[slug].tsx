@@ -4,15 +4,10 @@ import { Container, Typography, Box, TextField, Button, Grid } from "@mui/materi
 import Bread from "../../src/components/ui/Breadcrumbs";
 import DetalhesProduto from "../../src/components/forms/DetalhesProduto";
 import { useFormContext } from "../../src/config/FormContext";
+import { ProdutoDetail } from "@/types/produtoDetail";
 
 
-interface ProdutoDetail {
-  titulo:string;
-  sku: string;
-  estoque: number;
-  estoqueCd: number;
-  // Adicione mais campos conforme necessário
-}
+
 
 interface Product {
   slug: string | string[];
@@ -53,7 +48,7 @@ export default function ProductDetail() {
 
 
           // Passa os dados para o contexto
-          setFormValues("meuFormulario", {
+          setFormValues("produto", {
             marketingPlaces: foundProduct.marketingPlaces || [],
             sku: produtoDetail?.sku || "",
             titulo: produtoDetail?.titulo || "",
@@ -105,7 +100,7 @@ export default function ProductDetail() {
         Detalhes do Produto
       </Typography>
       <Box>
-      <DetalhesProduto view={isEditable}/>
+      <DetalhesProduto view={isEditable} />
        
         {isEditable && (
           <Button

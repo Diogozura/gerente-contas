@@ -96,7 +96,29 @@ console.log('formValues', formValues?.precos?.valorMinimo)
       
 
       {/* Inputs para adicionar ou editar precificação */}
-     
+      <Grid container spacing={2} alignItems="center" mb={2}>
+        <Grid item xs={4}>
+          <TextField
+            label="Variação"
+            fullWidth
+            value={variacao}
+            onChange={(e) => setVariacao(e.target.value)}
+            disabled={view}
+          />
+        </Grid>
+        <Grid item xs={4}>
+        <MoneyInput label="Valor Mínimo"  name="valorMinimo" />
+        </Grid>
+        <Grid item xs={2}>
+          <Button
+            variant="contained"
+            onClick={adicionarOuEditarListaPreco}
+            disabled={!variacao || (formValues?.precos?.valorMinimo || 0) <= 0}
+          >
+            {editIndex !== null ? 'Salvar' : 'Adicionar'}
+          </Button>
+        </Grid>
+      </Grid>
 
         {/* Renderizar a lista de precificação */}
         {listaPrecificacao.map((item, index) => (

@@ -63,9 +63,7 @@ export default function DetalhesProduto({ view }) {
           <Typography>Valores: {JSON.stringify(formValues.detalhesProduto || {})}</Typography>
           <Typography>meu form: {JSON.stringify(formValues.produto || {})}</Typography>
         </Grid> */}
-        <Grid item xs={12} textAlign={'center'}>
-          <Typography variant="h4" component={'h2'}>Informações do produto</Typography>
-        </Grid>
+        
         <Grid item xs={2} textAlign={'center'}>
           <Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"} />
         </Grid>
@@ -94,10 +92,10 @@ export default function DetalhesProduto({ view }) {
         <Grid item xs={4}>
           <TextField
             label="Código EAN"
-            name="codigoEan"
+            name="ean"
             fullWidth
             disabled={view}
-            value={formValues.produto?.codigoEan || ''}
+            value={formValues.produto?.ean || ''}
             onChange={handleInputChange}
           />
         </Grid>
@@ -179,6 +177,7 @@ export default function DetalhesProduto({ view }) {
         
         <Grid item xs={4}>
           <Autocomplete
+           disabled={view}
             value={value}
             onChange={handleChange}
             filterOptions={(options, params) => {
@@ -215,7 +214,7 @@ export default function DetalhesProduto({ view }) {
             )}
             freeSolo
             renderInput={(params) => (
-              <TextField {...params} label="Fornecedor" />
+              <TextField {...params}  disabled={view} label="Fornecedor" />
             )}
             
           />

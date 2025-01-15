@@ -1,4 +1,4 @@
-import { Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormHelperText, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionSummary, Autocomplete, Box, Button, Checkbox, Chip, Container, Divider, FormControl, FormHelperText, Grid, Tab, Tabs, TextField, Typography } from "@mui/material";
 import Head from "next/head";
 import Bread from "../../../components/ui/Breadcrumbs";
 import React from "react";
@@ -15,7 +15,13 @@ import Garantia from "@/components/forms/Garantia";
 import ListaPreco from "@/components/forms/ListaPreco";
 import Tributacao from "@/components/forms/Tributacao";
 import Estoque from "@/components/forms/Estoque";
-
+import { useFormContext } from "@/config/FormContext";
+import { ProdutoDetail } from "@/types/produtoDetail";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CustomAccordion from "@/components/common/CustomAccordionProps";
+import ShoppingBasketOutlinedIcon from '@mui/icons-material/ShoppingBasketOutlined';
+import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
@@ -46,7 +52,7 @@ function TabPanel(props: TabPanelProps) {
 
 export default function CriarAnuncio() {
     const router = useRouter()
-
+    const { formValues, setFormValues } = useFormContext();
     const [marketingPlaces, setMarketingPlaces] = React.useState<any[]>([]);
     const [selectedMarketingPlaces, setSelectedMarketingPlaces] = React.useState<any[]>([]);
     const [products, setProducts] = React.useState<Product[]>([]);
@@ -83,11 +89,19 @@ export default function CriarAnuncio() {
     const [errors, setErrors] = React.useState({ titulo: false, marketingPlaces: false, produto: false });
 
     const handleProductChange = (selectedProducts: Product[]) => {
+
+
+        console.log('selectedProducts', selectedProducts)
+
         const formattedProducts = selectedProducts.map((product) => ({
             titulo: product.titulo,
             sku: product.sku,
         }));
+        console.log('selectedProducts', selectedProducts[0])
+        console.log('formattedProducts', formattedProducts)
+        // Passa os dados para o contexto
 
+        setFormValues("produto", selectedProducts[0]);
         setProdutoSelecionado(selectedProducts);
         setNewAnuncio((prev) => ({
             ...prev,
@@ -98,11 +112,11 @@ export default function CriarAnuncio() {
 
     // Verifica se todos os campos obrigatórios estão preenchidos
 
-   
+
     const handleSaveAnnouncement = () => {
         const isTituloValid = newAnuncio.titulo.trim() !== "";
-        const isMarketingPlacesValid = newAnuncio.marketingPlaces.length > 0 ;
-        const isProductValid = produtoSelecionado.length >= 1 ;
+        const isMarketingPlacesValid = newAnuncio.marketingPlaces.length > 0;
+        const isProductValid = produtoSelecionado.length >= 1;
 
         setErrors({
             titulo: !isTituloValid,
@@ -119,6 +133,8 @@ export default function CriarAnuncio() {
         // Salvar anúncio (lógica de salvamento aqui)
         alert("Anúncio salvo com sucesso!");
     };
+
+    console.log('dados do pruduto', formValues.produto)
     return (
         <>
             <Head>
@@ -126,12 +142,25 @@ export default function CriarAnuncio() {
             </Head>
             <Container sx={{ padding: '30px 0' }} >
                 <Bread nav={nav} />
-                <Typography variant="h4" gutterBottom>
-                    Criar Anuncio
-                </Typography>
-          
-                <Grid container spacing={2}>
+                <Grid sx={{
+                    display:'flex',
+                    justifyContent:'space-between',
+                    alignItems:'center'
+                }}>
+                    <Typography variant="h4" gutterBottom>
+                        Criar Anuncio
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSaveAnnouncement}
 
+                    >
+                        Salvar Anúncio
+                    </Button>
+                </Grid>
+
+                <Grid container spacing={2}>
 
                     <Grid item xs={8}>
                         <FormControl fullWidth error={errors.titulo} sx={{ marginBottom: 2 }}>
@@ -168,7 +197,7 @@ export default function CriarAnuncio() {
                                 }}
                                 style={{ width: 500 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Marketing places" placeholder="Selecione... "  error={errors.marketingPlaces} helperText={errors.marketingPlaces && "Selecione pelo menos um marketing place."}/>
+                                    <TextField {...params} label="Marketing places" placeholder="Selecione... " error={errors.marketingPlaces} helperText={errors.marketingPlaces && "Selecione pelo menos um marketing place."} />
                                 )}
                             />
                         </FormControl>
@@ -177,169 +206,76 @@ export default function CriarAnuncio() {
                     <Grid item xs={6}>
                         <FormControl fullWidth error={errors.produto} sx={{ marginBottom: 2 }}>
                             <Autocomplete
-                                value={produtoSelecionado[0] || null}
+                                value={produtoSelecionado[0] || null} // Mostra o produto selecionado ou vazio
                                 options={products}
+                                disableCloseOnSelect
                                 getOptionLabel={(option) => option.titulo || ""}
                                 onChange={(event, value) => {
-                                    if (value) handleProductChange([value]);
+                                    if (value) {
+                                        // Produto selecionado
+                                        handleProductChange([value]);
+                                    } else {
+                                        // Campo limpo
+                                        handleProductChange([]);
+                                    }
                                 }}
                                 renderInput={(params) => (
-                                    <TextField {...params} label="Produto" error={errors.produto} helperText={errors.produto && "Selecione pelo menos um produto."} />
+                                    <TextField
+                                        {...params}
+                                        label="Produto"
+                                        error={errors.produto}
+                                        helperText={errors.produto && "Selecione pelo menos um produto."}
+                                    />
                                 )}
                             />
-                            
+
                         </FormControl>
                     </Grid>
                 </Grid>
 
                 <Divider sx={{ m: 2 }} />
                 {/* Ficha tecnina com produto  */}
-                <Grid container spacing={2}>
-                    <Grid item xs={12} textAlign={'center'}>
-                        <Typography variant="h4" component={'h2'}>Informações do produto</Typography>
-                    </Grid>
-                    <Grid item xs={2} textAlign={'center'}>
-                        <Image width={'100'} height={'100'} src={'/defaultImage.png'} alt={"image default"} />
-                    </Grid>
-
-                    {produtoSelecionado.map((product) => (
+                <Grid>
+                    {produtoSelecionado[0] ? (
                         <>
-                            <Grid item xs={10} display={'grid'} alignItems={'center'}>
-                                <TextField
-                                    label="Titulo do anuncio"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.titulo}
+                            {/* Informações do produto */}
+                            <CustomAccordion
+                                title="Informações do produto"
+                                subtitle="Informações detalhadas sobre o produto"
+                                defaultExpanded
+                                icon={<ShoppingBasketOutlinedIcon />}
+                            >
+                                <DetalhesProduto view={true} />
+                            </CustomAccordion>
+                            <Divider sx={{ m: 2 }} />
+                            {/* Informações do preço */}
+                            <CustomAccordion
+                                title="Informações do de precificação "
+                                subtitle="Informações detalhadas sobre os preços"
+                                defaultExpanded
+                                icon={<AttachMoneyOutlinedIcon />}
+                            >
+                                <ListaPreco view={true} />
+                            </CustomAccordion>
+                            <Divider sx={{ m: 2 }} />
+                            {/* Informações do estoque */}
+                            <CustomAccordion
+                                title="Informações do de precificação "
+                                subtitle="Informações detalhadas sobre os preços"
+                                defaultExpanded
+                                icon={<LocalShippingOutlinedIcon />}
+                            >
+                                <Estoque view={true} />
+                            </CustomAccordion>
 
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="SKU"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.sku}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="EAN"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.ean}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="Marca"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.marca}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="Modelo"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.modelo}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="Unidade"
-                                    type="text"
-                                    fullWidth
-                                    disabled
-                                    value={product?.unidade}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="Estoque total"
-                                    type="number"
-                                    fullWidth
-                                    disabled
-                                    value={product?.estoque}
-
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="altura"
-                                    type="number"
-                                    fullWidth
-                                    disabled
-                                    value={product?.altura}
-
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="largura"
-                                    type="number"
-                                    fullWidth
-                                    disabled
-                                    value={product?.largura}
-
-                                />
-                            </Grid>
-                            <Grid item xs={4}>
-                                <TextField
-                                    label="Profundidade"
-                                    type="number"
-                                    fullWidth
-                                    disabled
-                                    value={product?.profundidade}
-
-                                />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <TextField
-                                    label="peso"
-                                    type="number"
-                                    fullWidth
-                                    disabled
-                                    value={product?.pesoLiquido}
-
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    label="Descrição"
-                                    type="text"
-                                    fullWidth
-                                    multiline
-                                    disabled
-                                    value={product?.descricao}
-
-                                />
-                            </Grid>
+                            <Grid container spacing={2}></Grid>
                         </>
-                    ))}
-
+                    ) : ''}
                 </Grid>
 
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSaveAnnouncement}
-                    
-                >
-                    Salvar Anúncio
-                </Button>
 
-            </Container>
+
+            </Container >
 
 
         </>
