@@ -13,17 +13,16 @@ import {
   Radio,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import InfosFaltantesInt from '@/components/forms/infosFaltantesInt';
+import Estoque from "@/components/forms/Estoque";
+import CheckIcon from '@mui/icons-material/Check';
 
 interface CustomModalProps {
   open: boolean;
+  children: React.ReactNode;
   onClose: () => void;
-  title: string;
-  content: {
-    mensagem: string;
-    razaoSocial?: string;
-    inscricaoEstadual?: string;
-    cnpjOuCpf?: string;
-  };
+  title?: string;
+  subTitulo?: string;
   onSave: (data: any) => void; // Função chamada ao salvar
 }
 
@@ -31,18 +30,16 @@ export const ModalVinculo: React.FC<CustomModalProps> = ({
   open,
   onClose,
   title,
-  content,
+  subTitulo,
   onSave,
+  children
 }) => {
-  const [formData, setFormData] = React.useState(content);
+  const [modalData, setModalData] = React.useState<any>({}); // Estado para armazenar os dados do modal
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
+  // Função chamada ao clicar em "Salvar"
   const handleSave = () => {
-    onSave(formData);
-    onClose();
+    onSave(modalData); // Passa os dados para o componente pai
+    onClose(); // Fecha o modal
   };
 
   return (
@@ -79,7 +76,7 @@ export const ModalVinculo: React.FC<CustomModalProps> = ({
           }}
         >
           {/* Mensagem de aviso */}
-          <Typography
+          {subTitulo ? <Typography
             variant="body1"
             sx={{
               mb: 2,
@@ -89,73 +86,33 @@ export const ModalVinculo: React.FC<CustomModalProps> = ({
               borderRadius: 2,
             }}
           >
-            {content.mensagem}
-          </Typography>
+            {subTitulo}
+          </Typography> : ''}
 
-          {/* Campos do formulário */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              Razão Social
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              value={formData.razaoSocial || ""}
-              onChange={(e) => handleChange("razaoSocial", e.target.value)}
-              sx={{ mt: 1 }}
-            />
-          </Box>
 
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              Inscrição Estadual
-            </Typography>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              value={formData.inscricaoEstadual || ""}
-              onChange={(e) => handleChange("inscricaoEstadual", e.target.value)}
-              sx={{ mt: 1 }}
-            />
-          </Box>
-
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" fontWeight="bold">
-              CNPJ ou CPF
-            </Typography>
-            <RadioGroup
-              row
-              value={formData.cnpjOuCpf || "CNPJ"}
-              onChange={(e) => handleChange("cnpjOuCpf", e.target.value)}
-            >
-              <FormControlLabel value="CNPJ" control={<Radio />} label="CNPJ" />
-              <FormControlLabel value="CPF" control={<Radio />} label="CPF" />
-            </RadioGroup>
-            <TextField
-              fullWidth
-              variant="outlined"
-              size="small"
-              value={formData.cnpjOuCpf === "CNPJ" ? "CNPJ Placeholder" : "CPF Placeholder"}
-              onChange={(e) => handleChange("cnpjOuCpf", e.target.value)}
-              sx={{ mt: 1 }}
-            />
-          </Box>
-
-          {/* Botão Salvar */}
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{
-              mt: 2,
-              backgroundColor: "#5E247C",
-              "&:hover": { backgroundColor: "#9A44C8" },
-            }}
-            onClick={handleSave}
+          {children}
+          
+        </Box>
+        <Box sx={{
+          direction:'rtl'
+        }}>
+          {/* Ícone para cancelar */}
+          <IconButton
+            onClick={onClose}
+            aria-label="close"
+            color="error"
           >
-            Salvar
-          </Button>
+            <CloseIcon fontSize="large"  color="error"/>
+          </IconButton>
+           {/* Ícone para salvar */}
+           <IconButton
+            onClick={handleSave}
+            aria-label="save"
+            color="success"
+          >
+            <CheckIcon  fontSize="large" color="success"/>
+          </IconButton>
+
         </Box>
       </DialogContent>
     </Dialog>

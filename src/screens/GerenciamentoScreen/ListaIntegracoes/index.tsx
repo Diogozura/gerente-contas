@@ -1,60 +1,103 @@
-import { Box, IconButton, Paper, TextField, Tooltip, Button } from "@mui/material";
+import { Box, IconButton, Paper, TextField, Button, Tooltip, Typography } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import SettingsIcon from "@mui/icons-material/Settings";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
 import React, { useState } from "react";
-import CustomModal from "../../../components/ui/CustomModal";
 import { ModalVinculo } from "../../../components/ui/Modal";
+import InfosFaltantesInt from "@/components/forms/infosFaltantesInt";
+import { showToast } from "@/components/common/AlertToast";
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
 
 export default function ListaIntegracao({ dadosIntegracao }) {
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [nomeLojas, setNomeLojas] = useState(dadosIntegracao.map((item) => item.nomeLoja));
-  const [modalConfig, setModalConfig] = useState({ open: false, title: "", data: null });
-  const [openModal, setOpenModal] = useState(false);
-  const [modalContent, setModalContent] = useState<{
-    mensagem: string;
-    razaoSocial?: string;
-    inscricaoEstadual?: string;
-    cnpjOuCpf?: string;
-  }>({
-    mensagem: "",
+  const [editedValue, setEditedValue] = useState<string | null>(null); // Valor temporário para edição
+  const [nomeLojas, setNomeLojas] = useState<string[]>(
+    dadosIntegracao.map((item) => item.nomeLoja)
+  );
+  const [modalState, setModalState] = useState({
+    open: false,
+    tipo: "",
   });
 
+  const handleOpenModal = (tipo: string, data: any) => {
+    setModalState({
+      open: true,
+      tipo,
+      mensagem: tipo === "Deletar" ? "Tem certeza que deseja deletar?" : "Configuração",
+      ...data,
+    });
+  };
   const handleEditClick = (index: number) => {
-    setEditIndex(index === editIndex ? null : index); // Alterna entre edição e visualização
+    setEditIndex(index); // Define o índice sendo editado
+    setEditedValue(nomeLojas[index]); // Preenche o valor inicial do campo
   };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, index: number) => {
-    const updatedNomeLojas = [...nomeLojas];
-    updatedNomeLojas[index] = event.target.value;
-    setNomeLojas(updatedNomeLojas);
-  };
-
-  // Unificada a função handleOpenModal para abrir diferentes tipos de modal
-  const handleOpenModal = (title: string, data: any) => {
-    if (title === "Atenção") {
-      setModalContent({
-        mensagem: "Faltam informações importantes.",
-        ...data,
-      });
-      setOpenModal(true); // Para o ModalVinculo
-    } else {
-      setModalConfig({ open: true, title, data }); // Para o CustomModal
-    }
-  };
-
   const handleCloseModal = () => {
-    setOpenModal(false);
-    setModalConfig({ ...modalConfig, open: false });
+    setModalState({ ...modalState, open: false });
   };
 
   const handleSaveModal = (data: any) => {
-    console.log("Salvo:", data);
-    setOpenModal(false);
+    console.log(`Modal salvo: ${modalState.tipo}`);
+
+    showToast({
+      title: "Salvo com sucesso!",
+      status: "success",
+      position: "bottom-left",
+    });
+
+
+
+    handleCloseModal();
   };
 
+  const renderModalContent = () => {
+    const { tipo } = modalState;
+
+    switch (tipo) {
+      case "Configuração":
+        return (
+          <Box>
+            <Typography>Configuração da loja: </Typography>
+            {/* Outros inputs específicos */}
+          </Box>
+        );
+      case "Deletar":
+        return (
+          <Typography>
+            Tem certeza que deseja deleter?
+          </Typography>
+        );
+      case "Atenção":
+        return (
+          <Box>
+            <InfosFaltantesInt view={false} />
+          </Box>
+        );
+      default:
+        return null;
+    }
+  };
+
+   const handleCancelEdit = () => {
+    setEditIndex(null); // Sai do modo de edição
+    setEditedValue(null); // Reseta o valor temporário
+  };
+
+  const handleSaveEdit = (index: number) => {
+    if (editedValue !== null) {
+      const updatedLojas = [...nomeLojas];
+      updatedLojas[index] = editedValue; // Atualiza o valor na lista original
+      setNomeLojas(updatedLojas);
+      showToast({
+        title: "Nome atualizado com sucesso!",
+        status: "success",
+        position: "bottom-left",
+      });
+    }
+    handleCancelEdit(); // Finaliza a edição
+  };
   return (
     <>
       {dadosIntegracao.map((integracao, index) => (
@@ -70,7 +113,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             backgroundColor: "#fff",
           }}
         >
-          <Box display={"flex"} alignItems="center">
+          <Box display="flex" alignItems="center">
             <Image
               src={integracao.icon.src}
               alt={integracao.icon.alt}
@@ -80,14 +123,37 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             />
             <TextField
               variant="standard"
-              disabled={editIndex !== index}
-              value={nomeLojas[index]}
-              onChange={(event) => handleChange(event, index)}
+              disabled={editIndex !== index} // Desabilita se não for o campo editado
+              value={editIndex === index ? editedValue : nomeLojas[index]} // Mostra o valor editável
+              onChange={(e) => setEditedValue(e.target.value)} // Atualiza o valor temporário
               sx={{ width: "200px" }}
             />
-            <IconButton aria-label="Editar" onClick={() => handleEditClick(index)}>
-              <EditIcon />
-            </IconButton>
+            {editIndex === index ? (
+              <>
+                {/* Botão de cancelar */}
+                <IconButton
+                  aria-label="Cancelar"
+                  onClick={handleCancelEdit}
+                >
+                  <CloseIcon color="error" />
+                </IconButton>
+                {/* Botão de salvar */}
+                <IconButton
+                  aria-label="Salvar"
+                  onClick={() => handleSaveEdit(index)}
+                >
+                  <CheckIcon color="success" />
+                </IconButton>
+              </>
+            ) : (
+              <IconButton
+                aria-label="Editar"
+                onClick={() => handleEditClick(index)}
+              >
+                <EditIcon />
+              </IconButton>
+            )}
+
           </Box>
 
           <Box display="flex" alignItems="center">
@@ -98,7 +164,6 @@ export default function ListaIntegracao({ dadosIntegracao }) {
                 sx={{ ml: 1 }}
                 onClick={() =>
                   handleOpenModal("Atenção", {
-                    mensagem: "Faltam informações importantes.",
                     razaoSocial: integracao.razaoSocial,
                     inscricaoEstadual: integracao.inscricaoEstadual,
                     cnpjOuCpf: integracao.cnpjOuCpf,
@@ -109,12 +174,13 @@ export default function ListaIntegracao({ dadosIntegracao }) {
               </Button>
             )}
             {integracao.atencao && (
-              <Tooltip title="Faltante informações">
+              <Tooltip title="Faltam informações">
                 <IconButton
                   onClick={() =>
                     handleOpenModal("Atenção", {
-                      mensagem: "Faltam informações importantes.",
-                      ...integracao,
+                      razaoSocial: integracao.razaoSocial,
+                      inscricaoEstadual: integracao.inscricaoEstadual,
+                      cnpjOuCpf: integracao.cnpjOuCpf,
                     })
                   }
                 >
@@ -125,15 +191,18 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             <IconButton
               aria-label="Configuração"
               onClick={() =>
-                handleOpenModal("Configuração", { mensagem: "Configurar integração.", ...integracao })
+                handleOpenModal("Configuração", { razaoSocial: integracao.razaoSocial })
               }
             >
-              <SettingsIcon color="inherit"/>
+              <SettingsIcon color="inherit" />
             </IconButton>
             <IconButton
               aria-label="Deletar"
               onClick={() =>
-                handleOpenModal("Deletar", { mensagem: "Tem certeza que deseja deletar?", ...integracao })
+                handleOpenModal("Deletar", {
+                  razaoSocial: integracao.razaoSocial,
+                  cnpjOuCpf: integracao.cnpjOuCpf,
+                })
               }
             >
               <DeleteIcon />
@@ -142,26 +211,16 @@ export default function ListaIntegracao({ dadosIntegracao }) {
         </Paper>
       ))}
 
-      {/* Modal reutilizável CustomModal */}
-      <CustomModal
-        open={modalConfig.open}
-        onClose={handleCloseModal}
-        title={modalConfig.title}
-        data={modalConfig.data}
-        onConfirm={() => {
-          console.log("Ação confirmada com dados:", modalConfig.data);
-          handleCloseModal();
-        }}
-      />
-
-      {/* ModalVinculo */}
       <ModalVinculo
-        open={openModal}
+        open={modalState.open}
         onClose={handleCloseModal}
-        title="Atenção"
-        content={modalContent}
-        onSave={handleSaveModal}
-      />
+        title={modalState.tipo}
+        subTitulo=""
+        onSave={handleSaveModal}>
+        {renderModalContent()}
+      </ModalVinculo>
+
+
     </>
   );
 }

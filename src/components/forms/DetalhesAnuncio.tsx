@@ -1,6 +1,6 @@
 import { Autocomplete, Checkbox, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from '@mui/material';
 import React from 'react';
-import MoneyInput from '../common/InputMoney';
+import MoneyInput from '../Inputs/InputMoney';
 import { FormProvider, useFormContext } from '../../config/FormContext';
 import mockMarketingPlaces from "../../mock/marketingPlacesSelecionar.json";
 import { Product } from '@/types/product';

@@ -1,36 +1,43 @@
-import { toast, ToastOptions } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from "react";
+import { toast, ToastContainer, ToastOptions } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-type NotificationType = 'info' | 'success' | 'error' | 'warning';
+interface ToastNotificationProps {
+  title: string; // Título da notificação
+  status: "success" | "error" | "info" | "warning"; // Tipo de notificação
+  position?:
+    | "top-left"
+    | "top-right"
+    | "top-center"
+    | "bottom-left"
+    | "bottom-right"
+    | "bottom-center"; // Posição na tela (opcional, padrão: top-right)
+}
 
-export const Notification = {
-    show: (message: string, type: NotificationType = 'info', options: ToastOptions = {}) => {
-        const defaultOptions: ToastOptions = {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-        };
+// Função para exibir o toast
+export const showToast = ({ title, status, position = "top-right" }: ToastNotificationProps) => {
+  const toastConfig: ToastOptions = { position };
 
-        const finalOptions = { ...defaultOptions, ...options };
+  // Exibe o toast baseado no status
+  switch (status) {
+    case "success":
+      toast.success(title, toastConfig);
+      break;
+    case "error":
+      toast.error(title, toastConfig);
+      break;
+    case "info":
+      toast.info(title, toastConfig);
+      break;
+    case "warning":
+      toast.warn(title, toastConfig);
+      break;
+    default:
+      break;
+  }
+};
 
-        switch (type) {
-            case 'success':
-                toast.success(message, finalOptions);
-                break;
-            case 'error':
-                toast.error(message, finalOptions);
-                break;
-            case 'warning':
-                toast.warn(message, finalOptions);
-                break;
-            case 'info':
-            default:
-                toast.info(message, finalOptions);
-                break;
-        }
-    }
+// Apenas o ToastContainer que será adicionado no layout principal
+export const ToastNotificationContainer: React.FC = () => {
+  return <ToastContainer />;
 };

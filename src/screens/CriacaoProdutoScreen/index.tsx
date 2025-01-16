@@ -37,7 +37,7 @@ import { styled } from '@mui/system';
 import Image from "next/image";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import InputMoney from "../../components/common/InputMoney";
+import InputMoney from "../../components/Inputs/InputMoney";
 import { TabPanelProps } from "@/types/tabPanelProps";
 
 

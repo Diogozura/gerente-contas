@@ -1,6 +1,6 @@
 import { FormControl, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, Select, TextField, Typography } from '@mui/material';
 import React from 'react';
-import MoneyInput from '../common/InputMoney';
+import MoneyInput from '../Inputs/InputMoney';
 import { FormProvider, useFormContext } from '../../config/FormContext';
 
 

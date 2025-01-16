@@ -1,6 +1,6 @@
 import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import React from 'react';
-import MoneyInput from '../common/InputMoney';
+import MoneyInput from '../Inputs/InputMoney';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
