@@ -1,6 +1,9 @@
 import {
+  Box,
   Button,
+  Checkbox,
   Container,
+  FormControlLabel,
   Grid,
   TextField,
   Typography,
@@ -19,6 +22,8 @@ import { useFormContext } from "@/config/FormContext";
 import { showToast } from "@/components/common/AlertToast";
 import { PromiseNotification } from "@/components/common/PromiseNotification";
 import { useRouter } from "next/router";
+import TituloHub from "@/components/common/HubfiveName";
+import { CheckBox } from "@mui/icons-material";
 
 
 export function Login() {
@@ -70,60 +75,86 @@ export function Login() {
       }
       return;
     }
-
+    router.push("/auth/verificacao");
     // Lógica de envio caso não haja erros
     console.log("Login enviado com sucesso", formValues.login);
 
-  //   const loginPromise = authService.login({
-  //     body: {
-  //       username: formValues?.login?.email,
-  //       password: formValues?.login?.senha,
-  //     },
-  //   });
+    //   const loginPromise = authService.login({
+    //     body: {
+    //       username: formValues?.login?.email,
+    //       password: formValues?.login?.senha,
+    //     },
+    //   });
 
-  //   PromiseNotification({
-  //     promise: loginPromise,
-  //     pendingMessage: "Entrando...",
-  //     successMessage: "Login realizado com sucesso! Redirecionando...",
-  //     errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
-  //     successCallback: () => {
-  //       setTimeout(() => {
-  //         router.push("/dashboard");
-  //       }, 300);
-  //     },
-  //   });
+    //   PromiseNotification({
+    //     promise: loginPromise,
+    //     pendingMessage: "Entrando...",
+    //     successMessage: "Login realizado com sucesso! Redirecionando...",
+    //     errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
+    //     successCallback: () => {
+    //       setTimeout(() => {
+    //         router.push("/dashboard");
+    //       }, 300);
+    //     },
+    //   });
   };
   return (
     <>
       <Head>
         <title>Hubeefive - Login</title>
       </Head>
-      <Container component={'main'} sx={{
+      <Container maxWidth="xs" component={'main'} sx={{
         minHeight: '80vh',
         display: "flex",
         alignItems: 'center',
         justifyContent: 'space-evenly'
       }}>
-        
+
         <Grid
           bgcolor={'background.paper'}
           padding={3}
           borderRadius={2}
-          display={'grid'}
-    >
-      
-        <LoginForm />
-      <Button sx={{m:2}} disabled={isButtonDisabled} color="primary" variant="contained"  onClick={handleEnter}>
-        Entrar
-      </Button>
-      </Grid>
+          textAlign='center'
+        >
+          <TituloHub />
+          <Typography variant="h5" component='h3' mb={5} fontWeight={'600'}>User login</Typography>
+          <LoginForm />
+      <Box textAlign={'left'}>
+      <Link href={'/auth/trocar-senha'}>Esqueci minha senha</Link>
+
+      </Box>
+          <Button fullWidth 
+          
+          sx={{
+
+            textTransform: 'uppercase',
+            mt: 2,
+            // background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+            // color: 'white',
+            // '&:hover': {
+            //   background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+            // },
+          }} disabled={isButtonDisabled} color="primary" variant="contained" onClick={handleEnter}>
+            Entrar
+          </Button>
+          <Box m={2}>
+            <Typography>Não possui conta?</Typography>
+            <Typography>Conheça nossos <Link href={'/planos'} style={{
+              color: '#703B8C',
+              fontWeight: 'bold'
+            }}>Planos</Link></Typography>
+          </Box>
+
+          <Typography>Garantimos a privacidade dos seus
+            dados com criptografia.</Typography>
+        </Grid>
 
 
-    </Container >
+      </Container >
 
 
 
-      {/* <CadastroForm /> */ }
+      {/* <CadastroForm /> */}
     </>
   );
 }

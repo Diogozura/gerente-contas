@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
-  Box,
+
   Button,
-  Container,
+ 
   Typography,
-  Modal,
-  TextField,
+
   Input,
   Grid,
   Checkbox,
@@ -14,7 +13,6 @@ import QuickFilteringGrid from "./Tabela2";
 import productsData from "../../mock/products.json"; // Importe os dados
 import { useRouter } from "next/router";
 import { saveAs } from "file-saver";
-import Papa from "papaparse";
 import FiltroTexto from "../../components/common/FiltroText";
 import FiltroAvancado from "../../components/common/FiltroAvancado";
 
@@ -34,7 +32,6 @@ export default function Estoque({view}) {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [filtroAvancado, setFiltroAvancado] = useState("");
   const [textoFiltro, setTextoFiltro] = useState("");
-
   const router = useRouter();
 
   useEffect(() => {
@@ -123,9 +120,9 @@ export default function Estoque({view}) {
 
   return (
     <>
-      <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
+      <Grid container justifyContent="flex-end"  alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
-          <Button variant="contained" color="primary" onClick={() => router.push("/estoque/criacao-produto")}>
+          <Button variant="contained" color="primary" id='estoque-header' onClick={() => router.push("/estoque/criacao-produto")}>
             Cadastro de Produto Individual
           </Button>
         </Grid>

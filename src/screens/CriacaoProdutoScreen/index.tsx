@@ -202,11 +202,11 @@ export default function CriacaoProduto() {
       </Head>
       <Container >
         <Bread nav={nav} />
-        <Typography variant="h4" gutterBottom>
+        <Typography  variant="h4" id='create-product' gutterBottom>
           Criar Produto
         </Typography>
         <Grid item xs={12}>
-          <Button variant="contained" color="primary" disabled={!isFormValid} onClick={saveProduct}>
+          <Button  id="produtos-criar" variant="contained" color="primary" disabled={!isFormValid} onClick={saveProduct}>
             Salvar Produto
           </Button>
         </Grid>

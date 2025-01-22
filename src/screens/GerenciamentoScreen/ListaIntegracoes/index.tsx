@@ -156,7 +156,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
 
           </Box>
 
-          <Box display="flex" alignItems="center">
+          <Box display="flex"  alignItems="center">
             {integracao.error && (
               <Button
                 variant="contained"
