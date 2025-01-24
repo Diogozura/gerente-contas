@@ -11,7 +11,6 @@ const ONE_DAY = ONE_HOUR * 24;
 
 export const tokenService = {
   save(accessToken: string, ctx = null) {
-    console.log('acss', accessToken)
     nookies.set(ctx, ACCESS_TOKEN_KEY, accessToken, {
       maxAge: ONE_DAY * 7,
       path: '/',

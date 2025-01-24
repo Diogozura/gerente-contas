@@ -161,7 +161,6 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
     setMobileOpen(!mobileOpen);
   };
   const isActive = (path) => path === currentPath;
-  console.log('isActive', currentPath)
   const drawer = (
     <Box onClick={handleDrawerToggle} component={"header"}>
       <Box padding={1} color={"white"}>

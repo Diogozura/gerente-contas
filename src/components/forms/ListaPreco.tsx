@@ -23,7 +23,6 @@ export default function ListaPreco({ view }: { view: boolean }) {
   const { formValues, setFormValues } = useFormContext();
 
 
-console.log('formValues', formValues?.precos?.valorMinimo)
   // Carregar dados do localStorage na inicialização
   React.useEffect(() => {
     const savedList = localStorage.getItem(LOCAL_STORAGE_KEY);

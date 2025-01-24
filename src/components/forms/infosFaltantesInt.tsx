@@ -19,7 +19,6 @@ export default function InfosFaltantesInt({ view }) {
   };
 
 
-  console.log('formValues.infosFaltantesInt?.cnpjOuCpf', formValues.infosFaltantesInt)
 
   return (
     <>

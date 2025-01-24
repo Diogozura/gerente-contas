@@ -91,14 +91,11 @@ export default function CriarAnuncio() {
     const handleProductChange = (selectedProducts: Product[]) => {
 
 
-        console.log('selectedProducts', selectedProducts)
 
         const formattedProducts = selectedProducts.map((product) => ({
             titulo: product.titulo,
             sku: product.sku,
         }));
-        console.log('selectedProducts', selectedProducts[0])
-        console.log('formattedProducts', formattedProducts)
         // Passa os dados para o contexto
 
         setFormValues("produto", selectedProducts[0]);
@@ -134,7 +131,6 @@ export default function CriarAnuncio() {
         alert("Anúncio salvo com sucesso!");
     };
 
-    console.log('dados do pruduto', formValues.produto)
     return (
         <>
             <Head>

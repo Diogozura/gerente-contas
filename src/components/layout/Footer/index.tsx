@@ -49,6 +49,7 @@ export default function Footer() {
           }}
         >
           <IconButton
+          id="duvida-pagina"
             aria-label="start-tour"
             color="primary"
             size="small"

@@ -7,8 +7,10 @@ import Image from 'next/image';
 import icons from '../../../src/mock/icones.json';
 import { useRouter } from 'next/router';
 import Filtro from './Filtro';
-import Joyride, { CallBackProps } from "react-joyride";
-import { useTour } from "@/context/TourContext";
+import Tour from '@/components/tuor';
+import { gerenciamentoSteps } from '@/features/tours/gerenciamentoSteps/step';
+
+
 
 // Estilização para o menu lateral
 const SideMenu = styled(Paper)(() => ({
@@ -104,7 +106,7 @@ const IntegrationsPage: React.FC = () => {
                 },
               }}
             >
-              <Tab label="Integrações" id='choose-marketplace' />
+              <Tab label="Integrações" />
               <Tab label="Minhas Integrações"  id='integracoes-feitas'/>
             </Tabs>
           </Paper>
@@ -151,6 +153,7 @@ const IntegrationsPage: React.FC = () => {
          
         </Container>
       </Box>
+      <Tour steps={gerenciamentoSteps} nextPage='/gerenciamento?tab=minhas-integracoes'/>
     </>
   );
 };

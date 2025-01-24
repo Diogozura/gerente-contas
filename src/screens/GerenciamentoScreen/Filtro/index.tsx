@@ -37,7 +37,7 @@ export default function Filtro() {
         >
            <TextField
               variant="outlined"
-              id="outlined-basic"
+              id="Filtro-por-nome"
             placeholder="Filtro de visualização"
             onKeyDown={handleKeyDown} // Chama a função ao pressionar uma tecla
             InputProps={{

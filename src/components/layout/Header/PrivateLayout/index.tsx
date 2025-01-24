@@ -185,7 +185,6 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
   const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
   const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
   const [alertNotification, setAlertNotification] = React.useState<null | Number>(notifications.length);
-console.log('alertNotification', alertNotification)
   const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
 
   const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) =>

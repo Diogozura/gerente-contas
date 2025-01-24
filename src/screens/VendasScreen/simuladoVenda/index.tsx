@@ -18,7 +18,6 @@ const SimularVenda: React.FC = () => {
       setNotification("Nenhum produto encontrado no estoque!");
       return;
     }
-console.log('produtosJSON', produtosJSON)
     const produtos: Produto[] = JSON.parse(produtosJSON);
 
     // Filtra produtos com estoque disponível
@@ -40,7 +39,6 @@ console.log('produtosJSON', produtosJSON)
       produto.sku === produtoAleatorio.sku ? produtoAleatorio : produto
     );
     localStorage.setItem("produtos", JSON.stringify(produtosAtualizados));
-    console.log('produtoAleatorio', produtoAleatorio.titulo)
     // Cria a notificação
     const dataAtual = new Date().toLocaleString("pt-BR");
     const notificacao = `

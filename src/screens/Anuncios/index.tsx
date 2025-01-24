@@ -73,7 +73,6 @@ const router = useRouter();
       localStorage.setItem("anuncios", JSON.stringify(updatedAnuncios)); // Atualiza o localStorage
     };
 
-    console.log('produtosFiltrados', produtosFiltrados.map((e)=> e?.produto))
     return (
         <>
            <Head>

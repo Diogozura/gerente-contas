@@ -38,7 +38,7 @@ export default function ProductDetail() {
       if (storedProducts) {
         const products: Product[] = JSON.parse(storedProducts);
         const foundProduct = products.find((p) => p?.slug === slug);
-        console.log('foundProduct', foundProduct)
+      
 
         if (foundProduct) {
           setProduct(foundProduct);

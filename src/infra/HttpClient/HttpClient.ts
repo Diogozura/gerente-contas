@@ -33,8 +33,7 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
 
       const isServer = true
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
-    console.log('tentou gerar')
-     console.log('currentRefreshToken', currentRefreshToken)
+
         // tentar rodar o request anterior 
       try {
         const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {

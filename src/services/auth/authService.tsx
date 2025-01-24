@@ -139,7 +139,6 @@ async confirmarPagamento( {id} ) {
 
   },
   async authIntegracaoML(token) {
-    console.log('token', token)
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
     // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
       method: 'GET',
@@ -149,7 +148,6 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-        console.log('response', response)
         if (!response.ok) throw new Error('Não autorizado');
         return response;
       });

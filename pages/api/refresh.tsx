@@ -23,7 +23,7 @@ const controllers = {
   },
   async regenerateTokens(req, res) {
     const ctx = { req, res }
-console.log('regenera pra nois')
+
     const cookies = nookies.get(ctx);
     const refresh = cookies[REFRESH_TOKEN_NAME] || req.body.refreshToken
    const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/refresh/`, {
@@ -34,7 +34,7 @@ console.log('regenera pra nois')
      body:{refresh}
 
  })
- console.log('resfersh os token', refreshResponse.body)
+
     if (refreshResponse.ok) {
       nookies.set(ctx, REFRESH_TOKEN_NAME, refreshResponse.body.refresh, {
         httpOnly: true,

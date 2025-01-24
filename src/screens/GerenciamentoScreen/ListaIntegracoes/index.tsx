@@ -10,6 +10,8 @@ import InfosFaltantesInt from "@/components/forms/infosFaltantesInt";
 import { showToast } from "@/components/common/AlertToast";
 import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
+import Tour from "@/components/tuor";
+import { gerenciamentoIntSteps } from "@/features/tours/gerenciamentoIntSteps/step";
 
 export default function ListaIntegracao({ dadosIntegracao }) {
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -39,7 +41,6 @@ export default function ListaIntegracao({ dadosIntegracao }) {
   };
 
   const handleSaveModal = (data: any) => {
-    console.log(`Modal salvo: ${modalState.tipo}`);
 
     showToast({
       title: "Salvo com sucesso!",
@@ -148,6 +149,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             ) : (
               <IconButton
                 aria-label="Editar"
+                id="editar-nomes"
                 onClick={() => handleEditClick(index)}
               >
                 <EditIcon />
@@ -176,6 +178,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             {integracao.atencao && (
               <Tooltip title="Faltam informações">
                 <IconButton
+                id="atencao"
                   onClick={() =>
                     handleOpenModal("Atenção", {
                       razaoSocial: integracao.razaoSocial,
@@ -190,6 +193,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             )}
             <IconButton
               aria-label="Configuração"
+              id="configuracao"
               onClick={() =>
                 handleOpenModal("Configuração", { razaoSocial: integracao.razaoSocial })
               }
@@ -198,6 +202,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             </IconButton>
             <IconButton
               aria-label="Deletar"
+              id="delelete"
               onClick={() =>
                 handleOpenModal("Deletar", {
                   razaoSocial: integracao.razaoSocial,
@@ -220,7 +225,7 @@ export default function ListaIntegracao({ dadosIntegracao }) {
         {renderModalContent()}
       </ModalVinculo>
 
-
+      <Tour steps={gerenciamentoIntSteps} />
     </>
   );
 }

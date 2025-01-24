@@ -60,7 +60,6 @@ const FormsPage: React.FC<FormsPageProps> = ({ forms }) => {
 export const getStaticProps = async () => {
     const formsDirectory = path.join(process.cwd(), 'src', 'components', 'forms'); // Ajuste para 'components'
 
-    console.log('Caminho calculado:', formsDirectory); // Para debug
     const forms = fs.existsSync(formsDirectory)
       ? fs.readdirSync(formsDirectory).filter((file) => file.endsWith('.tsx'))
       : [];
