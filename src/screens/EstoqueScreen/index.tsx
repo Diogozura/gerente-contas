@@ -145,7 +145,7 @@ export default function Estoque({view}) {
       </Grid>
 
       <Grid display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-        <Grid>
+        <Grid display={'contents'}>
           <Checkbox
             indeterminate={selectedIds.length > 0 && selectedIds.length < products.length}
             checked={selectedIds.length === products.length}

@@ -22,6 +22,8 @@ const FiltroAvancado: React.FC<FiltroAvancadoProps> = ({
       value={value}
       onChange={(e) => onChange(e.target.value)}
       variant="outlined"
+      size="small"
+      fullWidth
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
