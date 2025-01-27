@@ -5,11 +5,12 @@ import { maskPhone } from '../../../utils/mask'; // Função de máscara já exi
 
 interface PhoneInputProps {
   label: string;
+  view: boolean;
   name: string; // Identificador único para o campo
   variant?: 'outlined' | 'filled' | 'standard'; // Torna `variant` opcional e define os tipos permitidos
 }
 
-export default function PhoneInput({ label, name, variant = 'outlined' }: PhoneInputProps) {
+export default function PhoneInput({ view, label, name, variant = 'outlined' }: PhoneInputProps) {
   const { formValues, setFormValues } = useFormContext();
 
  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +28,7 @@ export default function PhoneInput({ label, name, variant = 'outlined' }: PhoneI
       onChange={handleInputChange}
       variant={variant} // Usa o valor passado ou 'outlined' como padrão
       fullWidth
+      disabled={view}
       inputProps={{ maxLength: 15 }} // Limita a quantidade máxima de caracteres exibidos no campo (incluindo a máscara)
 
     />

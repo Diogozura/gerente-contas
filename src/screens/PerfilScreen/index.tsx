@@ -1,6 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Container, TextField, Button, Typography, Box, MenuItem } from "@mui/material";
+import Head from "next/head";
+import PerfilForm from "@/components/forms/PerfilForm";
+import { useFormContext } from "@/config/FormContext";
+import { UsuarioLogado } from "@/types/usuarioLogado";
 
 interface User {
   nome: string;
@@ -11,6 +15,7 @@ interface User {
 
 export default function CreateUser() {
   const router = useRouter();
+  const { formValues, setFormValues } = useFormContext();
   const [user, setUser] = useState<User>({
     nome: "Usuário Fake",
     email: "usuario@exemplo.com",
@@ -24,64 +29,44 @@ export default function CreateUser() {
       [field]: value,
     }));
   };
+useEffect(()=>{
+  const savedData = localStorage.getItem("dadosUsuarioLogado");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setFormValues("dadosUsuarioLogado", parsedData); // Atualiza o contexto globa
+      setFormValues('infoDados', { 'telefone': parsedData?.telefone });
+   console.log('parsedData', parsedData)
+  }
+    
+   
+  
+ 
+},[])
+
 
   const handleSubmit = () => {
-    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(user));
+    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(formValues.dadosUsuarioLogado));
     alert("Dados do usuário salvos com sucesso!");
-   
+
   };
 
   return (
-    <Container>
-      <Typography variant="h4" gutterBottom>
-        Criar Dados do Usuário
-      </Typography>
-      <Box
-        component="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        noValidate
-        sx={{ mt: 2 }}
-      >
-        <TextField
-          label="Nome"
-          value={user.nome}
-          fullWidth
-          onChange={(e) => handleChange("nome", e.target.value)}
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Email"
-          type="email"
-          value={user.email}
-          fullWidth
-          onChange={(e) => handleChange("email", e.target.value)}
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          label="Telefone"
-          value={user.telefone}
-          fullWidth
-          onChange={(e) => handleChange("telefone", e.target.value)}
-          sx={{ mb: 2 }}
-        />
-        <TextField
-          select
-          label="Permissão"
-          value={user.permissao}
-          fullWidth
-          onChange={(e) => handleChange("permissao", e.target.value)}
-          sx={{ mb: 2 }}
-        >
-          <MenuItem value="visualizar">Visualizar</MenuItem>
-          <MenuItem value="editar">Editar</MenuItem>
-        </TextField>
-        <Button variant="contained" color="primary" type="submit">
-          Salvar Usuário
-        </Button>
-      </Box>
-    </Container>
+    <>
+      <Head>
+        <title>Hubeefive - Perfil</title>
+      </Head>
+      <Container>
+        <Typography variant="h4" gutterBottom>
+          Dados do usuario logado
+        </Typography>
+
+        <PerfilForm view={false}/>
+       
+      
+          <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
+            Salvar Usuário
+          </Button>
+      </Container>
+    </>
   );
 }
