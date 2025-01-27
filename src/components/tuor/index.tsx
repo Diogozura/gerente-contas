@@ -70,6 +70,7 @@ const Tour: React.FC<TourProps> = ({ steps, nextPage }) => {
         back: "Voltar", // Altere o texto de "Back"
         skip: "Pular", // Altere o texto de "Skip"
         close: "Fechar", // Altere o texto de "Close"
+        last: "Proxima tela", // Altere o texto de "Close"
       }}
     />
   );
