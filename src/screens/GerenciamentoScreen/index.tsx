@@ -122,6 +122,7 @@ const IntegrationsPage: React.FC = () => {
                   <Button
                     id="choose-marketplace"
                     key={icon.alt}
+                    disabled={icon.disabled}
                     sx={{
                       p: 0,
                       minWidth: 'auto',
