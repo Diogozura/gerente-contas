@@ -13,6 +13,7 @@ import { ThemeProvider } from '../styles/themes/themeContext';
 import { useRouter } from 'next/router';
 import '../styles/globals.css';
 import { authenticatedPages } from "../src/config/authenticatedPages";
+import { ToastNotificationContainer } from '@/components/common/AlertToast';
 
 // Criação do cache para Emotion
 const clientSideEmotionCache = createEmotionCache();
@@ -53,7 +54,8 @@ function MyApp(props: MyAppProps) {
               </Head>
               <Header currentPath={currentPath} />
               <Component {...pageProps} />
-            
+              <ToastNotificationContainer />
+
               <Footer />
               
             </ThemeProvider>

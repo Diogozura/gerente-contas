@@ -1,20 +1,16 @@
 import React from "react";
 import {
   Box,
-  Button,
+ 
   Dialog,
   DialogContent,
   DialogTitle,
   IconButton,
-  TextField,
   Typography,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
+
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import InfosFaltantesInt from '@/components/forms/infosFaltantesInt';
-import Estoque from "@/components/forms/Estoque";
+
 import CheckIcon from '@mui/icons-material/Check';
 
 interface CustomModalProps {
@@ -88,10 +84,7 @@ export const ModalVinculo: React.FC<CustomModalProps> = ({
           >
             {subTitulo}
           </Typography> : ''}
-
-
           {children}
-          
         </Box>
         <Box sx={{
           direction:'rtl'
