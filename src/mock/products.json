@@ -1,8 +1,8 @@
 [
     {
       "id": 1,
-      "titulo": "Kit 3pcs Frascos Âmbar Shampoo Condicionador Sabonete 240ml Cilíndrico",
-      "sku": "KITFRSHCOSAB240C",
+      "titulo": "Kit 2pcs Frascos Âmbar Shampoo Condicionador Sabonete 240ml Cilíndrico",
+      "sku": "KITFRSHCOSAB240A",
       "estoque": 10,
       "estoqueCd": 2,
       "estoqueCdMin":5,
@@ -11,7 +11,7 @@
     {
       "id": 2,
       "titulo": "Kit 3pcs Frascos Âmbar Shampoo Condicionador Sabonete 240ml Cilíndrico",
-      "sku": "KITFRSHCOSAB240C",
+      "sku": "KITFRSHCOSAB240B",
       "estoque": 5,
       "estoqueCd": 17,
       "estoqueCdMin":5,
@@ -19,7 +19,7 @@
     },
     {
       "id": 3,
-      "titulo": "Kit 3pcs Frascos Âmbar Shampoo Condicionador Sabonete 240ml Cilíndrico",
+      "titulo": "1 Frascos Âmbar Shampoo Condicionador Sabonete 240ml Cilíndrico",
       "sku": "KITFRSHCOSAB240C",
       "estoque": 45,
       "estoqueCd": 11,

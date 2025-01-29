@@ -1,6 +1,8 @@
+import { ProdutoDetail } from "./produtoDetail";
+
 export interface Anuncio {
-  titulo: string;
+  marketingPlaces: string[];
+  produto: ProdutoDetail[];
   slug: string;
-  produto: [];
-  marketingPlaces: [];
+  titulo: string;
 }
