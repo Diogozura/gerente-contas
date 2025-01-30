@@ -150,6 +150,11 @@ const navItems = [
     label: "Contato",
     path: "/contato",
   },
+  {
+    id: 3,
+    label: "Novidades",
+    path: "/novidades",
+  },
 ];
 
 

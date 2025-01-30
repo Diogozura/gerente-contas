@@ -216,7 +216,7 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
       case 'Sair':
         // Limpa cookies ou tokens e redireciona para a página de login
         nookies.destroy(null, 'token');
-        router.push('/auth/login');
+        router.push('/auth/logout');
         break;
       default:
         console.warn('Ação desconhecida:', setting);

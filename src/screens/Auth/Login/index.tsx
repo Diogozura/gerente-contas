@@ -77,7 +77,6 @@ export function Login() {
     }
     router.push("/auth/verificacao");
     // Lógica de envio caso não haja erros
-    console.log("Login enviado com sucesso", formValues.login);
 
     //   const loginPromise = authService.login({
     //     body: {
@@ -129,17 +128,17 @@ export function Login() {
 
             textTransform: 'uppercase',
             mt: 2,
-            // background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-            // color: 'white',
-            // '&:hover': {
-            //   background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-            // },
+            background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+            color: 'white',
+            '&:hover': {
+              background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+            },
           }} disabled={isButtonDisabled} color="primary" variant="contained" onClick={handleEnter}>
             Entrar
           </Button>
           <Box m={2}>
             <Typography>Não possui conta?</Typography>
-            <Typography>Conheça nossos <Link href={'/planos'} style={{
+            <Typography>Conheça nossos <Link href={'/#planos'} style={{
               color: '#703B8C',
               fontWeight: 'bold'
             }}>Planos</Link></Typography>

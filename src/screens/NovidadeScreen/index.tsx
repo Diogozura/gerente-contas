@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Drawer, List, ListItem, ListItemText, Box, Checkbox, CircularProgress, Accordion, AccordionSummary, AccordionDetails, Typography, Container } from "@mui/material";
+import { Drawer, List, ListItem, ListItemText, Box, Checkbox, CircularProgress, Accordion, AccordionSummary, AccordionDetails, Typography, Container, Grid } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 interface Page {
@@ -41,11 +41,14 @@ const NovidadesPage: React.FC = () => {
     <Container sx={{
         backgroundColor:'Background'
     }}>
-      <Box sx={{ flexGrow: 1, p: 2 }}>
-        <h2>Novidades</h2>
-        <p>Verifique quais páginas estão funcionando corretamente.</p>
-      </Box>
-        <List>
+      <Grid container spacing={2} >
+        <Grid item xs={12}>
+        <Typography variant="h3" component={'h1'}>Novidades</Typography>
+        <Typography variant="body2" component={'p'}>Verifique quais páginas estão funcionando corretamente.</Typography>
+        </Grid>
+      
+      <Grid item xs={12}>
+      <List>
           {loading ? (
             <CircularProgress sx={{ margin: "auto", display: "block" }} />
           ) : (
@@ -69,8 +72,10 @@ const NovidadesPage: React.FC = () => {
             ))
           )}
         </List>
+      </Grid>
+        
       
-
+        </Grid>
       {/* Conteúdo Principal */}
       
     </Container>
