@@ -1,6 +1,5 @@
 import React, { ChangeEvent } from 'react';
 import { useRouter } from 'next/router';
-import CustomInput from '../../../../components/forms/Inputs/CustomInput';
 import Button from '@mui/material/Button';
 import FormGroup from '@mui/material/FormGroup';
 import Grid from '@mui/material/Grid';
@@ -79,14 +78,14 @@ export default function SimpleForm({ plano }) {
       <FormGroup>
         <Grid container spacing={2}>
           <Grid item xs={12}>
-            <CustomInput
+            {/* <CustomInput
               label="Email"
               type="email"
               value={formValues[formName]?.email || ''}
               onChange={handleChange('email')}
               helperText={formErrors.email}
               error={!!formErrors.email}
-            />
+            /> */}
           </Grid>
           {/* <Grid item xs={12}>
             <CustomInput

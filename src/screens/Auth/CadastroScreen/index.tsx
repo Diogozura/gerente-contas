@@ -2,11 +2,7 @@ import { Backdrop, Box, Button, CircularProgress, Container, Grid, Step, StepLab
 import { useRouter } from "next/router";
 import React from "react";
 import { toast } from "react-toastify";
-import { BoxForm, Formulario } from "../../../components/forms/Formulario";
-import { TituloFom } from "../../../components/forms/Formulario/TituloForm";
-import { authService } from "../../../services/auth/authService";
-import { Notification } from "../../../components/common/AlertToast";
-import { BackgroundBox } from "../../../components/layout/backgrouds/comeia";
+
 import CadastroForm from "./Form";
 import Head from "next/head";
 

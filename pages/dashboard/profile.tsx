@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "../../src/screens/ProfileScreen";
+export { default } from "../../src/screens/PerfilScreen";

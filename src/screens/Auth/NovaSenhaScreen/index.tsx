@@ -1,8 +1,7 @@
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import React from "react";
-import { BoxForm, Formulario } from "../../../components/forms/Formulario";
-import { TituloFom } from "../../../components/forms/Formulario/TituloForm";
+
 import { authService } from "../../../services/auth/authService";
 import Head from "next/head";
 
@@ -26,18 +25,18 @@ export default function NovaSenha() {
     }
         const handleSubmit = async (event) => {
         event.preventDefault();
-        handleToggle();
-        try {
-            const res = await authService.novaSenha({
-                password: values.password,
-                token : values.token
-            });
-            router.push("/sala");
-        } catch (erro) {
-            error();
+        // handleToggle();
+        // try {
+        //     const res = await authService.novaSenha({
+        //         password: values.password,
+        //         token : values.token
+        //     });
+        //     router.push("/sala");
+        // } catch (erro) {
+        //     error();
          
-            handleClose();
-        }
+        //     handleClose();
+        // }
     };
 
 
@@ -46,7 +45,7 @@ export default function NovaSenha() {
         <Head>
             <title>Hubeefive - nova  senha</title>
         </Head>
-            <BoxForm>
+            {/* <BoxForm>
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()
                     alert(JSON.stringify(values, null, 2))
@@ -76,7 +75,7 @@ export default function NovaSenha() {
                         variant="standard" />
                       <Button variant="contained" type="submit">Troca</Button>
                 </Formulario>
-            </BoxForm>
+            </BoxForm> */}
         </>
     )
 }

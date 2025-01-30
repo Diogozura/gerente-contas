@@ -4,6 +4,7 @@ import React from "react";
 
 
 import { authService } from "../../../services/auth/authService";
+import Head from "next/head";
 
 
 export default function TrocarSenha() {
@@ -25,18 +26,18 @@ export default function TrocarSenha() {
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
-        handleToggle();
-        try {
-            const res = await authService.login({
-                username: values.nome,
-                password: values.senha
-            });
-            router.push("/sala");
-        } catch (erro) {
-            error();
+        // handleToggle();
+        // try {
+        //     const res = await authService.login({
+        //         username: values.nome,
+        //         password: values.senha
+        //     });
+        //     router.push("/sala");
+        // } catch (erro) {
+        //     error();
          
-            handleClose();
-        }
+        //     handleClose();
+        // }
     };
 
     return (
@@ -44,7 +45,7 @@ export default function TrocarSenha() {
         <Head>
              <title>Hubeefive - trocar a senha</title>
         </Head>
-            <BoxForm>
+            {/* <BoxForm>
                 <Formulario onSubmit={(event) => {
                     event.preventDefault()
                     alert(JSON.stringify(values, null, 2))
@@ -64,7 +65,7 @@ export default function TrocarSenha() {
                     
                     <Button variant="contained" type="submit">Enviar</Button>
                 </Formulario>
-            </BoxForm>
+            </BoxForm> */}
         </>
     )
 }
