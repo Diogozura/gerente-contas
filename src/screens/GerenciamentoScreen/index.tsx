@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Container, Paper, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Button, Container, Paper, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { styled } from '@mui/system';
 import Head from 'next/head';
 import MinhasIntegracoes from './ListaIntegracoes/index';
@@ -9,6 +9,10 @@ import { useRouter } from 'next/router';
 import Filtro from './Filtro';
 import Tour from '@/components/tuor';
 import { gerenciamentoSteps } from '@/features/tours/gerenciamentoSteps/step';
+import { ModalVinculo } from '@/components/ui/Modal';
+import { showToast } from '@/components/common/AlertToast';
+import { IntegracaoMarketingPlace } from '@/types/IntegracaoMarketingPlace';
+import { getIntegracoes, saveIntegracao } from './ManipulandoLocalStorage';
 
 
 
@@ -29,47 +33,59 @@ const IntegrationsPage: React.FC = () => {
   const router = useRouter();
 
   const [selectedTab, setSelectedTab] = React.useState(0);
-  const [isClient, setIsClient] = React.useState(false); // Controle de renderização no cliente
+  const [nomeLoja, setNomeLoja] = React.useState("");
+  const [integracoes, setIntegracoes] = React.useState<IntegracaoMarketingPlace[]>([]);
+  const [modalState, setModalState] = React.useState({
+    open: false,
+    tipo: "",
+    marketplace: null as { id: string; nome: string } | null,
+  });
 
- 
-
-  // Sincroniza o estado inicial com a URL
   React.useEffect(() => {
-    setIsClient(true);
+    setIntegracoes(getIntegracoes());
     if (router.query.tab === "minhas-integracoes") {
       setSelectedTab(1);
-    } else {
-      setSelectedTab(0);
     }
   }, [router.query]);
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
-    const newTab = newValue === 1 ? "minhas-integracoes" : "integracoes";
-    router.push(`?tab=${newTab}`, undefined, { shallow: true });
+    router.push(`?tab=${newValue === 1 ? "minhas-integracoes" : "integracoes"}`, undefined, { shallow: true });
   };
 
- 
-  const dadosIntegracao = [
-    {
-      nomeLoja: 'beefive',
-      icon: {
-        src: '/marketingplaces/log-mercado-livre.png',
-        alt: 'logo mercado livre'
-      },
-      atencao: 'tem que ver isso ai meu truta',
-    },
-    {
-      nomeLoja: 'Universos Encaixados',
-      icon: {
-        src: '/marketingplaces/log-mercado-livre.png',
-        alt: 'logo mercado livre'
-      },
-      error: 'Vincule esta integração a um CNPJ ou CPF correspondente',
-    },
-  ];
+  const handleOpenModal = (marketplace: { id: string; nome: string }) => {
+    setModalState({
+      open: true,
+      tipo: "Seleção Marketing Place",
+      marketplace,
+    });
+  };
 
-  if (!isClient) return null; // Evita renderizar no servidor
+  const handleCloseModal = () => {
+    setModalState({ open: false, tipo: "", marketplace: null });
+    setNomeLoja("");
+  };
+
+  const handleSaveModal = () => {
+    if (!modalState.marketplace || !nomeLoja.trim()) return;
+
+    const novaIntegracao: IntegracaoMarketingPlace = {
+      nomeMarketplace: modalState.marketplace.nome,
+      nomeLoja,
+    };
+
+    saveIntegracao(novaIntegracao);
+    setIntegracoes(getIntegracoes());
+
+    showToast({
+      title: "Salvo com sucesso!",
+      status: "success",
+      position: "bottom-left",
+    });
+
+    handleCloseModal();
+  };
+
 
   return (
     <>
@@ -86,7 +102,7 @@ const IntegrationsPage: React.FC = () => {
 
         {/* Conteúdo Principal */}
         <Container sx={{ mt: 4 }}>
-     
+
           {/* Tabs */}
           <Paper component="aside" elevation={3} sx={{ maxWidth: '600px' }}>
             <Tabs
@@ -107,17 +123,17 @@ const IntegrationsPage: React.FC = () => {
               }}
             >
               <Tab label="Integrações" />
-              <Tab label="Minhas Integrações"  id='integracoes-feitas'/>
+              <Tab label="Minhas Integrações" id='integracoes-feitas' />
             </Tabs>
           </Paper>
 
           {/* Painel de conteúdo */}
-          <TabPanel sx={{ display: selectedTab === 0 ? 'block' : 'none' }}>
-            <Paper elevation={1} sx={{ p: 1, textAlign: 'center', backgroundColor: '#ffff' }}>
+          <TabPanel sx={{ p: 0, display: selectedTab === 0 ? 'block' : 'none' }}>
+            <Paper elevation={1} sx={{ p: 2, borderRadius: '0px', textAlign: 'center', backgroundColor: '#ffff' }}>
               <Typography variant="subtitle1" textAlign="left" gutterBottom p={2}>
                 Selecione um Marketplace para integrar ao HubeeFive
               </Typography>
-              <Box display="flex" justifyContent="center" gap={2} flexWrap="wrap">
+              <Box display="flex" justifyContent="space-around" gap={2} flexWrap="wrap">
                 {icons.map((icon) => (
                   <Button
                     id="choose-marketplace"
@@ -132,12 +148,13 @@ const IntegrationsPage: React.FC = () => {
                         transform: 'scale(1.1)',
                       },
                     }}
+                    onClick={() => handleOpenModal({ id: icon.alt, nome: icon.alt })}
                   >
                     <Image
                       src={icon.src}
                       alt={icon.alt}
-                      width={138}
-                      height={46}
+                      width={icon.width}
+                      height={icon.height}
                       style={{ objectFit: 'contain' }}
                     />
                   </Button>
@@ -146,15 +163,29 @@ const IntegrationsPage: React.FC = () => {
             </Paper>
           </TabPanel>
 
-          <TabPanel sx={{ display: selectedTab === 1 ? 'block' : 'none' }}>
+          <TabPanel sx={{ p: 0, display: selectedTab === 1 ? 'block' : 'none' }}>
             <Filtro />
-            <MinhasIntegracoes  dadosIntegracao={dadosIntegracao} />
+            <MinhasIntegracoes />
           </TabPanel>
 
-         
+
         </Container>
       </Box>
-      <Tour steps={gerenciamentoSteps} nextPage='/gerenciamento?tab=minhas-integracoes'/>
+      <Tour steps={gerenciamentoSteps} nextPage='/gerenciamento?tab=minhas-integracoes' />
+      <ModalVinculo
+        open={modalState.open}
+        onClose={handleCloseModal}
+        title={modalState.tipo}
+        subTitulo=""
+        onSave={handleSaveModal}>
+        <TextField
+          fullWidth
+          label="Nome da Loja"
+          value={nomeLoja}
+          onChange={(e) => setNomeLoja(e.target.value)}
+          sx={{ mt: 2 }}
+        />
+      </ModalVinculo>
     </>
   );
 };

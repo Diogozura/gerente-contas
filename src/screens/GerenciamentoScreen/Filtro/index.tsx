@@ -30,6 +30,7 @@ export default function Filtro() {
           sx={{
             p: 3,
             mb: 2,
+            borderRadius:'0px',
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",

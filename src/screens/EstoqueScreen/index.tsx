@@ -183,7 +183,6 @@ export default function Estoque() {
 
   const handleSaveModal = (data: any) => {
     const { tipo } = modalState;
-    console.log('tipo', tipo)
     switch (tipo) {
       case "Configuração":
         return (
@@ -194,7 +193,6 @@ export default function Estoque() {
         );
         break;  
       case "Deletar":
-        console.log('aiai', data)
         handleDeleteProduct(modalState.data.id);
         showToast({
           title: "Produto deletado com sucesso!",

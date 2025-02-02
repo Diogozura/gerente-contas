@@ -1,6 +1,7 @@
  [
-    { "src": "/marketingplaces/mercadoLivre.png", "alt": "Mercado Livre", "disabled":false },
-    { "src": "/marketingplaces/shopee.png", "alt": "Shopee", "disabled":true },
- 
-    { "src": "/marketingplaces/amazon.png", "alt": "Amazon", "disabled":false }
+    { "src": "/marketingplaces/mercadoLivre.png", "alt": "Mercado Livre", "disabled":false , "width":132, "height":46 },
+    { "src": "/marketingplaces/shopee.png", "alt": "Shopee", "disabled":false , "width":47, "height":55 },
+    { "src": "/marketingplaces/magalu.png", "alt": "Magalu", "disabled":true , "width":117, "height":27 },
+    { "src": "/marketingplaces/americanas.png", "alt": "Americanas", "disabled":true , "width":124, "height":29 },
+    { "src": "/marketingplaces/amazon.png", "alt": "Amazon", "disabled":false , "width":91, "height":31 }
   ]

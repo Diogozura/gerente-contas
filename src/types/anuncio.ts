@@ -5,4 +5,6 @@ export interface Anuncio {
   produto: ProdutoDetail[];
   slug: string;
   titulo: string;
+  marketplaceId:string;
+  loja:string;
 }

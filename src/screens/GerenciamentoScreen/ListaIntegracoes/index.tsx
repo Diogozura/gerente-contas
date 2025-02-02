@@ -4,7 +4,7 @@ import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import SettingsIcon from "@mui/icons-material/Settings";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ModalVinculo } from "../../../components/ui/Modal";
 import InfosFaltantesInt from "@/components/forms/infosFaltantesInt";
 import { showToast } from "@/components/common/AlertToast";
@@ -12,16 +12,69 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckIcon from '@mui/icons-material/Check';
 import Tour from "@/components/tuor";
 import { gerenciamentoIntSteps } from "@/features/tours/gerenciamentoIntSteps/step";
+import { IntegracaoMarketingPlace } from "@/types/IntegracaoMarketingPlace";
+import { deleteIntegracao, getIntegracoes } from "../ManipulandoLocalStorage";
+import { useFormContext } from "@/config/FormContext";
 
-export default function ListaIntegracao({ dadosIntegracao }) {
+export default function ListaIntegracao() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
-  const [editedValue, setEditedValue] = useState<string | null>(null); // Valor temporário para edição
-  const [nomeLojas, setNomeLojas] = useState<string[]>(
-    dadosIntegracao.map((item) => item.nomeLoja)
-  );
+  const [editedValue, setEditedValue] = useState<string | null>(null);
+  const [integracoes, setIntegracoes] = useState<IntegracaoMarketingPlace[]>([]);
+  const { formValues, setFormValues } = useFormContext();
+  useEffect(() => {
+    setIntegracoes(getIntegracoes());
+  }, []);
+
+  const getMarketplaceLogo = (nome?: string) => {
+    return nome?.includes("Mercado Livre")
+      ? "/marketingplaces/log-mercado-livre.png"
+      : "/marketingplaces/amazon.png";
+  };
+
+  const handleEditClick = (index: number) => {
+    setEditIndex(index);
+    setEditedValue(integracoes[index].nomeLoja);
+  };
+
+  const handleCancelEdit = () => {
+    setEditIndex(null);
+    setEditedValue(null);
+  };
+
+  const handleSaveEdit = (index: number) => {
+    if (editedValue !== null) {
+      setIntegracoes((prev) => {
+        const updatedIntegracoes = [...prev];
+        updatedIntegracoes[index] = {
+          ...updatedIntegracoes[index],
+          nomeLoja: editedValue,
+        };
+
+        // Atualiza o localStorage
+        localStorage.setItem("integracoes", JSON.stringify(updatedIntegracoes));
+
+        return updatedIntegracoes;
+      });
+
+      showToast({
+        title: "Nome atualizado com sucesso!",
+        status: "success",
+        position: "bottom-left",
+      });
+    }
+    handleCancelEdit();
+  };
+
+
+
   const [modalState, setModalState] = useState({
     open: false,
     tipo: "",
+    mensagem: "",
+    razaoSocial: "",
+    cnpjOuCpf: "",
+    id:"",
+    loja:""
   });
 
   const handleOpenModal = (tipo: string, data: any) => {
@@ -32,25 +85,68 @@ export default function ListaIntegracao({ dadosIntegracao }) {
       ...data,
     });
   };
-  const handleEditClick = (index: number) => {
-    setEditIndex(index); // Define o índice sendo editado
-    setEditedValue(nomeLojas[index]); // Preenche o valor inicial do campo
-  };
+
   const handleCloseModal = () => {
     setModalState({ ...modalState, open: false });
   };
 
-  const handleSaveModal = (data: any) => {
+  const handleSaveModal = () => {
+    const { tipo, ...int } = modalState;
+    switch (tipo) {
+      case "Atenção":
+       const infosFalantes=  formValues.infosFaltantesInt;
+       setIntegracoes((prev) =>
+        prev.map((item) =>
+          item.id === modalState.id
+            ? { ...item, ...infosFalantes }
+            : item
+        )
+      );
+    
+      // Atualiza o localStorage
+      localStorage.setItem(
+        "integracoes",
+        JSON.stringify(
+          integracoes.map((item) =>
+            item.id === modalState.id ? { ...item, ...infosFalantes } : item
+          )
+        )
+      );
+    
+      showToast({
+        title: "Informações completadas!",
+        status: "success",
+        position: "bottom-left",
+      });
+    
+      handleCloseModal();
+      break
+      case "Deletar":
+        if (int.id) {
+          deleteIntegracao(int.id);
+          setIntegracoes(getIntegracoes()); // Atualiza a lista
+          showToast({
+            title: "Integração deletada com sucesso!",
+            status: "success",
+            position: "bottom-left",
+          });
+        } else {
+          showToast({
+            title: "Erro ao deletar a integração.",
+            status: "error",
+            position: "bottom-left",
+          });
+        }
+        handleCloseModal();
+      break
+      default:
+        return null 
+    }
+ 
+      
+    
+    
 
-    showToast({
-      title: "Salvo com sucesso!",
-      status: "success",
-      position: "bottom-left",
-    });
-
-
-
-    handleCloseModal();
   };
 
   const renderModalContent = () => {
@@ -58,18 +154,9 @@ export default function ListaIntegracao({ dadosIntegracao }) {
 
     switch (tipo) {
       case "Configuração":
-        return (
-          <Box>
-            <Typography>Configuração da loja: </Typography>
-            {/* Outros inputs específicos */}
-          </Box>
-        );
+        return <Typography>Configuração da loja:</Typography>;
       case "Deletar":
-        return (
-          <Typography>
-            Tem certeza que deseja deleter?
-          </Typography>
-        );
+        return <Typography>Tem certeza que deseja deletar?</Typography>;
       case "Atenção":
         return (
           <Box>
@@ -81,30 +168,16 @@ export default function ListaIntegracao({ dadosIntegracao }) {
     }
   };
 
-   const handleCancelEdit = () => {
-    setEditIndex(null); // Sai do modo de edição
-    setEditedValue(null); // Reseta o valor temporário
+  const verificarCamposFaltantes = (integracao: IntegracaoMarketingPlace) => {
+    return !integracao.cnpjOuCpf || !integracao.razaoSocial || !integracao.inscricaoEstadual;
   };
 
-  const handleSaveEdit = (index: number) => {
-    if (editedValue !== null) {
-      const updatedLojas = [...nomeLojas];
-      updatedLojas[index] = editedValue; // Atualiza o valor na lista original
-      setNomeLojas(updatedLojas);
-      showToast({
-        title: "Nome atualizado com sucesso!",
-        status: "success",
-        position: "bottom-left",
-      });
-    }
-    handleCancelEdit(); // Finaliza a edição
-  };
   return (
     <>
-      {dadosIntegracao.map((integracao, index) => (
+      {integracoes.map((int, index) => (
         <Paper
-          key={integracao.nomeLoja}
-          elevation={1}
+          key={int.id}
+          elevation={3}
           sx={{
             p: 3,
             mb: 2,
@@ -112,119 +185,89 @@ export default function ListaIntegracao({ dadosIntegracao }) {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "#fff",
+            borderRadius: 2,
           }}
         >
           <Box display="flex" alignItems="center">
             <Image
-              src={integracao.icon.src}
-              alt={integracao.icon.alt}
-              width={43}
-              height={33}
+              src={getMarketplaceLogo(int.nomeMarketplace)}
+              alt={`Logo de ${int.nomeMarketplace}`}
+              width={50}
+              height={35}
               style={{ marginRight: "10px" }}
             />
             <TextField
               variant="standard"
-              disabled={editIndex !== index} // Desabilita se não for o campo editado
-              value={editIndex === index ? editedValue : nomeLojas[index]} // Mostra o valor editável
-              onChange={(e) => setEditedValue(e.target.value)} // Atualiza o valor temporário
+              disabled={editIndex !== index}
+              value={editIndex === index ? editedValue : int.nomeLoja}
+              onChange={(e) => setEditedValue(e.target.value)}
               sx={{ width: "200px" }}
             />
             {editIndex === index ? (
               <>
-                {/* Botão de cancelar */}
-                <IconButton
-                  aria-label="Cancelar"
-                  onClick={handleCancelEdit}
-                >
+                <IconButton aria-label="Cancelar" onClick={handleCancelEdit}>
                   <CloseIcon color="error" />
                 </IconButton>
-                {/* Botão de salvar */}
-                <IconButton
-                  aria-label="Salvar"
-                  onClick={() => handleSaveEdit(index)}
-                >
+                <IconButton aria-label="Salvar" onClick={() => handleSaveEdit(index)}>
                   <CheckIcon color="success" />
                 </IconButton>
               </>
             ) : (
-              <IconButton
-                aria-label="Editar"
-                id="editar-nomes"
-                onClick={() => handleEditClick(index)}
-              >
+              <IconButton aria-label="Editar" onClick={() => handleEditClick(index)}>
                 <EditIcon />
               </IconButton>
             )}
-
           </Box>
 
-          <Box display="flex"  alignItems="center">
-            {integracao.error && (
+          <Box display="flex" alignItems="center">
+            
+            {/* {int.error && (
               <Button
                 variant="contained"
-                color="inherit"
+                color="warning"
                 sx={{ ml: 1 }}
                 onClick={() =>
-                  handleOpenModal("Atenção", {
-                    razaoSocial: integracao.razaoSocial,
-                    inscricaoEstadual: integracao.inscricaoEstadual,
-                    cnpjOuCpf: integracao.cnpjOuCpf,
+                  showToast({
+                    title: "Erro na integração!",
+                    status: "warning",
+                    position: "bottom-left",
                   })
                 }
               >
-                {integracao.error}
+                {int.error}
               </Button>
-            )}
-            {integracao.atencao && (
-              <Tooltip title="Faltam informações">
-                <IconButton
-                id="atencao"
-                  onClick={() =>
-                    handleOpenModal("Atenção", {
-                      razaoSocial: integracao.razaoSocial,
-                      inscricaoEstadual: integracao.inscricaoEstadual,
-                      cnpjOuCpf: integracao.cnpjOuCpf,
-                    })
-                  }
-                >
-                  <PriorityHighIcon />
+            )} */}
+            {verificarCamposFaltantes(int) && (
+              <Tooltip title="Faltam informações obrigatórias">
+                <IconButton onClick={() => handleOpenModal("Atenção", int)}>
+                  <PriorityHighIcon color="warning" />
                 </IconButton>
               </Tooltip>
             )}
             <IconButton
               aria-label="Configuração"
-              id="configuracao"
-              onClick={() =>
-                handleOpenModal("Configuração", { razaoSocial: integracao.razaoSocial })
-              }
+              onClick={() => handleOpenModal("Configuração", int)}
             >
               <SettingsIcon color="inherit" />
             </IconButton>
             <IconButton
               aria-label="Deletar"
-              id="delelete"
-              onClick={() =>
-                handleOpenModal("Deletar", {
-                  razaoSocial: integracao.razaoSocial,
-                  cnpjOuCpf: integracao.cnpjOuCpf,
-                })
-              }
+              onClick={() => handleOpenModal("Deletar", int)}
             >
               <DeleteIcon />
             </IconButton>
           </Box>
         </Paper>
       ))}
-
       <ModalVinculo
         open={modalState.open}
         onClose={handleCloseModal}
         title={modalState.tipo}
         subTitulo=""
-        onSave={handleSaveModal}>
+        onSave={handleSaveModal}
+      >
         {renderModalContent()}
       </ModalVinculo>
-
       <Tour steps={gerenciamentoIntSteps} />
     </>
   );
