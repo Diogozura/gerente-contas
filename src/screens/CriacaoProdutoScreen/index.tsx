@@ -7,38 +7,35 @@ import {
   Button,
   Grid,
   Box,
-  InputLabel,
-  Select,
-  MenuItem,
   FormControl,
-  OutlinedInput,
-  InputAdornment,
   FormHelperText,
   Modal,
-  FormLabel,
   RadioGroup,
   FormControlLabel,
   Radio,
   Tabs,
   Tab,
-  Paper,
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  AccordionActions,
   IconButton,
+  Input,
 } from "@mui/material";
 import Bread from "../../components/ui/Breadcrumbs";
 // import Swiper from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Head from "next/head";
-import { styled } from '@mui/system';
 import Image from "next/image";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import InputMoney from "../../components/Inputs/InputMoney";
 import { TabPanelProps } from "@/types/tabPanelProps";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+import CadastroProduto from "@/components/forms/CadastroProduto";
 
 
 
@@ -51,17 +48,15 @@ function TabPanel(props: TabPanelProps) {
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
+      style={{
+        backgroundColor: '#FFFF'
+      }}
       {...other}
     >
       {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
     </div>
   );
 }
-
-
-
-
-
 
 export default function CriacaoProduto() {
   const router = useRouter();
@@ -200,355 +195,198 @@ export default function CriacaoProduto() {
       <Head>
         <title>Hubeefive - Criar produto</title>
       </Head>
-      <Container >
-        <Bread nav={nav} />
-        <Typography  variant="h4" id='create-product' gutterBottom>
-          Criar Produto
-        </Typography>
-        <Grid item xs={12}>
-          <Button  id="produtos-criar" variant="contained" color="primary" disabled={!isFormValid} onClick={saveProduct}>
-            Salvar Produto
+
+      <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
+        <Grid item>
+          <Button variant="contained" color="primary" id='estoque-header' onClick={() => router.push("/estoque/criacao-produto")}>
+            Cadastro de Produto Individual
           </Button>
         </Grid>
+        <Grid item>
+          <Button variant="contained" component="label" color="primary">
+            Cadastro de Produto Em Massa
+            <Input type="file" sx={{ display: "none" }} />
+          </Button>
+        </Grid>
+        {/* <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={selectedIds.length === 0}
+            onClick={exportToCSV}
+          >
+            Exportar Produtos
+          </Button>
+        </Grid> */}
+      </Grid>
+     
 
-        <Tabs value={tab} onChange={handleTabChange} aria-label="product tabs" centered>
-          <Tab label="Ficha do Produto" id="tab-0" aria-controls="tabpanel-0" />
-          <Tab label="Estoque" id="tab-1" aria-controls="tabpanel-1" />
-          <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" disabled />
-        </Tabs>
-      </Container>
+      <Tabs value={tab} onChange={handleTabChange} aria-label="product tabs"
+        sx={{
+          '.MuiTabs-indicator': { display: 'none' },
+          '.MuiTab-root': {
+            backgroundColor: '#F5F5F5',
+            color: '#9E9E9E',
+          },
+          '.Mui-selected': {
+            backgroundColor: '#FFFFFF',
+            color: '#000000f9',
+            fontWeight: 'bold',
+          },
+          paddingLeft: '20px'
+        }}
+      >
+        <Tab label="Ficha do Produto" id="tab-0" aria-controls="tabpanel-0" />
+        <Tab label="Estoque" id="tab-1" aria-controls="tabpanel-1" />
+        <Tab label="Tributação" id="tab-2" aria-controls="tabpanel-2" disabled />
+      </Tabs>
+
       {/* Ficha tecnina com produto  */}
       <TabPanel value={tab} index={0}>
         {/* Imagens upload  */}
-        <Grid >
-          {/* Carrossel de pré-visualização */}
-          {newProduct.imagens.length > 0 && (
-            <Grid item xs={12}>
-              <Swiper
-                spaceBetween={10}
-                slidesPerView={3}
-                style={{ height: "150px", marginTop: "20px" }}
-              >
-                {newProduct.imagens.map((img, idx) => (
-                  <SwiperSlide key={idx}>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        cursor: "pointer",
-                        border: "1px solid #ccc",
-                      }}
-                      onClick={() => handleImageClick(idx)}
-                    >
-                      <Image
-                        src={URL.createObjectURL(img)}
-                        alt={`Imagem ${idx + 1}`}
-                        width={400}
-                        height={400}
-                      // style={{ maxWidth: "100%", maxHeight: "100%" }}
-                      />
-                    </Box>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
-            </Grid>
-          )}
-          {/* Modal para exibir a imagem em tamanho grande */}
-          <Modal open={!!selectedImage} onClose={handleCloseModal}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                bgcolor: "background.paper",
-                border: "2px solid #000",
-                boxShadow: 24,
-                p: 2,
-              }}
-            >
-              {selectedImage && (
-                <img
-                  src={selectedImage}
-                  alt="Imagem ampliada"
-                  style={{ maxWidth: "100%", maxHeight: "100%" }}
+        <Grid container spacing={2}>
+          <Grid xs={12}>
+            <Grid container padding={3} spacing={2}>
+              <Grid xs={9}>
+                <TextField 
+                variant="standard"
+                label="Titulo"
+                name='tituloProduto'
+                type="text"
+                fullWidth 
                 />
-              )}
-            </Box>
-          </Modal>
-          <Grid item xs={12}>
+              </Grid>
 
-            <FormHelperText>
-              {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
-            </FormHelperText>
-            <Button
-              variant="contained"
-              component="label"
-              color="primary"
-              disabled={newProduct.imagens.length >= 6}
-            >
-              Upload de Imagens
-              <input
-                type="file"
-                hidden
-                accept=".jpg, .jpeg, .png"
-                multiple
-                onChange={handleImageUpload}
-              />
-            </Button>
+              <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={!isFormValid} onClick={saveProduct} sx={{
+                  m: 1
+                }}>
+                  Salvar Produto
+                </Button>
+                <Button variant="contained" color="primary" id="Editor" sx={{
+                  m: 1
+                }}
+                // onClick={() => handleOpenModal("Editor", product)}
+                >
+                  <ModeEditOutlineOutlinedIcon color="background.paper" />
+                </Button>
+                <Button variant="contained" color="primary" disabled
+                  sx={{
+                    m: 1
+                  }}
+                >
+                  <ContentCopyIcon color="background.paper" />
+                </Button>
+                <Button variant="contained" color="primary"
+                  sx={{
+                    m: 1
+                  }}
+                  id="delelete"
+                // onClick={() =>
+                //   handleOpenModal("Deletar", product)
+                // }
+
+                >
+                  <DeleteOutlineOutlinedIcon color="background.paper" />
+                </Button>
+
+              </Grid>
+            </Grid>
+
           </Grid>
-        </Grid>
-        {/* Informações do produto  */}
-        <Grid xs={9}>
-          <Grid container p={1} spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                label="Título"
-                fullWidth
-                value={newProduct.titulo}
-                required
-                onChange={(e) => handleChange("titulo", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              {/* {espaço vago} */}
-            </Grid>
-
-            <Grid item xs={4}>
-              <TextField
-                label="Código SKU"
-                fullWidth
-                value={newProduct.sku}
-                onChange={(e) => handleChange("sku", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Código EAN"
-                fullWidth
-                value={newProduct.ean}
-                onChange={(e) => handleChange("ean", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Unidade"
-                fullWidth
-                value={newProduct.unidade}
-                onChange={(e) => handleChange("unidade", e.target.value)}
-              />
-            </Grid>
-
-            <Grid item xs={4}>
-              <TextField
-                label="Altura (cm)"
-                type="number"
-                fullWidth
-                value={newProduct.altura}
-                onChange={(e) => handleChange("altura", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Largura (cm)"
-                type="number"
-                fullWidth
-                value={newProduct.largura}
-                onChange={(e) => handleChange("largura", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Profundidade (cm)"
-                type="number"
-                fullWidth
-                value={newProduct.profundidade}
-                onChange={(e) => handleChange("profundidade", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Modelo"
-                fullWidth
-                value={newProduct.modelo}
-                onChange={(e) => handleChange("modelo", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Marca"
-                fullWidth
-                value={newProduct.marca}
-                onChange={(e) => handleChange("marca", e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <TextField
-                label="Peso Líquido (g)"
-                type="number"
-                fullWidth
-                value={newProduct.pesoLiquido}
-                onChange={(e) => handleChange("pesoLiquido", parseInt(e.target.value, 10))}
-              />
-            </Grid>
-            {/* Garantia  */}
-            <Grid item xs={6}>
-              <Typography variant="h6" gutterBottom>
-                Garantia
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                {garantiaTipo === 'garantiaFabrica' && garantiaValor
-                  ? `Você oferece garantia de fábrica por ${garantiaValor} ${garantiaPeriodo}.`
-                  : garantiaTipo === 'garantiaVendedor' && garantiaValor
-                    ? `Você oferece garantia do vendedor por ${garantiaValor} ${garantiaPeriodo}.`
-                    : 'Nenhuma garantia selecionada.'}
-              </Typography>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  name="garantia"
-                  value={garantiaTipo}
-                  onChange={handleTipoChange}
+          <Grid xs={3}>
+            {/* Carrossel de pré-visualização */}
+            {newProduct.imagens.length > 0 && (
+              <Grid item xs={12}>
+                <Swiper
+                  spaceBetween={10}
+                  slidesPerView={3}
+                  style={{ height: "150px", marginTop: "20px" }}
                 >
-                  <FormControlLabel
-                    value="garantiaVendedor"
-                    control={<Radio />}
-                    label="Garantia do vendedor"
-                  />
-                  <FormControlLabel
-                    value="garantiaFabrica"
-                    control={<Radio />}
-                    label="Garantia de fábrica"
-                  />
-
-                  <FormControlLabel
-                    value="semGarantia"
-                    control={<Radio />}
-                    label="Sem garantia"
-                  />
-
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-
-            <Grid p={4} xs={12} spacing={2}>
-              <Accordion defaultExpanded>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel3-content"
-                  id="panel3-header"
-                >
-                  <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
-                    Lista de preços
-                  </Typography>
-                  <Typography variant="body1" component={'p'} >
-                    Crie variações de preços para diferentes tipos ou canais de venda
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  {/* Lista de Preços */}
-                  <Box mt={3}>
-                    <Typography variant="h6">Lista de Preços</Typography>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={4}>
-                        <TextField
-                          label="Variação"
-                          fullWidth
-                          value={variacao}
-                          onChange={(e) => setVariacao(e.target.value)}
-                        />
-                      </Grid>
-                      <Grid item xs={4}>
-                        <InputMoney
-                          label="Preço Mínimo"
-                          name="PrecoMinimo"
-                        />
-                  
-                      </Grid>
-                      <Grid item xs={2}>
-                        <Button variant="contained" onClick={adicionarListaPreco}>
-                          Adicionar
-                        </Button>
-                      </Grid>
-                    </Grid>
-
-                    {/* Renderizar Lista de Preços */}
-                    {newProduct.listaPrecos.map((item, index) => (
-                      <Grid
-                        key={index}
-                        container
-                        spacing={2}
-                        alignItems="center"
-                        mt={1}
-                        sx={{ borderBottom: "1px solid #ccc", pb: 1 }}
+                  {newProduct.imagens.map((img, idx) => (
+                    <SwiperSlide key={idx}>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          cursor: "pointer",
+                          border: "1px solid #ccc",
+                        }}
+                        onClick={() => handleImageClick(idx)}
                       >
-                        <Grid item xs={4}>
-                          <Typography>{item.variacao}</Typography>
-                        </Grid>
-                        <Grid item xs={4}>
-                          <Typography>R$ {item.precoMinimo.toLocaleString('pt-br', {style: 'decimal', minimumSignificantDigits: 3})}</Typography>
-                        </Grid>
-                        <Grid item xs={2}>
-                          <IconButton onClick={() => removerListaPreco(index)}>
-                            <DeleteOutlineOutlinedIcon />
-                          </IconButton>
-                        </Grid>
-                      </Grid>
-                    ))}
-                  </Box>
-                </AccordionDetails>
+                        <Image
+                          src={URL.createObjectURL(img)}
+                          alt={`Imagem ${idx + 1}`}
+                          width={400}
+                          height={400}
+                        // style={{ maxWidth: "100%", maxHeight: "100%" }}
+                        />
+                      </Box>
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              </Grid>
+            )}
+            {/* Modal para exibir a imagem em tamanho grande */}
+            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  bgcolor: "background.paper",
+                  border: "2px solid #000",
+                  boxShadow: 24,
+                  p: 2,
+                }}
+              >
+                {selectedImage && (
+                  <img
+                    src={selectedImage}
+                    alt="Imagem ampliada"
+                    style={{ maxWidth: "100%", maxHeight: "100%" }}
+                  />
+                )}
+              </Box>
+            </Modal>
+            <Grid item >
 
-              </Accordion>
-
+              <FormHelperText>
+                {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
+              </FormHelperText>
+              <Button
+                variant="contained"
+                component="label"
+                color="primary"
+                disabled={newProduct.imagens.length >= 6}
+              >
+                Upload de Imagens
+                <input
+                  type="file"
+                  hidden
+                  accept=".jpg, .jpeg, .png"
+                  multiple
+                  onChange={handleImageUpload}
+                />
+              </Button>
             </Grid>
+          </Grid >
+          {/* Informações do produto  */}
 
-            <Grid p={4} spacing={2} xs={12}>
-              <Accordion defaultExpanded>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel3-content"
-                  id="panel3-header"
-                >
-                  <Typography color={'primary'} variant="h5" component={'h3'} fontWeight={500}>
-                    Descrição
-                  </Typography>
-
-
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Grid item xs={12}>
-                    <TextField
-                      label="Descrição do Produto"
-                      multiline
-                      fullWidth
-                      value={newProduct.descricao}
-                      onChange={(e) => handleChange("descricao", e.target.value)}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Button
-                      variant="outlined"
-                      color="primary"
-                      onClick={handleGenerateDescription}
-                    >
-                      Gerar Descrição
-                    </Button>
-                  </Grid>
-                </AccordionDetails>
-
-              </Accordion>
-
-            </Grid>
+          <Grid xs={9}  >
+            <CadastroProduto view={false}/>
           </Grid>
-          <Grid />
         </Grid>
+
 
 
       </TabPanel>
       {/*controle de  Estoque produto  */}
-      <TabPanel value={tab} index={1}>
+      <TabPanel value={tab} index={1} >
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography>
