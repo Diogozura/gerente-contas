@@ -178,7 +178,7 @@ const settings = [
 const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anúncio publicado'];
 
 
-export default function PublicLayout({ currentPath = '' }: { currentPath?: string }) {
+export default function PrivateLayout({ currentPath = '' }: { currentPath?: string }) {
   const router = useRouter()
   const { currentTheme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -223,7 +223,7 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
     }
   };
 
-  const isActive = (path: string) => path === currentPath;
+  const isActive = (path: string) => path === router.pathname;
   const drawer = (
     <Box onClick={handleDrawerToggle} component={"header"}>
       <Box padding={1} color={"white"}>

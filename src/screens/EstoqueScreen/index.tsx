@@ -175,10 +175,8 @@ export default function Estoque() {
       return produto; // Mantém os produtos não editados
     });
     // 3. Salva os dados atualizados no localStorage
-    console.log('produtosAtualizados', produtosAtualizados)
     localStorage.setItem("produtos", JSON.stringify(produtosAtualizados));
-
-    console.log("Produtos atualizados:", produtosAtualizados);
+    setProducts(produtosAtualizados);
   };
 
   const handleSaveModal = (data: any) => {
@@ -190,8 +188,7 @@ export default function Estoque() {
             <Typography>Configuração da loja: </Typography>
             {/* Outros inputs específicos */}
           </Box>
-        );
-        break;  
+        );  
       case "Deletar":
         handleDeleteProduct(modalState.data.id);
         showToast({
@@ -202,7 +199,6 @@ export default function Estoque() {
         handleCloseModal();
         break;
       case "Editor":
-        console.log(' formValues.editarProduto',  formValues.editarProduto)
         // Novo produto atualizado com base nos dados enviados
         const updatedProduct = {
           id: modalState.data.id, 

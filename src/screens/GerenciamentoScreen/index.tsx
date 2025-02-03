@@ -6,14 +6,13 @@ import MinhasIntegracoes from './ListaIntegracoes/index';
 import Image from 'next/image';
 import icons from '../../../src/mock/icones.json';
 import { useRouter } from 'next/router';
-import Filtro from './Filtro';
 import Tour from '@/components/tuor';
 import { gerenciamentoSteps } from '@/features/tours/gerenciamentoSteps/step';
 import { ModalVinculo } from '@/components/ui/Modal';
 import { showToast } from '@/components/common/AlertToast';
 import { IntegracaoMarketingPlace } from '@/types/IntegracaoMarketingPlace';
 import { getIntegracoes, saveIntegracao } from './ManipulandoLocalStorage';
-
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 
 // Estilização para o menu lateral
@@ -95,8 +94,8 @@ const IntegrationsPage: React.FC = () => {
       <Box display="flex" p={10} key={router.asPath}>
         {/* Menu Lateral */}
         <SideMenu>
-          <Typography variant="h6" color="primary" fontWeight="bold">
-            Integrações
+          <Typography variant="h6" color="primary" fontWeight="bold" display={'flex'} alignItems={'center'}>
+            Integrações <PlayArrowIcon color='primary'/>
           </Typography>
         </SideMenu>
 
@@ -164,7 +163,7 @@ const IntegrationsPage: React.FC = () => {
           </TabPanel>
 
           <TabPanel sx={{ p: 0, display: selectedTab === 1 ? 'block' : 'none' }}>
-            <Filtro />
+            
             <MinhasIntegracoes />
           </TabPanel>
 

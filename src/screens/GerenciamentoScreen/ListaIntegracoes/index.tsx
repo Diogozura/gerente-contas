@@ -1,8 +1,6 @@
 import { Box, IconButton, Paper, TextField, Button, Tooltip, Typography } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
 import SettingsIcon from "@mui/icons-material/Settings";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import { ModalVinculo } from "../../../components/ui/Modal";
@@ -15,16 +13,33 @@ import { gerenciamentoIntSteps } from "@/features/tours/gerenciamentoIntSteps/st
 import { IntegracaoMarketingPlace } from "@/types/IntegracaoMarketingPlace";
 import { deleteIntegracao, getIntegracoes } from "../ManipulandoLocalStorage";
 import { useFormContext } from "@/config/FormContext";
-
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import FiltroTexto from "@/components/common/FiltroText";
 export default function ListaIntegracao() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editedValue, setEditedValue] = useState<string | null>(null);
   const [integracoes, setIntegracoes] = useState<IntegracaoMarketingPlace[]>([]);
+    const [textoFiltro, setTextoFiltro] = useState("");
   const { formValues, setFormValues } = useFormContext();
   useEffect(() => {
     setIntegracoes(getIntegracoes());
   }, []);
+  console.log('integracoes', integracoes)
 
+  const [filteredIntegracoes, setFilteredIntegracoes] = useState(integracoes);
+  
+  useEffect(() => {
+    // Filtra as integrações sempre que o filtro de texto ou a lista de integrações mudarem
+    const filtered = integracoes.filter((integracao) => {
+      const matchText =
+        integracao.nomeLoja.toLowerCase().includes(textoFiltro.toLowerCase()) ||
+        integracao.id.toLowerCase().includes(textoFiltro.toLowerCase());
+      return matchText;
+    });
+    setFilteredIntegracoes(filtered);
+  }, [textoFiltro, integracoes]);
+  
   const getMarketplaceLogo = (nome?: string) => {
     return nome?.includes("Mercado Livre")
       ? "/marketingplaces/log-mercado-livre.png"
@@ -143,9 +158,6 @@ export default function ListaIntegracao() {
         return null 
     }
  
-      
-    
-    
 
   };
 
@@ -174,7 +186,26 @@ export default function ListaIntegracao() {
 
   return (
     <>
-      {integracoes.map((int, index) => (
+    <Paper
+              elevation={1}
+              sx={{
+                p: 3,
+                mb: 2,
+                borderRadius:'0px',
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+  <FiltroTexto
+            label="Filtrar por título ou SKU"
+            value={textoFiltro}
+            onChange={setTextoFiltro}
+          />
+            </Paper>
+   
+
+      {filteredIntegracoes.map((int, index) => (
         <Paper
           key={int.id}
           elevation={3}
@@ -214,7 +245,7 @@ export default function ListaIntegracao() {
               </>
             ) : (
               <IconButton aria-label="Editar" onClick={() => handleEditClick(index)}>
-                <EditIcon />
+                <EditOutlinedIcon />
               </IconButton>
             )}
           </Box>
@@ -254,7 +285,7 @@ export default function ListaIntegracao() {
               aria-label="Deletar"
               onClick={() => handleOpenModal("Deletar", int)}
             >
-              <DeleteIcon />
+              <DeleteOutlinedIcon />
             </IconButton>
           </Box>
         </Paper>
