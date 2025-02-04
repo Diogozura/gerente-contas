@@ -19,7 +19,7 @@ export default function Estoque({ view }) {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <TextField
             label="Estoque Local"
             name='estoqueLocal'
@@ -34,7 +34,7 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <TextField
             label="Estoque minimo"
             name='estoqueMinimo'
@@ -49,13 +49,14 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <TextField
             label="Estoque Máximo"
             type="number"
             fullWidth
             disabled={view}
-            value={formValues.estoque?.tituloAnuncio || ''}
+            name='estoqueMaximo'
+            value={formValues.estoque?.estoqueMaximo || ''}
             onChange={handleInputChange}
             InputProps={{
               inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
@@ -63,7 +64,7 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={6} display="flex" alignItems="center" gap={1}>
+        <Grid item xs={2} display="flex" alignItems="center" gap={1}>
           <TextField
             label="Crossdocking"
             name='crossdocking'
@@ -84,13 +85,14 @@ export default function Estoque({ view }) {
             </Tooltip>
           
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={3}>
           <TextField
             label="Localização"
             type="Text"
             fullWidth
             disabled={view}
-            value={formValues.estoque?.tituloAnuncio || ''}
+            name='localizao'
+            value={formValues.estoque?.localizao || ''}
             onChange={handleInputChange}
             InputProps={{
               inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
@@ -98,13 +100,14 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={3}>
           <TextField
             label="Estoque em CD"
             type="number"
             fullWidth
             disabled={view}
-            value={formValues.estoque?.tituloAnuncio || ''}
+            name='estoqueCd'
+            value={formValues.estoque?.estoqueCd || ''}
             onChange={handleInputChange}
             InputProps={{
               inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
@@ -112,13 +115,14 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <TextField
             label="Estoque Mínimo"
             type="number"
             fullWidth
             disabled={view}
-            value={formValues.estoque?.tituloAnuncio || ''}
+            name='estoqueCdMin'
+            value={formValues.estoque?.estoqueCdMin || ''}
             onChange={handleInputChange}
             InputProps={{
               inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
@@ -126,13 +130,14 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={2}>
           <TextField
             label="Estoque máximo"
             type="number"
             fullWidth
             disabled={view}
-            value={formValues.estoque?.tituloAnuncio || ''}
+            name='estoqueCdMax'
+            value={formValues.estoque?.estoqueCdMax || ''}
             onChange={handleInputChange}
             InputProps={{
               inputProps: { min: 0 }, // Bloqueia manualmente valores negativos

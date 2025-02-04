@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext, ReactNode } from 'react';
 interface FormContextProps {
   formValues: Record<string, Record<string, any>>; // Estrutura do tipo { formName: { key: value } }
   setFormValues: (formName: string, values: Record<string, any>) => void; // Atualiza valores do formulário
+  resetFormValues:()=> void;
 }
 
 // Tipos para valores monetários
@@ -43,7 +44,9 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       },
     }));
   };
-
+  const resetFormValues = () => {
+    setFormValuesState({}); // Limpa todos os formulários
+  };
   // Estado dos valores monetários
   const [value, setValue] = useState<number>(0);
 
@@ -64,6 +67,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       value={{
         formValues,
         setFormValues,
+        resetFormValues,
         value,
         formattedValue,
         setValue,

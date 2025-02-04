@@ -170,10 +170,10 @@ const navItems = [
 ];
 
 const settings = [
-  { label: 'Perfil', icon: <AccountCircle /> },
-  { label: 'Minha conta', icon:  <SettingsIcon /> },
-  { label: 'Tema', icon: <ContrastIcon /> },
-  { label: 'Sair', icon: <ExitToApp /> },
+  { label: 'Perfil', icon: <AccountCircle color='action'/> },
+  { label: 'Minha conta', icon:  <SettingsIcon color='action'/> },
+  { label: 'Tema', icon: <ContrastIcon color='action'/> },
+  { label: 'Sair', icon: <ExitToApp color='action'/> },
 ];
 const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anúncio publicado'];
 
@@ -351,9 +351,11 @@ export default function PrivateLayout({ currentPath = '' }: { currentPath?: stri
 
                   <Tooltip title="Configurações">
                     <IconButton onClick={handleOpenSettings}>
-                      <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" color={'primary'}/>
+                      <Avatar alt="BeeFive" src="/static/images/avatar/2.jpg" color={'primary'}/>
                     </IconButton>
+                    
                   </Tooltip>
+                  
                   <Menu
                     anchorEl={anchorElSettings}
                     open={Boolean(anchorElSettings)}
@@ -369,6 +371,7 @@ export default function PrivateLayout({ currentPath = '' }: { currentPath?: stri
                     ))}
                   </Menu>
                 </Box>
+                <Typography component={'p'} variant='h5' fontWeight={'500'}>BeeFive</Typography>
               </Toolbar>
             </Container>
 

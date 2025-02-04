@@ -29,7 +29,7 @@ const FiltroTexto: React.FC<FiltroTextoProps> = ({ label, value, onChange }) => 
         startAdornment: (
           <InputAdornment position="start">
            
-            <SearchIcon />
+            <SearchIcon  color='action'/>
             
           </InputAdornment>
         ),

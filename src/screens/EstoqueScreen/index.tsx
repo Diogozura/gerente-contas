@@ -12,15 +12,12 @@ import {
   Box,
   Chip,
 } from "@mui/material";
-import QuickFilteringGrid from "./Tabela2";
 import productsData from "../../mock/products.json"; // Importe os dados
 import { useRouter } from "next/router";
 import { saveAs } from "file-saver";
 import FiltroTexto from "../../components/common/FiltroText";
 import FiltroAvancado from "../../components/common/FiltroAvancado";
-import { Delete, Edit } from "@mui/icons-material";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
@@ -30,15 +27,39 @@ import { showToast } from "@/components/common/AlertToast";
 import { ModalVinculo } from "@/components/ui/Modal";
 import EditarProdutoForm from "@/components/forms/EditarProdutoForm";
 import Head from "next/head";
+import { v4 as uuidv4 } from 'uuid';
 import { useFormContext } from "@/config/FormContext";
 interface Product {
   id: number;
-  titulo: string;
-  sku: string;
-  estoque: number;
-  estoqueCd: number;
-  estoqueMin: number;
-  estoqueCdMin: number;
+  CadastroProdutos: { titulo: string };
+  dataCriacao: string;
+  estoque: {
+    crossdocking: number;
+    estoqueCd: number;
+    estoqueCdMax: number;
+    estoqueCdMin: number;
+    estoqueLocal: number;
+    estoqueMaximo: number;
+    estoqueMinimo: number;
+  };
+  infoProdutos: {
+    altura: string;
+    condicao: string;
+    ean: string;
+    itensPorCaixa: string;
+    largura: string;
+    marca: string;
+    pesoBruto: string;
+    pesoLiquido: string;
+    producao: string;
+    profundidade: string;
+    sku: string;
+    unidade: string;
+  };
+  produtoDescricao: {
+    descricao: string;
+  }
+
 }
 
 const verificarDadosFaltantes = (product: Product): string[] => {
@@ -54,26 +75,32 @@ export default function Estoque() {
   const [filtroAvancado, setFiltroAvancado] = useState("");
   const [textoFiltro, setTextoFiltro] = useState("");
   const router = useRouter();
-  const { formValues, setFormValues } = useFormContext();
+  const { formValues, setFormValues, resetFormValues } = useFormContext();
 
   useEffect(() => {
-    const storedProducts = localStorage.getItem("produtos");
+    const storedProducts = localStorage.getItem("ProdutosCadastrados");
+    console.log('formValues', formValues.CadastroProdutos)
+    resetFormValues()
     if (storedProducts && storedProducts !== "[]") {
-      setProducts(JSON.parse(storedProducts));
+      // Parse only if there is a valid stored value
+      const parsedProducts = JSON.parse(storedProducts);
+      setProducts(parsedProducts);
     } else {
+      // Caso não existam produtos no localStorage, utiliza o productsData padrão
       setProducts(productsData);
-      localStorage.setItem("produtos", JSON.stringify(productsData));
+      localStorage.setItem("ProdutosCadastrados", JSON.stringify(productsData));
     }
   }, []);
 
   useEffect(() => {
     // Atualiza os produtos filtrados sempre que os filtros ou os produtos mudarem
-    const filtered = products.filter((product) => {
+    const filtered = products?.filter((product) => {
       const matchText =
-        product.titulo.toLowerCase().includes(textoFiltro.toLowerCase()) ||
-        product.sku.toLowerCase().includes(textoFiltro.toLowerCase());
+        product?.CadastroProdutos.titulo?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
+        product?.infoProdutos.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
+      console.log('product', product)
       const matchAdvanced =
-        !filtroAvancado || product.titulo.toLowerCase().includes(filtroAvancado.toLowerCase());
+        !filtroAvancado || product?.CadastroProdutos.titulo.toLowerCase().includes(filtroAvancado.toLowerCase());
       return matchText && matchAdvanced;
     });
     setFilteredProducts(filtered);
@@ -146,7 +173,7 @@ export default function Estoque() {
   });
 
   const handleOpenModal = (tipo: string, data: Product | null = null) => {
-    
+
     setFormValues('editarProduto', {
       titulo: data.titulo,
       sku: data.sku,
@@ -163,7 +190,7 @@ export default function Estoque() {
     setModalState({ open: false, tipo: "", data: null });
   };
 
-  const handleSave = (updatedProduct: { id: string; [key: string]: any }) => {
+  const handleSave = (updatedProduct: { id: string;[key: string]: any }) => {
     // 1. Recupera os dados existentes no localStorage
     const produtos = JSON.parse(localStorage.getItem("produtos") || "[]");
 
@@ -188,7 +215,7 @@ export default function Estoque() {
             <Typography>Configuração da loja: </Typography>
             {/* Outros inputs específicos */}
           </Box>
-        );  
+        );
       case "Deletar":
         handleDeleteProduct(modalState.data.id);
         showToast({
@@ -201,11 +228,11 @@ export default function Estoque() {
       case "Editor":
         // Novo produto atualizado com base nos dados enviados
         const updatedProduct = {
-          id: modalState.data.id, 
-          titulo: formValues.editarProduto?.titulo, 
-          estoque: Number(formValues.editarProduto?.estoque), 
-          sku: formValues.editarProduto?.sku, 
-          ...formValues.editarProduto, 
+          id: modalState.data.id,
+          titulo: formValues.editarProduto?.titulo,
+          estoque: Number(formValues.editarProduto?.estoque),
+          sku: formValues.editarProduto?.sku,
+          ...formValues.editarProduto,
         };
 
         handleSave(updatedProduct); // Atualiza o localStorage ou a base de dados
@@ -256,7 +283,10 @@ export default function Estoque() {
       </Head>
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
-          <Button variant="contained" color="primary" id='estoque-header' onClick={() => router.push("/estoque/criacao-produto")}>
+          <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
+            const productId = uuidv4(); // Gerando o UUID
+            router.push(`/estoque/${productId}`); // Passando o id na URL
+          }}>
             Cadastro de Produto Individual
           </Button>
         </Grid>
@@ -340,39 +370,39 @@ export default function Estoque() {
                     src={"https://picsum.photos/200"}
                     width={100}
                     height={100}
-                    alt={`Imagem de ${product.titulo}`}
+                    alt={`Imagem de ${product?.CadastroProdutos?.titulo}`}
                     style={{ borderRadius: 4 }}
                   />
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Link href={`/estoque/${product.sku}`} passHref>
+                  <Link href={`/estoque/${product?.id}`} passHref>
                     <Typography style={{ cursor: "pointer" }} fontWeight={'600'} component="h3">
-                      {product.titulo}
+                      {product?.CadastroProdutos?.titulo}
                     </Typography>
 
 
                   </Link>
                   <Typography component="p">
-                    SKU : <b>{product.sku}</b>
+                    SKU : <b>{product?.infoProdutos.sku}</b>
                   </Typography>
                   <Typography component="p">
-                    Estoque : <b>{product.estoqueCd}</b>
+                    Estoque : <b>{product?.estoque.estoqueLocal}</b>
                   </Typography>
                   <Typography component="p">
-                    Estoque em centro de distribuição : <b>{product.estoque}</b>
+                    Estoque em centro de distribuição : <b>{product?.estoque.estoqueCd}</b>
                   </Typography>
                   <Typography display={'flex'} component="p">
                     🔗 Vinculado em seus Anúncios
                   </Typography>
                 </Grid>
                 <Grid item xs={1.7} display={'grid'} padding={5}>
-                  {product.estoqueMin > product.estoque ?
+                  {product?.estoque.estoqueMinimo > product?.estoque.estoqueLocal ?
                     <>
                       <Chip color="error" label="Estoque   Baixo" sx={{ borderRadius: '5px' }} variant="filled" />
                     </> : " "
                   }
-                  {product.estoqueCdMin > product.estoqueCd ?
+                  {product?.estoque.estoqueCdMin > product?.estoque.estoqueCd ?
                     <>
                       <Chip color="error" label="Estoque Baixo Em CD" sx={{ borderRadius: '5px' }} variant="filled" />
                     </> : " "
@@ -394,16 +424,16 @@ export default function Estoque() {
                   }
                 </Grid>
                 <Grid item xs={2} display={'flex'} justifyContent={'space-evenly'}>
-                  <Button variant="contained" color="inherit" id="Editor"
+                  <Button variant="contained"color="primary" id="Editor"
                     onClick={() => handleOpenModal("Editor", product)}>
                     <ModeEditOutlineOutlinedIcon />
                   </Button>
-                  <Button variant="contained" color="inherit" disabled
+                  <Button variant="contained"color="primary" disabled
 
                   >
                     <ContentCopyIcon />
                   </Button>
-                  <Button variant="contained" color="inherit"
+                  <Button variant="contained" color="primary"
                     id="delelete"
                     onClick={() =>
                       handleOpenModal("Deletar", product)
@@ -412,7 +442,7 @@ export default function Estoque() {
                   >
                     <DeleteOutlineOutlinedIcon />
                   </Button>
-                  <Button variant="contained" color="inherit" disabled
+                  <Button variant="contained" color="primary" disabled
 
                   >
                     <RemoveRedEyeOutlinedIcon />

@@ -22,22 +22,22 @@ import {
   Input,
   Chip,
 } from "@mui/material";
-import Bread from "../../components/ui/Breadcrumbs";
+
 // import Swiper from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Head from "next/head";
 import Image from "next/image";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import InputMoney from "../../components/Inputs/InputMoney";
+
 import { TabPanelProps } from "@/types/tabPanelProps";
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+
 import CadastroProduto from "@/components/forms/CadastroProduto";
-import ListaPreco from "@/components/forms/ListaPreco";
+
 import CraicaoListaPreco from "@/components/forms/precificando";
 import DescricaoForm from "@/components/forms/DescricaoForm";
 import { useFormContext } from "@/config/FormContext";

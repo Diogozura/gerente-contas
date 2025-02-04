@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, TextField, Typography } from '@mui/material';
+import { Box, Button, Grid, IconButton, TextField, Typography } from '@mui/material';
 import React from 'react';
 import MoneyInput from '../Inputs/InputMoney';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
@@ -15,14 +15,11 @@ type PrecificacaoItem = {
 const LOCAL_STORAGE_KEY = 'listaPrecificacao';
 
 export default function ListaPreco({ view }: { view: boolean }) {
-
   const [listaPrecificacao, setListaPrecificacao] = React.useState<PrecificacaoItem[]>([]);
   const [variacao, setVariacao] = React.useState('');
-  const [precoMinimo, setPrecoMinimo] = React.useState<number>(0);
   const [editIndex, setEditIndex] = React.useState<number | null>(null);
   const { formValues, setFormValues } = useFormContext();
-
-
+  
   // Carregar dados do localStorage na inicialização
   React.useEffect(() => {
     const savedList = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -31,54 +28,30 @@ export default function ListaPreco({ view }: { view: boolean }) {
     }
   }, []);
 
-
   // Salvar lista no localStorage sempre que for atualizada
   React.useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listaPrecificacao));
   }, [listaPrecificacao]);
 
   // Adicionar ou editar item na lista
-    const adicionarOuEditarListaPreco = () => {
-      const precoMinimo = formValues?.precos?.valorMinimo || 0; // Use o valor do contexto
-      if (variacao && precoMinimo > 0) {
-        if (editIndex !== null) {
-          // Atualizar item existente
-          const novaLista = [...listaPrecificacao];
-          novaLista[editIndex] = { variacao, precoMinimo };
-          setListaPrecificacao(novaLista);
-          setEditIndex(null); // Sair do modo de edição
-        } else {
-          // Adicionar novo item
-          setListaPrecificacao([...listaPrecificacao, { variacao, precoMinimo }]);
-        }
-  
-        // Resetar campos
-        setVariacao('');
-        setFormValues('precos', { valorMinimo: 0 }); // Reseta o valor no contexto
+  const adicionarOuEditarListaPreco = () => {
+    const precoMinimo = formValues?.precos?.valorMinimo || 0; // Use o valor do contexto
+    if (variacao.trim() && precoMinimo > 0) {
+      if (editIndex !== null) {
+        // Atualizar item existente
+        const novaLista = [...listaPrecificacao];
+        novaLista[editIndex] = { variacao, precoMinimo };
+        setListaPrecificacao(novaLista);
+        setEditIndex(null); // Sair do modo de edição
+      } else {
+        // Adicionar novo item
+        setListaPrecificacao([...listaPrecificacao, { variacao, precoMinimo }]);
       }
-    };
 
- 
-  // Atualizar item na lista
-  const atualizarItem = (index: number, field: keyof PrecificacaoItem, value: string | number) => {
-    setListaPrecificacao((prev) => {
-      const novaLista = [...prev];
-      novaLista[index] = {
-        ...novaLista[index],
-        [field]: value,
-      };
-      return novaLista;
-    });
-  };
-
-  // Salvar edição
-  const salvarEdicao = () => {
-    setEditIndex(null); // Sair do modo de edição
-  };
-
-  // Cancelar edição
-  const cancelarEdicao = () => {
-    setEditIndex(null);
+      // Resetar campos
+      setVariacao('');
+      setFormValues('precos', { valorMinimo: 0 }); // Reseta o valor no contexto
+    }
   };
 
   // Remover item da lista
@@ -90,37 +63,33 @@ export default function ListaPreco({ view }: { view: boolean }) {
     }
   };
 
+  const adicionarNovoItem = () => {
+    const novoItem: PrecificacaoItem = { variacao: '', precoMinimo: 0 };
+    setListaPrecificacao([novoItem, ...listaPrecificacao]); // Adiciona no topo
+    setEditIndex(0); // Sempre edita o primeiro item da lista
+    setVariacao(''); // Limpa o campo de variação
+    setFormValues('precos', { valorMinimo: 0 }); // Reseta o valor mínimo
+  };
+
   return (
     <>
-      
+      <Box display={'flex'} justifyContent={'space-between'} p={1}>
+        <Typography variant="body1" component={'p'}>Crie variações de preços para diferentes tipos ou canais de venda</Typography>
+        <Button
+          variant="contained"
+          onClick={() => adicionarNovoItem()}
+          sx={{ mb: 2 }}
+        >
+          + Adicionar Lista
+        </Button>
+      </Box>
+
 
       {/* Inputs para adicionar ou editar precificação */}
-      <Grid container spacing={2} alignItems="center" mb={2}>
-        <Grid item xs={4}>
-          <TextField
-            label="Variação"
-            fullWidth
-            value={variacao}
-            onChange={(e) => setVariacao(e.target.value)}
-            disabled={view}
-          />
-        </Grid>
-        <Grid item xs={4}>
-        <MoneyInput label="Valor Mínimo"  name="valorMinimo" />
-        </Grid>
-        <Grid item xs={2}>
-          <Button
-            variant="contained"
-            onClick={adicionarOuEditarListaPreco}
-            disabled={!variacao || (formValues?.precos?.valorMinimo || 0) <= 0}
-          >
-            {editIndex !== null ? 'Salvar' : 'Adicionar'}
-          </Button>
-        </Grid>
-      </Grid>
 
-        {/* Renderizar a lista de precificação */}
-        {listaPrecificacao.map((item, index) => (
+
+      {/* Renderizar a lista de precificação */}
+      {listaPrecificacao.map((item, index) => (
         <Grid
           key={index}
           container
@@ -129,31 +98,34 @@ export default function ListaPreco({ view }: { view: boolean }) {
           mt={1}
           sx={{ borderBottom: '1px solid #ccc', pb: 1 }}
         >
-          {/* Se a linha está em modo de edição */}
           {editIndex === index ? (
             <>
               <Grid item xs={4}>
                 <TextField
                   fullWidth
-                  variant='standard'
-                  value={item.variacao}
-                  onChange={(e) => atualizarItem(index, 'variacao', e.target.value)}
+                  variant="standard"
+                  label="Variação"
+                  value={variacao}
+                  onChange={(e) => setVariacao(e.target.value)}
                 />
               </Grid>
               <Grid item xs={4}>
-              <MoneyInput label="Valor Mínimo" variant='standard' name="valorMinimo" />
+                <MoneyInput
+                  label="Valor Mínimo"
+                  variant="standard"
+                  name="valorMinimo"
+                />
               </Grid>
               <Grid item xs={2}>
-                <IconButton onClick={salvarEdicao}>
-                  <SaveOutlinedIcon />
+                <IconButton onClick={adicionarOuEditarListaPreco}>
+                  <SaveOutlinedIcon color="action" />
                 </IconButton>
-                <IconButton onClick={cancelarEdicao}>
-                  <CloseOutlinedIcon />
+                <IconButton onClick={() => setEditIndex(null)}>
+                  <CloseOutlinedIcon color="action" />
                 </IconButton>
               </Grid>
             </>
           ) : (
-            // Se a linha está em modo de visualização
             <>
               <Grid item xs={4}>
                 <Typography>{item.variacao}</Typography>
@@ -164,11 +136,15 @@ export default function ListaPreco({ view }: { view: boolean }) {
                 </Typography>
               </Grid>
               <Grid item xs={2}>
-                <IconButton onClick={() => setEditIndex(index)}>
-                  <EditOutlinedIcon />
+                <IconButton onClick={() => {
+                  setVariacao(item.variacao); // Preenche com o valor atual
+                  setFormValues('precos', { valorMinimo: item.precoMinimo }); // Preenche o valor de "precoMinimo"
+                  setEditIndex(index);
+                }}>
+                  <EditOutlinedIcon color="action" />
                 </IconButton>
                 <IconButton onClick={() => removerListaPreco(index)}>
-                  <DeleteOutlineOutlinedIcon />
+                  <DeleteOutlineOutlinedIcon color="action" />
                 </IconButton>
               </Grid>
             </>
@@ -182,7 +158,6 @@ export default function ListaPreco({ view }: { view: boolean }) {
           Nenhum item na lista de precificação.
         </Typography>
       )}
-
     </>
   );
 }

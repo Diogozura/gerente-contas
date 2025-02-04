@@ -26,6 +26,7 @@ export default function ListaPreco({ view }: { view: boolean }) {
   // Carregar dados do localStorage na inicialização
   React.useEffect(() => {
     const savedList = localStorage.getItem(LOCAL_STORAGE_KEY);
+    console.log('savedList', savedList)
     if (savedList) {
       setListaPrecificacao(JSON.parse(savedList));
     }
@@ -33,9 +34,9 @@ export default function ListaPreco({ view }: { view: boolean }) {
 
 
   // Salvar lista no localStorage sempre que for atualizada
-  React.useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listaPrecificacao));
-  }, [listaPrecificacao]);
+  // React.useEffect(() => {
+  //   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(listaPrecificacao));
+  // }, [listaPrecificacao]);
 
   // Adicionar ou editar item na lista
     const adicionarOuEditarListaPreco = () => {

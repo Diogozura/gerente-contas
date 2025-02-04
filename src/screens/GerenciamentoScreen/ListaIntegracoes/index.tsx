@@ -230,9 +230,10 @@ export default function ListaIntegracao() {
             <TextField
               variant="standard"
               disabled={editIndex !== index}
+              fullWidth
               value={editIndex === index ? editedValue : int.nomeLoja}
               onChange={(e) => setEditedValue(e.target.value)}
-              sx={{ width: "200px" }}
+          
             />
             {editIndex === index ? (
               <>
@@ -245,7 +246,7 @@ export default function ListaIntegracao() {
               </>
             ) : (
               <IconButton aria-label="Editar" onClick={() => handleEditClick(index)}>
-                <EditOutlinedIcon />
+                <EditOutlinedIcon color="action"/>
               </IconButton>
             )}
           </Box>
@@ -271,21 +272,23 @@ export default function ListaIntegracao() {
             {verificarCamposFaltantes(int) && (
               <Tooltip title="Faltam informações obrigatórias">
                 <IconButton onClick={() => handleOpenModal("Atenção", int)}>
-                  <PriorityHighIcon color="warning" />
+                  <PriorityHighIcon color="action" />
                 </IconButton>
               </Tooltip>
             )}
             <IconButton
               aria-label="Configuração"
               onClick={() => handleOpenModal("Configuração", int)}
+              color="primary"
             >
-              <SettingsIcon color="inherit" />
+              <SettingsIcon color="action" />
             </IconButton>
             <IconButton
               aria-label="Deletar"
+               color="primary"
               onClick={() => handleOpenModal("Deletar", int)}
             >
-              <DeleteOutlinedIcon />
+              <DeleteOutlinedIcon  color="action"/>
             </IconButton>
           </Box>
         </Paper>

@@ -27,7 +27,7 @@ const FiltroAvancado: React.FC<FiltroAvancadoProps> = ({
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <FilterAltOutlinedIcon />
+            <FilterAltOutlinedIcon color='action'/>
           </InputAdornment>
         ),
       }}

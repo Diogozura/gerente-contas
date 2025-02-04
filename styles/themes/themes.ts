@@ -156,7 +156,7 @@ const lightTheme = createTheme({
     },
      // Custom color
      inherit: {
-      main: '#5E5E5E',
+      main: '#ffffff',
     },
   } as any,
   components: {
