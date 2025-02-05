@@ -95,8 +95,8 @@ export default function Estoque() {
     // Atualiza os produtos filtrados sempre que os filtros ou os produtos mudarem
     const filtered = products?.filter((product) => {
       const matchText =
-        product?.CadastroProdutos.titulo?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
-        product?.infoProdutos.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
+        product?.CadastroProdutos?.titulo?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
+        product?.infoProdutos?.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
       console.log('product', product)
       const matchAdvanced =
         !filtroAvancado || product?.CadastroProdutos.titulo.toLowerCase().includes(filtroAvancado.toLowerCase());
@@ -167,9 +167,9 @@ export default function Estoque() {
   const handleOpenModal = (tipo: string, data: Product | null = null) => {
 
     setFormValues('editarProduto', {
-      titulo: data.titulo,
-      sku: data.sku,
-      estoque: data.estoque,
+      titulo: data.CadastroProdutos.titulo,
+      sku: data.infoProdutos.sku,
+      estoque: data.estoque.estoqueLocal,
     })
     setModalState({
       open: true,
@@ -376,25 +376,25 @@ export default function Estoque() {
 
                   </Link>
                   <Typography component="p">
-                    SKU : <b>{product?.infoProdutos.sku}</b>
+                    SKU : <b>{product?.infoProdutos?.sku}</b>
                   </Typography>
                   <Typography component="p">
-                    Estoque : <b>{product?.estoque.estoqueLocal}</b>
+                    Estoque : <b>{product?.estoque?.estoqueLocal}</b>
                   </Typography>
                   <Typography component="p">
-                    Estoque em centro de distribuição : <b>{product?.estoque.estoqueCd}</b>
+                    Estoque em centro de distribuição : <b>{product?.estoque?.estoqueCd}</b>
                   </Typography>
                   <Typography display={'flex'} component="p">
                     🔗 Vinculado em seus Anúncios
                   </Typography>
                 </Grid>
                 <Grid item xs={1.7} display={'grid'} padding={5}>
-                  {product?.estoque.estoqueMinimo > product?.estoque.estoqueLocal ?
+                  {product?.estoque?.estoqueMinimo > product?.estoque?.estoqueLocal ?
                     <>
                       <Chip color="error" label="Estoque   Baixo" sx={{ borderRadius: '5px' }} variant="filled" />
                     </> : " "
                   }
-                  {product?.estoque.estoqueCdMin > product?.estoque.estoqueCd ?
+                  {product?.estoque?.estoqueCdMin > product?.estoque?.estoqueCd ?
                     <>
                       <Chip color="error" label="Estoque Baixo Em CD" sx={{ borderRadius: '5px' }} variant="filled" />
                     </> : " "

@@ -16,7 +16,7 @@ interface ToastNotificationProps {
 
 // Função para exibir o toast
 export const showToast = ({ title, status, position = "top-right" }: ToastNotificationProps) => {
-  const toastConfig: ToastOptions = { position };
+  const toastConfig: ToastOptions = { position, autoClose: 5000 }// Tempo em milissegundos (5 segundos) };
 
   // Exibe o toast baseado no status
   switch (status) {

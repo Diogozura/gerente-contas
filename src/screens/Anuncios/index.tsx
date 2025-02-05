@@ -13,15 +13,15 @@ interface ProdutoLocalStorage {
   estoque: number;
 }
 
-const verificarEstoque = (anuncio: Anuncio): boolean => {
-  if (typeof window === "undefined") return false;
-  const produtosLocalStorage: ProdutoLocalStorage[] = JSON.parse(localStorage.getItem("produtos") || "[]");
+// const verificarEstoque = (anuncio: Anuncio): boolean => {
+//   if (typeof window === "undefined") return false;
+//   const produtosLocalStorage: ProdutoLocalStorage[] = JSON.parse(localStorage.getItem("produtos") || "[]");
 
-  return anuncio.produto.some(produtoAnuncio => {
-    const produtoLocal = produtosLocalStorage.find(p => p.sku === produtoAnuncio.sku);
-    return produtoLocal ? produtoLocal.estoque <= 0 : true;
-  });
-};
+//   return anuncio.produto.some(produtoAnuncio => {
+//     const produtoLocal = produtosLocalStorage?.find(p => p.sku === produtoAnuncio.sku);
+//     return produtoLocal ? produtoLocal.estoque <= 0 : true;
+//   });
+// };
 
 export default function Anuncios() {
   const [openModal, setOpenModal] = React.useState(false);
@@ -88,7 +88,7 @@ export default function Anuncios() {
               <Typography variant="body1"><strong>🔗</strong> {anuncio.marketingPlaces?.join(", ")}</Typography>
             </Box>
             <Box>
-              {verificarEstoque(anuncio) && <Chip color="default" label="Anúncio pausado - sem estoque" sx={{ borderRadius: '5px' }} />}
+              {/* {verificarEstoque(anuncio) && <Chip color="default" label="Anúncio pausado - sem estoque" sx={{ borderRadius: '5px' }} />} */}
             </Box>
             <Box>
               <Button variant="contained" color="inherit" onClick={() => handleDelete(anuncio.slug)} sx={{ m: 1 }}>

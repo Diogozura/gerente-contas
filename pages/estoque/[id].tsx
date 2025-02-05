@@ -191,9 +191,83 @@ export default function CriacaoProduto() {
     setSelectedImage(null);
   };
   const handleDelete = () => {
-    console.log('Deletando', id)
+    const storedData = localStorage.getItem("ProdutosCadastrados");
+    const storedDataAnuncios = localStorage.getItem("anuncios");
+    const parsedData: { id: string;[key: string]: any }[] = JSON.parse(storedData);
+    const parsedDataAnuncios: { id: string;[key: string]: any }[] = JSON.parse(storedDataAnuncios);
+    // 3. Filtra os itens removendo o que tem o ID específico
+    const objetoEncontrado = parsedData.filter(item => item.id == id);
+  
+    
+    const skusProdutos = parsedDataAnuncios.flatMap(item =>
+      item.produto.map((p: any) => p.sku) // Obtém os SKUs dentro de `produto`
+    );
+    // 2. Verifica se algum SKU de `infoProdutos.sku` já existe em `skusProdutos`
+    const skuJaExiste = objetoEncontrado.some(item =>
+      skusProdutos.includes(item.infoProdutos.sku) // Verifica se já existe
+    );
+ 
+    if (skuJaExiste) {
+      console.error("Erro: SKU já cadastrado!");
+      showToast({
+        title: "Anuncio vinculado a um SKU",
+        status: "error",
+        position: "bottom-left",
+      });
+      return { success: false, message: "Anuncio vinculado a um SKU" };
+    } else {
+      const updatedData = parsedData.filter(item => item.id !== id);
+      showToast({
+        title: "Produto Deletado com sucesso!",
+        status: "success",
+        position: "bottom-left",
+      });
+          // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
+    setTimeout(() => {
+      localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
+      router.push('/estoque');
+    }, 1000); // 3 segundos de dela
+     
+    }
   };
-
+  const saveOrUpdateItem = () => {
+    // Extrai os dados do formulário
+    const CadastroProdutos = formValues.CadastroProdutos;
+    const infoProdutos = formValues.produto;
+    const estoque = formValues.estoque;
+    const produtoDescricao = formValues.produtoDescricao;
+    const dataCriacao = moment();
+  
+    // Objeto do produto atualizado ou novo
+    const novoProduto = {
+      id,
+      CadastroProdutos,
+      infoProdutos,
+      produtoDescricao,
+      estoque,
+      dataCriacao: dataCriacao.format("YYYY-MM-DD HH:mm:ss"), // Formatação da data
+    };
+  
+    // Obtém os dados existentes no localStorage
+    const storedData = localStorage.getItem("ProdutosCadastrados");
+    const parsedData: { id: string; [key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
+  
+    // Verifica se já existe um item com o mesmo ID
+    const index = parsedData.findIndex(item => item.id === id);
+  
+    if (index !== -1) {
+      // Se o item já existe, atualiza apenas os dados dele
+      parsedData[index] = { ...parsedData[index], ...novoProduto };
+    } else {
+      // Se não existir, adiciona o novo item
+      parsedData.push(novoProduto);
+    }
+  
+    // Salva os dados atualizados no localStorage
+    localStorage.setItem("ProdutosCadastrados", JSON.stringify(parsedData));
+  
+    console.log("LocalStorage atualizado:", parsedData);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -204,10 +278,8 @@ export default function CriacaoProduto() {
 
     if (produtoSalvo) {
       const produtos = JSON.parse(produtoSalvo);
-      console.log('produtoSalvo', produtos);
 
       const produtoEncontrado = produtos.find(produto => produto.id === id);
-      console.log('produtoEncontrado', produtoEncontrado);
 
       if (produtoEncontrado) {
         const tituloAtual = formValues?.CadastroProdutos?.titulo || '';
@@ -218,17 +290,17 @@ export default function CriacaoProduto() {
             titulo: produtoEncontrado.CadastroProdutos.titulo,
           });
           setFormValues("produtoDescricao", {
-            descricao: produtoEncontrado.produtoDescricao.descricao,
+            descricao: produtoEncontrado?.produtoDescricao?.descricao,
           });
           setFormValues("estoque", {
-            crossdocking: produtoEncontrado.estoque.crossdocking,
-            estoqueCd: produtoEncontrado.estoque.estoqueCd,
-            estoqueCdMax: produtoEncontrado.estoque.estoqueCdMax,
-            estoqueCdMin: produtoEncontrado.estoque.estoqueCdMin,
-            estoqueLocal: produtoEncontrado.estoque.estoqueLocal,
-            estoqueMaximo: produtoEncontrado.estoque.estoqueMaximo,
-            estoqueMinimo: produtoEncontrado.estoque.estoqueMinimo,
-            localizao: produtoEncontrado.estoque.localizao,
+            crossdocking: produtoEncontrado.estoque?.crossdocking,
+            estoqueCd: produtoEncontrado.estoque?.estoqueCd,
+            estoqueCdMax: produtoEncontrado.estoque?.estoqueCdMax,
+            estoqueCdMin: produtoEncontrado.estoque?.estoqueCdMin,
+            estoqueLocal: produtoEncontrado.estoque?.estoqueLocal,
+            estoqueMaximo: produtoEncontrado.estoque?.estoqueMaximo,
+            estoqueMinimo: produtoEncontrado.estoque?.estoqueMinimo,
+            localizao: produtoEncontrado.estoque?.localizao,
           });
           const setProdutos = produtoEncontrado.infoProdutos
           setFormValues("produto", {
@@ -247,7 +319,7 @@ export default function CriacaoProduto() {
           });
         }
 
-        setIsValid(true);
+       
       } else {
         setIsValid(false);
       }
@@ -331,12 +403,13 @@ export default function CriacaoProduto() {
                   value={formValues.CadastroProdutos?.titulo || ''}
                   type="text"
                   onChange={handleInputChange}
+                  disabled={isValid}
                   fullWidth
                 />
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveProduct} sx={{
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
                   m: 1
                 }}>
                   Salvar Produto
@@ -344,7 +417,7 @@ export default function CriacaoProduto() {
                 <Button variant="contained" color="primary" id="Editor" sx={{
                   m: 1
                 }}
-                // onClick={() => handleOpenModal("Editor", product)}
+                onClick={()=> setIsValid(!isValid)}
                 >
                   <ModeEditOutlineOutlinedIcon />
                 </Button>
@@ -378,9 +451,10 @@ export default function CriacaoProduto() {
             </Grid>
 
           </Grid>
-          <Grid xs={2}>
+          <Grid xs={2} textAlign={'center'}>
+             <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
             {/* Carrossel de pré-visualização */}
-            {newProduct.imagens.length > 0 && (
+            {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
                   spaceBetween={10}
@@ -413,9 +487,9 @@ export default function CriacaoProduto() {
                   ))}
                 </Swiper>
               </Grid>
-            )}
+            )} */}
             {/* Modal para exibir a imagem em tamanho grande */}
-            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+            {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
               <Box
                 sx={{
                   position: "absolute",
@@ -436,8 +510,8 @@ export default function CriacaoProduto() {
                   />
                 )}
               </Box>
-            </Modal>
-            <Grid item >
+            </Modal> */}
+            {/* <Grid item >
 
               <FormHelperText>
                 {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
@@ -457,7 +531,7 @@ export default function CriacaoProduto() {
                   onChange={handleImageUpload}
                 />
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid >
           {/* Informações do produto  */}
 
@@ -571,7 +645,8 @@ export default function CriacaoProduto() {
           </Grid>
           <Grid xs={2}>
             {/* Carrossel de pré-visualização */}
-            {newProduct.imagens.length > 0 && (
+              <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+            {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
                   spaceBetween={10}
@@ -604,9 +679,9 @@ export default function CriacaoProduto() {
                   ))}
                 </Swiper>
               </Grid>
-            )}
+            )} */}
             {/* Modal para exibir a imagem em tamanho grande */}
-            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+            {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
               <Box
                 sx={{
                   position: "absolute",
@@ -648,7 +723,7 @@ export default function CriacaoProduto() {
                   onChange={handleImageUpload}
                 />
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid >
           <Grid xs={10}>
             <Estoque view={isValid} />
