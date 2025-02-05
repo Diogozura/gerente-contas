@@ -66,7 +66,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default function CriacaoProduto() {
+export default function CriacaoEdicaoProduto() {
   const router = useRouter();
   const [newProduct, setNewProduct] = useState({
     id: 0,
@@ -94,7 +94,7 @@ export default function CriacaoProduto() {
     imagens: [] as File[],
     listaPrecos: [] as { variacao: string; precoMinimo: number }[],
   });
-
+ 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
@@ -198,6 +198,7 @@ export default function CriacaoProduto() {
 
   React.useEffect(() => {
     const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
+
     if (produtoSalvo) {
       const dadosProduto = JSON.parse(produtoSalvo);
       if (dadosProduto.dataCriacao) {

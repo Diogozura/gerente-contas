@@ -79,7 +79,6 @@ export default function Estoque() {
 
   useEffect(() => {
     const storedProducts = localStorage.getItem("ProdutosCadastrados");
-    console.log('formValues', formValues.CadastroProdutos)
     resetFormValues()
     if (storedProducts && storedProducts !== "[]") {
       // Parse only if there is a valid stored value
@@ -133,13 +132,6 @@ export default function Estoque() {
   };
   const handleDeleteProduct = (id: number) => {
     const updatedProducts = products.filter((product) => product.id !== id);
-    setProducts(updatedProducts);
-    localStorage.setItem("produtos", JSON.stringify(updatedProducts));
-  };
-  const handleEditProduct = (updatedProduct: Product) => {
-    const updatedProducts = products.map((product) =>
-      product.id === updatedProduct.id ? updatedProduct : product
-    );
     setProducts(updatedProducts);
     localStorage.setItem("produtos", JSON.stringify(updatedProducts));
   };

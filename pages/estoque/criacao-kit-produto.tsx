@@ -1,1 +1,1 @@
-export { default } from "../../src/screens/CriacaoProdutoScreen";
+export { default } from "../../src/screens/CriacaoEdicaoProdutoScreen";

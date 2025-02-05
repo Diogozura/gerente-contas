@@ -21,6 +21,7 @@ export default function DescricaoForm({ view }) {
                       label="Descrição do Produto"
                       multiline
                       fullWidth
+                      disabled={view}
                       value={formValues.produtoDescricao?.descricao || ''}
                       onChange={handleInputChange}
                     />

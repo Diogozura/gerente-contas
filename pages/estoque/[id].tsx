@@ -46,6 +46,7 @@ import Estoque from "@/components/forms/Estoque";
 import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
+import { Console } from "console";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -96,10 +97,11 @@ export default function CriacaoProduto() {
   });
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isValid, setIsValid] = useState(false);
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
-
+  const { id } = router.query; // Recuperando o id da URL
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
@@ -115,10 +117,10 @@ export default function CriacaoProduto() {
   // Campos obrigatórios
   const camposObrigatorios = ['titulo', 'sku'];
 
-  // Verifica se todos os campos obrigatórios estão preenchidos
-  const isFormValid = camposObrigatorios.every(
-    (campo) => newProduct[campo]?.toString().trim() !== ''
-  );
+  // // Verifica se todos os campos obrigatórios estão preenchidos
+  // const isFormValid = camposObrigatorios.every(
+  //   (campo) => newProduct[campo]?.toString().trim() !== ''
+  // );
 
   const handleGenerateDescription = () => {
     const { titulo, marca, modelo, altura, largura, profundidade, pesoLiquido } = newProduct;
@@ -134,7 +136,7 @@ export default function CriacaoProduto() {
     const produtoDescricao = formValues.produtoDescricao;
     const id = formValues?.id || uuidv4();
     const dataCriacao = moment();
-  
+
     const CriaçaoProduto = {
       id,
       CadastroProdutos,
@@ -143,25 +145,25 @@ export default function CriacaoProduto() {
       estoque,
       dataCriacao: dataCriacao.format('YYYY-MM-DD HH:mm:ss'),  // formatação da data
     };
-  
+
     // Recupera os produtos cadastrados ou um array vazio, caso não exista nenhum
     const produtosCadastrados = JSON.parse(localStorage.getItem('ProdutosCadastrados')) || [];
-  
+
     // Adiciona o novo produto ao array
     produtosCadastrados.push(CriaçaoProduto);
-  
+
     // Salva o array de volta no localStorage
     localStorage.setItem('ProdutosCadastrados', JSON.stringify(produtosCadastrados));
-  
 
-  
+
+
     showToast({
       title: "Produto salvo com sucesso!",
       status: "success",
       position: "bottom-left",
     });
   };
-  
+
 
   // Upload de imagens corrigido
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -188,25 +190,77 @@ export default function CriacaoProduto() {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
-
+  const handleDelete = () => {
+    console.log('Deletando', id)
+  };
 
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues('CadastroProdutos', { [name]: value }); // Atualiza valores dinamicamente
   };
-
   React.useEffect(() => {
     const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
+
     if (produtoSalvo) {
-      const dadosProduto = JSON.parse(produtoSalvo);
-      if (dadosProduto.dataCriacao) {
-        setDataAtualizada(dadosProduto.dataCriacao);
+      const produtos = JSON.parse(produtoSalvo);
+      console.log('produtoSalvo', produtos);
+
+      const produtoEncontrado = produtos.find(produto => produto.id === id);
+      console.log('produtoEncontrado', produtoEncontrado);
+
+      if (produtoEncontrado) {
+        const tituloAtual = formValues?.CadastroProdutos?.titulo || '';
+
+        // Evita atualizar se o valor já estiver correto
+        if (tituloAtual !== produtoEncontrado.CadastroProdutos.titulo) {
+          setFormValues("CadastroProdutos", {
+            titulo: produtoEncontrado.CadastroProdutos.titulo,
+          });
+          setFormValues("produtoDescricao", {
+            descricao: produtoEncontrado.produtoDescricao.descricao,
+          });
+          setFormValues("estoque", {
+            crossdocking: produtoEncontrado.estoque.crossdocking,
+            estoqueCd: produtoEncontrado.estoque.estoqueCd,
+            estoqueCdMax: produtoEncontrado.estoque.estoqueCdMax,
+            estoqueCdMin: produtoEncontrado.estoque.estoqueCdMin,
+            estoqueLocal: produtoEncontrado.estoque.estoqueLocal,
+            estoqueMaximo: produtoEncontrado.estoque.estoqueMaximo,
+            estoqueMinimo: produtoEncontrado.estoque.estoqueMinimo,
+            localizao: produtoEncontrado.estoque.localizao,
+          });
+          const setProdutos = produtoEncontrado.infoProdutos
+          setFormValues("produto", {
+            altura: setProdutos.altura,
+            condicao: setProdutos.condicao,
+            ean: setProdutos.ean,
+            itensPorCaixa: setProdutos.itensPorCaixa,
+            largura: setProdutos.largura,
+            marca: setProdutos.marca,
+            pesoBruto: setProdutos.pesoBruto,
+            pesoLiquido: setProdutos.pesoLiquido,
+            producao: setProdutos.producao,
+            profundidade: setProdutos.profundidade,
+            unidade: setProdutos.unidade,
+            sku: produtoEncontrado.infoProdutos.sku
+          });
+        }
+
+        setIsValid(true);
+      } else {
+        setIsValid(false);
+      }
+
+      if (produtoEncontrado?.dataCriacao) {
+        setDataAtualizada(produtoEncontrado.dataCriacao);
       }
     }
-   
-  },);
-  
+  }, [id, formValues, setFormValues]); // A
+
+
+
+
   return (
     <>
       <Head>
@@ -282,7 +336,7 @@ export default function CriacaoProduto() {
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary"  onClick={saveProduct} sx={{
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveProduct} sx={{
                   m: 1
                 }}>
                   Salvar Produto
@@ -305,6 +359,7 @@ export default function CriacaoProduto() {
                   sx={{
                     m: 1
                   }}
+                  onClick={handleDelete}
                   id="delelete"
                 // onClick={() =>
                 //   handleOpenModal("Deletar", product)
@@ -407,7 +462,7 @@ export default function CriacaoProduto() {
           {/* Informações do produto  */}
 
           <Grid xs={10}  >
-            <CadastroProduto view={false} />
+            <CadastroProduto view={isValid} />
           </Grid>
           <Grid xs={12} mb={2}>
             <Accordion defaultExpanded>
@@ -447,7 +502,7 @@ export default function CriacaoProduto() {
                   </Button>
                 </Box>
 
-                <DescricaoForm view={false} />
+                <DescricaoForm view={isValid} />
               </AccordionDetails>
             </Accordion>
 
@@ -596,9 +651,9 @@ export default function CriacaoProduto() {
             </Grid>
           </Grid >
           <Grid xs={10}>
-          <Estoque view={false}/>
+            <Estoque view={isValid} />
           </Grid>
-         
+
         </Grid>
       </TabPanel>
       {/*controle tributação do produto  */}
