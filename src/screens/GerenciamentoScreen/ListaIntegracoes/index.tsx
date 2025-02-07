@@ -23,6 +23,8 @@ export default function ListaIntegracao() {
     const [textoFiltro, setTextoFiltro] = useState("");
   const { formValues, setFormValues } = useFormContext();
   useEffect(() => {
+    const produtoSalvo = localStorage.getItem('integracoesMarketingPlace');
+    const dadosProduto = JSON.parse(produtoSalvo);
     setIntegracoes(getIntegracoes());
   }, []);
   console.log('integracoes', integracoes)
@@ -66,7 +68,7 @@ export default function ListaIntegracao() {
         };
 
         // Atualiza o localStorage
-        localStorage.setItem("integracoes", JSON.stringify(updatedIntegracoes));
+        localStorage.setItem("integracoesMarketingPlace", JSON.stringify(updatedIntegracoes));
 
         return updatedIntegracoes;
       });

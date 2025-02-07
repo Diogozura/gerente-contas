@@ -143,7 +143,7 @@ const navItems = [
   {
     id: 2,
     label: "Planos",
-    path: "/",
+    path: "/planos",
   },
   {
     id: 3,
@@ -222,12 +222,15 @@ export default function PublicLayout({ currentPath = '' }: { currentPath?: strin
         <AppBar component="nav" position="static">
           <Container>
             <Toolbar disableGutters>
+              <Link href={'/'} style={{display:'flex'}}>
               <Typography variant="h4" component={'h2'} fontWeight={'400'}noWrap>
                 Hubee
               </Typography>
               <Typography variant="h4" component={'h2'} fontWeight={'bold'}noWrap>
                 Five
               </Typography>
+              </Link>
+              
               <Box
                 sx={{
                   display: { xs: "none", md: "flex" },
