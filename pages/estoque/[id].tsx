@@ -101,8 +101,15 @@ export default function CriacaoProduto() {
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
-  const { id } = router.query; // Recuperando o id da URL
+  const { id , mode } = router.query; // Recuperando o id da URL
 
+  React.useEffect(() => {
+    if (mode === 'edit' && id) {
+      setIsValid(false);
+    } else if (mode === 'view' && id) {
+      setIsValid(true);
+    }
+  }, [mode, id]);
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
@@ -267,12 +274,15 @@ export default function CriacaoProduto() {
     localStorage.setItem("ProdutosCadastrados", JSON.stringify(parsedData));
   
     console.log("LocalStorage atualizado:", parsedData);
+    
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues('CadastroProdutos', { [name]: value }); // Atualiza valores dinamicamente
   };
+
+
   React.useEffect(() => {
     const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
 
@@ -304,26 +314,22 @@ export default function CriacaoProduto() {
           });
           const setProdutos = produtoEncontrado.infoProdutos
           setFormValues("produto", {
-            altura: setProdutos.altura,
-            condicao: setProdutos.condicao,
-            ean: setProdutos.ean,
-            itensPorCaixa: setProdutos.itensPorCaixa,
-            largura: setProdutos.largura,
-            marca: setProdutos.marca,
-            pesoBruto: setProdutos.pesoBruto,
-            pesoLiquido: setProdutos.pesoLiquido,
-            producao: setProdutos.producao,
-            profundidade: setProdutos.profundidade,
-            unidade: setProdutos.unidade,
-            sku: produtoEncontrado.infoProdutos.sku
+            altura: setProdutos?.altura,
+            condicao: setProdutos?.condicao,
+            ean: setProdutos?.ean,
+            itensPorCaixa: setProdutos?.itensPorCaixa,
+            largura: setProdutos?.largura,
+            marca: setProdutos?.marca,
+            pesoBruto: setProdutos?.pesoBruto,
+            pesoLiquido: setProdutos?.pesoLiquido,
+            producao: setProdutos?.producao,
+            profundidade: setProdutos?.profundidade,
+            unidade: setProdutos?.unidade,
+            sku: produtoEncontrado?.infoProdutos?.sku
           });
         }
-
        
-      } else {
-        setIsValid(false);
       }
-
       if (produtoEncontrado?.dataCriacao) {
         setDataAtualizada(produtoEncontrado.dataCriacao);
       }
@@ -341,7 +347,10 @@ export default function CriacaoProduto() {
 
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
-          <Button variant="contained" color="primary" id='estoque-header' onClick={() => router.push("/estoque/criacao-produto")}>
+          <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
+                      const productId = uuidv4(); // Gerando o UUID
+                      router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
+                    }}>
             Cadastro de Produto Individual
           </Button>
         </Grid>
@@ -401,7 +410,6 @@ export default function CriacaoProduto() {
                   label="Titulo"
                   name='titulo'
                   value={formValues.CadastroProdutos?.titulo || ''}
-                  type="text"
                   onChange={handleInputChange}
                   disabled={isValid}
                   fullWidth
@@ -417,7 +425,8 @@ export default function CriacaoProduto() {
                 <Button variant="contained" color="primary" id="Editor" sx={{
                   m: 1
                 }}
-                onClick={()=> setIsValid(!isValid)}
+                onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
+
                 >
                   <ModeEditOutlineOutlinedIcon />
                 </Button>

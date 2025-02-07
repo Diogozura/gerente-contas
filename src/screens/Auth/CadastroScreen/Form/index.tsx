@@ -148,55 +148,55 @@ export default function RegisterForm() {
             textAlign={"center"}
           >
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Nome"
                 type="text"
                 value={formValues[formName]?.firstname || ""}
                 onChange={handleChange("firstname")}
                 helperText={formErrors.firstname}
                 error={!!formErrors.firstname}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Sobrenome"
                 type="text"
                 value={formValues[formName]?.lastname || ""}
                 onChange={handleChange("lastname")}
                 helperText={formErrors.lastname}
                 error={!!formErrors.lastname}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Email"
                 type="email"
                 value={formValues[formName]?.email || ""}
                 onChange={handleChange("email")}
                 helperText={formErrors.email}
                 error={!!formErrors.email}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Telefone"
                 type="tel"
                 value={formValues[formName]?.tel || ""}
                 onChange={handleChange("tel")}
                 helperText={formErrors.tel}
                 error={!!formErrors.tel}
-              />
+              /> */}
             </Grid>
 
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="CPF"
                 type="cpf"
                 value={formValues[formName]?.cpf || ""}
                 onChange={handleChange("cpf")}
                 helperText={formErrors.cpf}
                 error={!!formErrors.cpf}
-              />
+              /> */}
             </Grid>
 
 {/*          
@@ -223,24 +223,24 @@ export default function RegisterForm() {
          
 
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Senha"
                 type="password"
                 value={formValues[formName]?.password || ""}
                 onChange={handleChange("password")}
                 helperText={formErrors.password}
                 error={!!formErrors.password}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
-              <CustomInput
+              {/* <CustomInput
                 label="Repita a Senha"
                 type="password"
                 value={formValues[formName]?.confirmPassword || ""}
                 onChange={handleChange("confirmPassword")}
                 helperText={formErrors.confirmPassword}
                 error={!!formErrors.confirmPassword}
-              />
+              /> */}
             </Grid>
             <Grid item xs={12}>
               <Button

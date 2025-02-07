@@ -277,7 +277,7 @@ export default function Estoque() {
         <Grid item>
           <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
             const productId = uuidv4(); // Gerando o UUID
-            router.push(`/estoque/${productId}`); // Passando o id na URL
+            router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
           }}>
             Cadastro de Produto Individual
           </Button>
@@ -368,7 +368,7 @@ export default function Estoque() {
                 </Grid>
 
                 <Grid item xs={6}>
-                  <Link href={`/estoque/${product?.id}`} passHref>
+                  <Link href={`/estoque/${product?.id}?mode=view`} passHref>
                     <Typography style={{ cursor: "pointer" }} fontWeight={'600'} component="h3">
                       {product?.CadastroProdutos?.titulo}
                     </Typography>

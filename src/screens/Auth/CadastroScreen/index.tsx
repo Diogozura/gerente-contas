@@ -1,7 +1,7 @@
-import { Backdrop, Box, Button, CircularProgress, Container, Grid, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
-import { useRouter } from "next/router";
+import {  Box,  Container, Grid, Step, StepLabel, Stepper, Typography } from "@mui/material";
+
 import React from "react";
-import { toast } from "react-toastify";
+
 
 import CadastroForm from "./Form";
 import Head from "next/head";
