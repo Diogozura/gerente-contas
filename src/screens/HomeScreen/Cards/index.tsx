@@ -21,7 +21,7 @@
 //          {children}
 //         </Grid>
 //       </Grid>
-     
+
 //     </Grid>
 //   );
 // }
@@ -33,7 +33,7 @@ import Typography from '@mui/material/Typography';
 import { Button, CardActionArea, CardActions } from '@mui/material';
 import { useRouter } from 'next/router';
 
-export default function CardsPlano({plano, preco, descricao}) {
+export default function CardsPlano({ plano, preco }) {
   const router = useRouter();
   const handleClick = () => {
     router.push({
@@ -46,53 +46,55 @@ export default function CardsPlano({plano, preco, descricao}) {
   return (
     <>
 
-    <Card sx={{ maxWidth: 500, m:2 , padding:'0px 20px', 
-      
-      borderRadius:5}}  >
-      <CardContent>
-      <Typography variant="h5"  fontWeight={'bold'}  color="primary" component="h2">
-          Plano  {plano} 
+      <Card sx={{
+        maxWidth: 500, m: 2, padding: '0px 20px',
+
+        borderRadius: 5
+      }}  >
+        <CardContent>
+          <Typography variant="h5" fontWeight={'bold'} color="primary" component="h2">
+            Plano  {plano}
           </Typography>
           <Typography variant="h4" fontWeight={'bold'} fontFamily={'Radio Canada, sans-serif'} mb={5} color="primary">
-          R${preco}
+            R${preco}
           </Typography>
-          {Array.isArray(descricao) ? (
-          <ul>
-            {descricao.map((item, index) => (
-              <li key={index}>
-                <Typography variant="body1" color="text.secondary">
-                  {item.descricao}
-                </Typography>
-              </li>
-            ))}
-          </ul>
-        ) : (
+          {/* {Array.isArray(descricao) ? (
+            <ul>
+              {descricao.map((item, index) => (
+                <li key={index}>
+                  <Typography variant="body1" color="text.secondary">
+                    {item.descricao}
+                  </Typography>
+                </li>
+              ))}
+            </ul>
+          ) : (
+         
+        )} */}
           <Typography variant="body2" color="text.secondary">
-            {descricao}
+            Plano {plano} - 1 mês de acesso
           </Typography>
-        )}
-
-      </CardContent>
-      <CardActions sx={{justifyContent: 'space-around'}}>
-      <Button 
-      size="large" 
-      variant='contained'
-      onClick={handleClick}
-      sx={{
-      textTransform: 'uppercase',
-      background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-      color: 'white',
-      '&:hover': {
-        background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-      },
-    }}>
-         comprar
-        </Button>
-      </CardActions>
-    </Card>
+        </CardContent>
+        <CardActions sx={{ justifyContent: 'space-around' }}>
+          <Button
+            size="large"
+            variant='contained'
+            onClick={handleClick}
+            sx={{
+              textTransform: 'uppercase',
+              background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+              color: 'white',
+              '&:hover': {
+                background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+              },
+            }}>
+            comprar
+          </Button>
+        </CardActions>
+      </Card>
     </>
-    
 
-    
+
+
   );
 }

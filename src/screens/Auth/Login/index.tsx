@@ -24,6 +24,7 @@ import { PromiseNotification } from "@/components/common/PromiseNotification";
 import { useRouter } from "next/router";
 import TituloHub from "@/components/common/HubfiveName";
 import { CheckBox } from "@mui/icons-material";
+import { authService } from "@/services/auth/authService";
 
 
 export function Login() {
@@ -75,27 +76,27 @@ export function Login() {
       }
       return;
     }
-    router.push("/auth/verificacao");
+   
     // Lógica de envio caso não haja erros
 
-    //   const loginPromise = authService.login({
-    //     body: {
-    //       username: formValues?.login?.email,
-    //       password: formValues?.login?.senha,
-    //     },
-    //   });
+      const loginPromise = authService.login({
+        body: {
+          username: formValues?.login?.email,
+          password: formValues?.login?.senha,
+        },
+      });
 
-    //   PromiseNotification({
-    //     promise: loginPromise,
-    //     pendingMessage: "Entrando...",
-    //     successMessage: "Login realizado com sucesso! Redirecionando...",
-    //     errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
-    //     successCallback: () => {
-    //       setTimeout(() => {
-    //         router.push("/dashboard");
-    //       }, 300);
-    //     },
-    //   });
+      PromiseNotification({
+        promise: loginPromise,
+        pendingMessage: "Entrando...",
+        successMessage: "Login realizado com sucesso! Redirecionando...",
+        errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
+        successCallback: () => {
+          setTimeout(() => {
+            router.push("/auth/verificacao");
+          }, 300);
+        },
+      });
   };
   return (
     <>
@@ -118,22 +119,22 @@ export function Login() {
           <TituloHub />
           <Typography variant="h5" component='h3' mb={5} fontWeight={'600'}>User login</Typography>
           <LoginForm />
-      <Box textAlign={'left'}>
-      <Link href={'/auth/trocar-senha'}>Esqueci minha senha</Link>
+          <Box textAlign={'left'}>
+            <Link href={'/auth/trocar-senha'}>Esqueci minha senha</Link>
 
-      </Box>
-          <Button fullWidth 
-          
-          sx={{
+          </Box>
+          <Button fullWidth
 
-            textTransform: 'uppercase',
-            mt: 2,
-            background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-            color: 'white',
-            '&:hover': {
+            sx={{
+
+              textTransform: 'uppercase',
+              mt: 2,
               background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
-            },
-          }} disabled={isButtonDisabled} color="primary" variant="contained" onClick={handleEnter}>
+              color: 'white',
+              '&:hover': {
+                background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
+              },
+            }} disabled={isButtonDisabled} color="primary" variant="contained" onClick={handleEnter}>
             Entrar
           </Button>
           <Box m={2}>

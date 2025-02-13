@@ -5,10 +5,13 @@ import { Plan, plans } from "./planos";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
+import { requireAuthentication } from "@/helpers/auth";
+import { authService } from "@/services/auth/authService";
+import { GetServerSideProps } from "next";
 
 
-export default function HomeScreen() {
-
+export default function HomeScreen({dadosSala}) {
+  console.log('dadosSala', dadosSala)
   return (
     <>
       <Head>
@@ -30,12 +33,12 @@ export default function HomeScreen() {
 
 
         <Grid item xs={12} padding={1} display={"flex"} flexWrap={'wrap'} textAlign={"center"} justifyContent={'space-around'} >
-          {plans.map((plan: Plan) => (
+          {dadosSala?.planos?.map((plan: Plan) => (
             <CardsPlano
-              key={plan.plano}
-              plano={plan.plano}
-              preco={plan.preco}
-              descricao={plan.descricao}
+              key={plan?.plano}
+              plano={plan?.plano}
+              preco={plan?.valor}
+              // descricao={plan.descricao}
             />
           ))}
         </Grid>
@@ -43,3 +46,22 @@ export default function HomeScreen() {
     </>
   );
 }
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const dadosSala = await authService.planosHub();
+
+    return {
+      props: {
+        dadosSala: dadosSala.dados || [], // Evita retornar undefined
+      },
+    };
+  } catch (error) {
+    console.error("Erro ao buscar planos do hub:", error);
+
+    return {
+      props: {
+        dadosSala: [], // Retorna array vazio em caso de erro
+      },
+    };
+  }
+};

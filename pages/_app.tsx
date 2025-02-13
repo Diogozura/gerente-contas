@@ -29,7 +29,7 @@ const applyPageBackground = (pathname: string) => {
     // document.body.style.backgroundSize = '';
   } else {
     document.body.style.backgroundImage = '';
-    document.body.style.backgroundColor = '#F7F7F7';
+    document.body.style.backgroundColor = '#ffffff';
   }
 };
 

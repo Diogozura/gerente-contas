@@ -11,13 +11,26 @@ interface Props {
 }
 
 export const authService = {
+  //Planos hub
+  async planosHub() {
+    try {
+      const response = await HttpClient(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/planos_hub`,
+        { method: "GET" }
+      );
+      return response.body;
+    } catch (error) {
+      console.error("Erro ao buscar planos do hub:", error);
+      throw error; // Deixe o erro ser tratado pelo getServerSideProps
+    }
+  },
 
 //Primeiro contato
-async primeiroContato({ email, plano }) {
+async primeiroContato({ body }) {
 
   return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/primeiro_contato`, {
     method: 'POST',
-    body: {  email, plano },
+    body,
   })
     .then((response) => {
       tokenService.savePay(response.body.dados.token);

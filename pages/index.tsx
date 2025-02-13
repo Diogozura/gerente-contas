@@ -1,2 +1,1 @@
-import HomeScreen from "../src/screens/HomeScreen";
-export default HomeScreen
+export { default, getServerSideProps } from "../src/screens/HomeScreen";

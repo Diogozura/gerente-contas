@@ -1,8 +1,9 @@
 // Definindo a interface para os planos
 export interface Plan {
     plano: 'A' | 'B' | 'C';
-    preco: string;
+    valor: string;
     descricao: string | Recurso[];
+
   }
   interface Recurso {
     descricao: string;
@@ -24,7 +25,7 @@ export interface Plan {
   export const plans: Plan[] = [
     {
       plano: 'A',
-      preco: '79,90',
+      valor: '79,90',
       descricao: [
         { descricao: 'Plano A - 1 mês de acesso' },
         { descricao: '1 Conta CNPJ' },
@@ -33,7 +34,7 @@ export interface Plan {
     },
     {
       plano: 'B',
-      preco: '109,90',
+      valor: '109,90',
       descricao: [
         { descricao: 'Plano A - 1 mês de acesso' },
         { descricao: '2 Conta CNPJ' },
@@ -42,7 +43,7 @@ export interface Plan {
     },
     {
       plano: 'C',
-      preco: '149,90',
+      valor: '149,90',
       descricao: [
         { descricao: 'Plano A - 1 mês de acesso' },
         { descricao: '3 Conta CNPJ' },
