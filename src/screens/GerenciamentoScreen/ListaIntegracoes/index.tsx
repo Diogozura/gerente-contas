@@ -23,8 +23,6 @@ export default function ListaIntegracao() {
     const [textoFiltro, setTextoFiltro] = useState("");
   const { formValues, setFormValues } = useFormContext();
   useEffect(() => {
-    const produtoSalvo = localStorage.getItem('integracoesMarketingPlace');
-    const dadosProduto = JSON.parse(produtoSalvo);
     setIntegracoes(getIntegracoes());
   }, []);
   console.log('integracoes', integracoes)

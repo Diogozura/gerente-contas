@@ -359,7 +359,7 @@ export default function Estoque() {
                 {/* Imagem */}
                 <Grid item xs={1} padding={'none'}>
                   <Image
-                    src={"https://picsum.photos/200"}
+                    src={'/defaultImage.png'}
                     width={100}
                     height={100}
                     alt={`Imagem de ${product?.CadastroProdutos?.titulo}`}

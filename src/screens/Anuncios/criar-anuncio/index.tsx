@@ -22,8 +22,8 @@ import CustomAccordion from "@/components/common/CustomAccordionProps";
 import ShoppingBasketOutlinedIcon from '@mui/icons-material/ShoppingBasketOutlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" color="action"/>;
+const checkedIcon = <CheckBoxIcon fontSize="small" color="action" />;
 
 
 function generateSlug(titulo) {
@@ -64,13 +64,14 @@ export default function CriarAnuncio() {
         produto: [] as { titulo: string; sku: string }[],
     });
     const [produtoSelecionado, setProdutoSelecionado] = React.useState([]);
-
+ 
     const nav = {
         principal: "anuncios",
         atual: "criacao-anuncio",
     };
     React.useEffect(() => {
-        const storedProducts = localStorage.getItem("produtos");
+        const storedProducts = localStorage.getItem("ProdutosCadastrados");
+
         if (storedProducts && storedProducts !== "[]") {
             setProducts(JSON.parse(storedProducts));
         }
@@ -90,15 +91,15 @@ export default function CriarAnuncio() {
 
     const handleProductChange = (selectedProducts: Product[]) => {
 
-
-
+       
         const formattedProducts = selectedProducts.map((product) => ({
-            titulo: product.titulo,
-            sku: product.sku,
+            titulo: product?.CadastroProdutos?.titulo,
+            sku: product?.infoProdutos?.sku,
         }));
         // Passa os dados para o contexto
-
-        setFormValues("produto", selectedProducts[0]);
+        console.log('formattedProducts', formattedProducts)
+        console.log('selectedProducts', selectedProducts)
+        setFormValues("produto", selectedProducts[0]?.infoProdutos);
         setProdutoSelecionado(selectedProducts);
         setNewAnuncio((prev) => ({
             ...prev,
@@ -184,6 +185,7 @@ export default function CriarAnuncio() {
                                             <Checkbox
                                                 icon={icon}
                                                 checkedIcon={checkedIcon}
+                                                color="info"
                                                 style={{ marginRight: 8 }}
                                                 checked={selected}
                                             />
@@ -205,7 +207,7 @@ export default function CriarAnuncio() {
                                 value={produtoSelecionado[0] || null} // Mostra o produto selecionado ou vazio
                                 options={products}
                                 disableCloseOnSelect
-                                getOptionLabel={(option) => option.titulo || ""}
+                                getOptionLabel={(option) => option?.CadastroProdutos?.titulo || ""}
                                 onChange={(event, value) => {
                                     if (value) {
                                         // Produto selecionado
@@ -219,6 +221,7 @@ export default function CriarAnuncio() {
                                     <TextField
                                         {...params}
                                         label="Produto"
+                                        color="primary"
                                         error={errors.produto}
                                         helperText={errors.produto && "Selecione pelo menos um produto."}
                                     />

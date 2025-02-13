@@ -9,7 +9,7 @@ const filter = createFilterOptions();
 export default function DetalhesProduto({ view }) {
   const { formValues, setFormValues } = useFormContext();
 
-
+console.log('formValues prpduto', formValues.produto)
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues('produto', { [name]: value }); // Atualiza valores dinamicamente
