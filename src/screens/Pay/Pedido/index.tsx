@@ -21,13 +21,20 @@ import LinearStepper from "../../../components/common/Stepper";
 import PedidoForm from "@/components/forms/PedidoForm";
 import { authService } from "@/services/auth/authService";
 import { PromiseNotification } from "@/components/common/PromiseNotification";
+import { tokenService } from "@/services/auth/tokenService";
 
-export default function Pedido() {
+export default function Pedido(ctx) {
   const router = useRouter();
-  const { formValues } = useFormContext();
-  const [isButtonDisabled, setIsButtonDisabled] = React.useState(false);
+  const { formValues, resetFormValues } = useFormContext();
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(true);
   const { plano, preco } = router.query;
-  console.log('formValues', formValues?.pedido?.email)
+
+  React.useEffect(() => {
+    const isFormValid = formValues?.pedido?.email?.trim() !== "" 
+    setIsButtonDisabled(!isFormValid);
+  }, [formValues]);
+
+ 
 
   const steps = ["Select Plano", "Primeiro contato", "Pagamento", "Cadastro"];
   const handleEnter = async (event: React.FormEvent) => {
@@ -39,14 +46,18 @@ export default function Pedido() {
         plano: plano,
       },
     });
+
     PromiseNotification({
             promise: primeiroContatoPromise,
             pendingMessage: "Aguardando...",
-            successMessage: "Login realizado com sucesso! Redirecionando...",
+            successMessage: "Redirecionando...",
             errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
             successCallback: () => {
               setTimeout(() => {
-                router.push("/auth/verificacao");
+                router.push({
+                              pathname: '/pay/pagamento',
+                              query: { id: tokenService.getPay(ctx) },
+                            });
               }, 300);
             },
           });
@@ -104,7 +115,7 @@ export default function Pedido() {
                 background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
               },
             }} disabled={isButtonDisabled}  variant="contained" onClick={handleEnter}>
-            Avaliação
+            Avançar
           </Button>
           <br />
           <Typography variant="body1" component={"p"}>
