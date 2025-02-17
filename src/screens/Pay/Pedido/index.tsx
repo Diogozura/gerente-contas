@@ -30,15 +30,13 @@ export default function Pedido(ctx) {
   const { plano, preco } = router.query;
 
   React.useEffect(() => {
-    const isFormValid = formValues?.pedido?.email?.trim() !== "" 
-    setIsButtonDisabled(!isFormValid);
-  }, [formValues]);
+    setIsButtonDisabled(!formValues?.pedido?.email?.trim());  
+  }, [formValues?.pedido?.email]);
 
  
 
   const steps = ["Select Plano", "Primeiro contato", "Pagamento", "Cadastro"];
   const handleEnter = async (event: React.FormEvent) => {
-    formValues.pedido.email
 
     const primeiroContatoPromise = authService.primeiroContato({
       body: {
@@ -108,7 +106,7 @@ export default function Pedido(ctx) {
           <Button fullWidth
             sx={{
               textTransform: 'uppercase',
-              mt: 2,
+              mt: 5,
               background: 'linear-gradient(90deg, #9A44C8 5%, #5E247C 55%)',
               color: 'white',
               '&:hover': {
@@ -118,7 +116,7 @@ export default function Pedido(ctx) {
             Avançar
           </Button>
           <br />
-          <Typography variant="body1" component={"p"}>
+          <Typography variant="body1" component={"p"} mt={5}>
             Garantimos a privacidade dos seus dados com criptografia.
           </Typography>
           <br />

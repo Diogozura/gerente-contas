@@ -25,30 +25,30 @@ export default function Pedido() {
 
   const [countdown, setCountdown] = useState(5);
 
-  // useEffect(() => {
-  //   const confirmarPagamento = async (id) => {
-  //     try {
-  //       if (id) {
+  useEffect(() => {
+    const confirmarPagamento = async (id) => {
+      try {
+        if (id) {
           
-  //         await authService.confirmarPagamento({ id });
-  //           router.push({
-  //             pathname: "/auth/cadastro",
-  //             query: { id },
-  //           });
+          await authService.confirmarPagamento({ id });
+            router.push({
+              pathname: "/auth/cadastro",
+              query: { id },
+            });
           
-  //       }
-  //     } catch (error) {
-  //       console.error("Erro ao confirmar pagamento:", error);
-  //     }
-  //   };
+        }
+      } catch (error) {
+        console.error("Erro ao confirmar pagamento:", error);
+      }
+    };
 
-  //   confirmarPagamento(id);
-  // }, [countdown, router, id]);
+    confirmarPagamento(id);
+  }, [countdown, router, id]);
 
   return (
     <>
      <Container
-        maxWidth="sm"
+      
         sx={{
           mt:2,
           display:'flex',
@@ -58,22 +58,14 @@ export default function Pedido() {
           minHeight: "80vh",
         }}
       >
-        <Box sx={{  mb: 10 }}>
-          <Stepper activeStep={2} alternativeLabel>
-            {steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
+       
         {/* <LinearStepper/> */}
         <Grid container xs={12}>
-         
           <Grid
             item
             borderRadius={4}
-            padding={1}
+            padding={2}
+            textAlign={'center'}
             sx={{
               m: "0px auto",
               bgcolor: "#14961a65",
