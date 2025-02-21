@@ -150,8 +150,58 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
+        console.log('response', response.body.dados.contas[0].id)
         // if (!response.ok) throw new Error('Não autorizado');
-        return response;
+        return response.body;
+      });
+
+  },
+  async retornaEmpresas(token, {idConta}) {
+    console.log('idConta', idConta)
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/2/empresa`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      refresh : true
+    }
+    )
+      .then(response => {
+        // if (!response.ok) throw new Error('Não autorizado');
+        return response.body.dados;
+      });
+
+  },
+  async retornaDetalhesEmpresa({idConta, idEmpresa}) {
+    const token = tokenService.get();
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/2/empresa/${idEmpresa}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      refresh : true
+    }
+    )
+      .then(response => {
+        // if (!response.ok) throw new Error('Não autorizado');
+        return response.body.dados;
+      });
+
+  },
+  async cadastroEmpresa({idEmpresa, body}, ctx) {
+  const token = tokenService.get(ctx);
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idEmpresa}/empresa`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body
+    }
+    )
+      .then(response => {
+        // if (!response.ok) throw new Error('Não autorizado');
+        return response.body;
       });
 
   },

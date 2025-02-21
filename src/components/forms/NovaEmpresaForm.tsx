@@ -1,43 +1,48 @@
-import { FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, TextField } from '@mui/material';
+import { Grid, TextField } from '@mui/material';
 import React from 'react';
 import { useFormContext } from '../../config/FormContext';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import PhoneInput from '../Inputs/Telefone';
+import CNPJInput from '../Inputs/CNPJ';
 
-export default function PerfilForm({ view }) {
+
+
+
+
+export default function NovaEmpresaForm({view}) {
     const { formValues, setFormValues } = useFormContext();
-  
-      const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const { name, value } = e.target;
-          setFormValues('minhaConta', { [name]: value }); // Atualiza valores dinamicamente
-      };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormValues('novaEmpresa', { [name]: value }); // Atualiza valores dinamicamente
+    };
     return (
         <>
             <Grid container spacing={2}>
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <TextField
-                        label="Nome"
+                        label="Nome da empresa"
                         type="text"
-                        name='nome'
+                        name='nomeEmpresa'
                         fullWidth
+                        variant='standard'
                         disabled={view}
-                        value={formValues.dadosUsuarioLogado?.nome || ''}
+                        value={formValues.novaEmpresa?.nomeEmpresa || ''}
                         onChange={handleInputChange}
                         InputProps={{
                             inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
                             style: { appearance: "textfield", WebkitAppearance: "none" }, // Remove spinner
                         }}
                     />
-                    
-                </Grid>
-                <Grid item xs={12}>
+                </Grid> */}
+               
+                <Grid item xs={6}>
                     <TextField
-                        label="Email"
-                        type="email"
-                        name='email'
+                        label="Razão Social"
+                        type="text"
+                        name='razaoSocial'
                         fullWidth
+                        variant='standard'
                         disabled={view}
-                        value={formValues.dadosUsuarioLogado?.email || ''}
+                        value={formValues.novaEmpresa?.razaoSocial || ''}
                         onChange={handleInputChange}
                         InputProps={{
                             inputProps: { min: 0 }, // Bloqueia manualmente valores negativos
@@ -45,11 +50,10 @@ export default function PerfilForm({ view }) {
                         }}
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <PhoneInput label={'Telefone de contato'} name={'telefone'} view={view} />
+                <Grid item xs={6}>
+                  <CNPJInput label={'Novo CNPJ'} name={'novoCNPJ'} variant={'standard'}               />
                 </Grid>
-
-
+              
             </Grid>
 
         </>

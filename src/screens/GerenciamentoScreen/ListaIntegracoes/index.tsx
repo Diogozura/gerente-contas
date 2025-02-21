@@ -20,7 +20,7 @@ export default function ListaIntegracao() {
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editedValue, setEditedValue] = useState<string | null>(null);
   const [integracoes, setIntegracoes] = useState<IntegracaoMarketingPlace[]>([]);
-    const [textoFiltro, setTextoFiltro] = useState("");
+  const [textoFiltro, setTextoFiltro] = useState("");
   const { formValues, setFormValues } = useFormContext();
   useEffect(() => {
     setIntegracoes(getIntegracoes());
@@ -28,7 +28,7 @@ export default function ListaIntegracao() {
   console.log('integracoes', integracoes)
 
   const [filteredIntegracoes, setFilteredIntegracoes] = useState(integracoes);
-  
+
   useEffect(() => {
     // Filtra as integrações sempre que o filtro de texto ou a lista de integrações mudarem
     const filtered = integracoes.filter((integracao) => {
@@ -39,7 +39,7 @@ export default function ListaIntegracao() {
     });
     setFilteredIntegracoes(filtered);
   }, [textoFiltro, integracoes]);
-  
+
   const getMarketplaceLogo = (nome?: string) => {
     return nome?.includes("Mercado Livre")
       ? "/marketingplaces/log-mercado-livre.png"
@@ -88,8 +88,8 @@ export default function ListaIntegracao() {
     mensagem: "",
     razaoSocial: "",
     cnpjOuCpf: "",
-    id:"",
-    loja:""
+    id: "",
+    loja: ""
   });
 
   const handleOpenModal = (tipo: string, data: any) => {
@@ -109,33 +109,33 @@ export default function ListaIntegracao() {
     const { tipo, ...int } = modalState;
     switch (tipo) {
       case "Atenção":
-       const infosFalantes=  formValues.infosFaltantesInt;
-       setIntegracoes((prev) =>
-        prev.map((item) =>
-          item.id === modalState.id
-            ? { ...item, ...infosFalantes }
-            : item
-        )
-      );
-    
-      // Atualiza o localStorage
-      localStorage.setItem(
-        "integracoes",
-        JSON.stringify(
-          integracoes.map((item) =>
-            item.id === modalState.id ? { ...item, ...infosFalantes } : item
+        const infosFalantes = formValues.infosFaltantesInt;
+        setIntegracoes((prev) =>
+          prev.map((item) =>
+            item.id === modalState.id
+              ? { ...item, ...infosFalantes }
+              : item
           )
-        )
-      );
-    
-      showToast({
-        title: "Informações completadas!",
-        status: "success",
-        position: "bottom-left",
-      });
-    
-      handleCloseModal();
-      break
+        );
+
+        // Atualiza o localStorage
+        localStorage.setItem(
+          "integracoes",
+          JSON.stringify(
+            integracoes.map((item) =>
+              item.id === modalState.id ? { ...item, ...infosFalantes } : item
+            )
+          )
+        );
+
+        showToast({
+          title: "Informações completadas!",
+          status: "success",
+          position: "bottom-left",
+        });
+
+        handleCloseModal();
+        break
       case "Deletar":
         if (int.id) {
           deleteIntegracao(int.id);
@@ -153,11 +153,11 @@ export default function ListaIntegracao() {
           });
         }
         handleCloseModal();
-      break
+        break
       default:
-        return null 
+        return null
     }
- 
+
 
   };
 
@@ -186,24 +186,24 @@ export default function ListaIntegracao() {
 
   return (
     <>
-    <Paper
-              elevation={1}
-              sx={{
-                p: 3,
-                mb: 2,
-                borderRadius:'0px',
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-  <FiltroTexto
-            label="Filtrar por título ou SKU"
-            value={textoFiltro}
-            onChange={setTextoFiltro}
-          />
-            </Paper>
-   
+      <Paper
+        elevation={1}
+        sx={{
+          p: 3,
+          mb: 2,
+          borderRadius: '0px',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <FiltroTexto
+          label="Filtrar por título ou SKU"
+          value={textoFiltro}
+          onChange={setTextoFiltro}
+        />
+      </Paper>
+
 
       {filteredIntegracoes.map((int, index) => (
         <Paper
@@ -233,7 +233,7 @@ export default function ListaIntegracao() {
               fullWidth
               value={editIndex === index ? editedValue : int.nomeLoja}
               onChange={(e) => setEditedValue(e.target.value)}
-          
+
             />
             {editIndex === index ? (
               <>
@@ -246,13 +246,13 @@ export default function ListaIntegracao() {
               </>
             ) : (
               <IconButton aria-label="Editar" onClick={() => handleEditClick(index)}>
-                <EditOutlinedIcon color="action"/>
+                <EditOutlinedIcon color="action" />
               </IconButton>
             )}
           </Box>
 
           <Box display="flex" alignItems="center">
-            
+
             {/* {int.error && (
               <Button
                 variant="contained"
@@ -285,10 +285,10 @@ export default function ListaIntegracao() {
             </IconButton>
             <IconButton
               aria-label="Deletar"
-               color="primary"
+              color="primary"
               onClick={() => handleOpenModal("Deletar", int)}
             >
-              <DeleteOutlinedIcon  color="action"/>
+              <DeleteOutlinedIcon color="action" />
             </IconButton>
           </Box>
         </Paper>

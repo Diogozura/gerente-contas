@@ -5,6 +5,8 @@ import Head from "next/head";
 import PerfilForm from "@/components/forms/PerfilForm";
 import { useFormContext } from "@/config/FormContext";
 import { UsuarioLogado } from "@/types/usuarioLogado";
+import { requireAuthentication } from "@/helpers/auth";
+import { authService } from "@/services/auth/authService";
 
 interface User {
   nome: string;
@@ -13,42 +15,21 @@ interface User {
   permissao: string;
 }
 
-export default function CreateUser() {
+export default function Perfil({dadosSala}) {
   const router = useRouter();
   const { formValues, setFormValues } = useFormContext();
-  const [user, setUser] = useState<User>({
-    nome: "Usuário Fake",
-    email: "usuario@exemplo.com",
-    telefone: "(11) 99999-9999",
-    permissao: "visualizar", // Default: "editar" ou "visualizar"
-  });
 
-  const handleChange = (field: keyof User, value: string) => {
-    setUser((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-useEffect(()=>{
-  const savedData = localStorage.getItem("dadosUsuarioLogado");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setFormValues("dadosUsuarioLogado", parsedData); // Atualiza o contexto globa
-      setFormValues('infoDados', { 'telefone': parsedData?.telefone });
-   console.log('parsedData', parsedData)
-  }
-    
-   
+     useEffect(() => {
+      const nomeCompleto = dadosSala?.dados?.first_name +' '+  dadosSala?.dados?.last_name
+
+       setFormValues("dadosUsuarioLogado", {
+        nome: nomeCompleto,
+         email: dadosSala?.dados?.email,
+       });
+     
+     }, []);
   
- 
-},[])
 
-
-  const handleSubmit = () => {
-    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(formValues.dadosUsuarioLogado));
-    alert("Dados do usuário salvos com sucesso!");
-
-  };
 
   return (
     <>
@@ -60,13 +41,28 @@ useEffect(()=>{
           Dados do usuario logado
         </Typography>
 
-        <PerfilForm view={false}/>
-       
-      
-          <Button variant="contained" color="primary" type="submit" onClick={handleSubmit}>
-            Salvar Usuário
-          </Button>
+        <PerfilForm view={true}/>
+
       </Container>
     </>
   );
 }
+export const getServerSideProps = requireAuthentication(async (ctx) => {
+  const token = ctx.req.token;
+  try {
+    const dadosSala = await authService.dadosSala(token);
+
+    return {
+      props: {
+        dadosSala,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+
+        permanent: true,
+      },
+    };
+  }
+});
