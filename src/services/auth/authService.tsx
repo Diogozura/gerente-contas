@@ -121,10 +121,10 @@ async confirmarPagamento( {id} ) {
 
   /* Troca Senha*/
   //Email
-  async email({ email}) {
+  async esqueciMinhaSenha(body) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/esqueci_minha_senha`, {
       method: 'POST',
-      body: { email },
+      body,
     })
       .then((res) => {
         if (!res.ok) throw new Error(res.body.txt)
@@ -158,7 +158,7 @@ async confirmarPagamento( {id} ) {
   },
   async retornaEmpresas(token, {idConta}) {
     console.log('idConta', idConta)
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/2/empresa`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idConta}/empresa`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -172,9 +172,9 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async retornaDetalhesEmpresa({idConta, idEmpresa}) {
+  async retornaDetalhesEmpresa({contaId, idEmpresa}) {
     const token = tokenService.get();
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/2/empresa/${idEmpresa}`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${contaId}/empresa/${idEmpresa}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -200,8 +200,57 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-        // if (!response.ok) throw new Error('Não autorizado');
+        if (!response.ok) throw new Error(response.body.mensagem)
         return response.body;
+      });
+
+  },
+  async compartilhaConta({idConta, body}) {
+  const token = tokenService.get();
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body.mensagem)
+        return response.body;
+      });
+
+  },
+  async deletaCompartilhaConta({idConta, permissao_id}) {
+  const token = tokenService.get();
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta/${permissao_id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body.mensagem)
+        return response.body;
+      });
+
+  },
+  async listaCompartilhamentoConta({contaId}) {
+    const token = tokenService.get();
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${contaId}/compartilhamento_conta`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      refresh : true
+    }
+    )
+      .then(response => {
+        // if (!response.ok) throw new Error('Não autorizado');
+        return response.body.dados;
       });
 
   },

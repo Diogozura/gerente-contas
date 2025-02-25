@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Container, Button, Typography, Box, Select, MenuItem, Accordion, AccordionSummary, AccordionDetails, List, ListItem, ListItemText, IconButton, Divider, CircularProgress, Paper, } from "@mui/material";
+import { Container, Button, Typography, Box, Select, MenuItem, Accordion, AccordionSummary, AccordionDetails, List, ListItem, ListItemText, IconButton, Divider, CircularProgress, Paper, TextField, } from "@mui/material";
 import Head from "next/head";
 
 import { useFormContext } from "@/config/FormContext";
@@ -36,7 +36,7 @@ const formatCNPJ = (cnpj: string) => {
 };
 export default function CreateUser({ retornaEmpresas, idConta }) {
 
-  console.log('retorna emrpesas', retornaEmpresas)
+
 
   const { formValues, setFormValues } = useFormContext();
   const [openNovoUsuario, setOpenNovoUsuario] = useState(false);
@@ -47,14 +47,23 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
   const [empresasConta, setEmpresasConta] = useState([]);
 
   const [detalhesEmpresa, setDetalhesEmpresa] = useState({});
+  const [contaCompartilhada, setContaCompartilhada] = useState([]);
   const [loading, setLoading] = useState(null); // Para controlar o loading individualmente
+  const [contaId, setContaId] = useState(null);
+
+
+  useEffect(() => {
+    const cookies = parseCookies();
+    setContaId(cookies.idConta || idConta);
+    setEmpresasConta(retornaEmpresas)
+  }, []);
 
   const buscarDetalhesEmpresa = async (idEmpresa) => {
     if (detalhesEmpresa[idEmpresa]) return; // Se já buscou, não faz novamente
 
     setLoading(idEmpresa); // Define qual empresa está carregando
     try {
-      const detalhes = await authService.retornaDetalhesEmpresa({ idConta, idEmpresa });
+      const detalhes = await authService.retornaDetalhesEmpresa({ contaId, idEmpresa });
       console.log('detalhes', detalhes)
       setDetalhesEmpresa((prev) => ({
         ...prev,
@@ -66,21 +75,38 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
       setLoading(null); // Remove o estado de loading
     }
   };
+  const buscarEmailUsuarios = async () => {
+
+
+
+    try {
+      const detalhes = await authService.listaCompartilhamentoConta({ contaId });
+      console.log('detalhes emails', detalhes)
+      setContaCompartilhada(detalhes)
+
+    } catch (error) {
+      console.error("Erro ao buscar detalhes da empresa:", error);
+    } finally {
+      setLoading(null); // Remove o estado de loading
+    }
+  };
 
   const [modalState, setModalState] = React.useState({
     open: false,
     tipo: "",
     empresaNome: "",
-    email: ""
+    email: "",
+    permissao_id: '',
   });
+  console.log('contaCompartilhada', contaCompartilhada)
 
-
-  const handleOpenModal = (tipo: string, empresaNome: string, email?: string) => {
+  const handleOpenModal = (tipo: string, empresaNome?: string, email?: string, permissao_id?: string) => {
     setModalState({
       open: true,
       tipo,
       empresaNome,
       email, // Passa o email do usuário a ser excluído
+      permissao_id
     });
   };
   const handleCloseModal = () => {
@@ -89,7 +115,7 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
 
 
   const handleSaveModal = () => {
-    const { tipo, empresaNome, email } = modalState;
+    const { tipo, empresaNome, email, permissao_id } = modalState;
     switch (tipo) {
       case "Atenção":
         const infosFalantes = formValues.infosFaltantesInt;
@@ -107,19 +133,21 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
         handleCloseModal();
         break
       case "deletar email":
-        if (empresaNome && email) {
-          // Clona o objeto de empresas
-          const empresasAtualizadas = { ...empresas };
 
-          // Filtra os usuários da empresa, removendo o email selecionado
-          empresasAtualizadas[empresaNome].usuarios = empresasAtualizadas[empresaNome].usuarios.filter(
-            (usuario) => usuario.email !== email
-          );
 
-          // Atualiza o localStorage e o estado
-          localStorage.setItem("empresas", JSON.stringify(empresasAtualizadas));
-          setEmpresas(empresasAtualizadas);
+        if (email) {
 
+          const cadastroConta = authService.deletaCompartilhaConta({
+            permissao_id: email,
+            idConta,
+          });
+          console.log('cadastroConta', cadastroConta)
+          PromiseNotification({
+            promise: cadastroConta,
+            pendingMessage: "Deletando...",
+            successMessage: "Usuário deletado com sucesso ...",
+            errorMessage: "Ocorreu um erro ao tentar deletar item. Tente novamente.",
+          });
           showToast({
             title: "Usuário removido com sucesso!",
             status: "success",
@@ -136,13 +164,13 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
   };
 
   const renderModalContent = () => {
-    const { tipo, email } = modalState;
+    const { tipo, email, empresaNome } = modalState;
 
     switch (tipo) {
       case "Configuração":
         return <Typography>Configuração da loja:</Typography>;
       case "deletar email":
-        return <Typography>Tem certeza que deseja deletar? {email}</Typography>;
+        return <Typography>Tem certeza que deseja deletar? {empresaNome}</Typography>;
       case "Atenção":
         return (
           <Box>
@@ -154,38 +182,6 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
     }
   };
 
-  // 🔹 Carregar empresas e salvar no localStorage se necessário
-  const carregarEmpresas = () => {
-    const storedData = localStorage.getItem("empresas");
-    let empresas: Record<string, { cnpj: string; usuarios: User[]; plano?: string }> = storedData ? JSON.parse(storedData) : {};
-
-    //     dadosSala?.dados?.empresas_listadas?.forEach((empresa: Empresa, index: number) => {
-    // console.log('dadosSala?.dados?', )
-    //     });
-    setEmailPrincipal('diogozura')
-
-    localStorage.setItem("empresas", JSON.stringify(empresas));
-  };
-
-
-
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedData = localStorage.getItem("empresas");
-      const storedConta = localStorage.getItem("usuariosConta");
-      const usuarioLogado2 = localStorage.getItem("dadosUsuarioLogado");
-      console.log('usuarioLogado2', JSON.parse(usuarioLogado2).contas[0].id)
-      setEmpresas(storedData ? JSON.parse(storedData) : {});
-      setEmpresasConta(retornaEmpresas)
-      try {
-        setUsuariosConta(storedConta ? JSON.parse(storedConta) : []);
-      } catch (error) {
-        console.error("Erro ao parsear usuáriosConta:", error);
-        setUsuariosConta([]); // Garante que sempre tenha um array válido
-      }
-    }
-  }, []);
 
   // Alterna entre os formulários
   const handleNovoUsuario = () => {
@@ -207,28 +203,28 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
       return;
     }
 
-    // Recupera os usuários já salvos
-    const storedConta = localStorage.getItem("usuariosConta");
-    let usuariosSalvos = storedConta ? JSON.parse(storedConta) : [];
+ 
 
-    // Garante que seja um array antes de adicionar novos emails
-    if (!Array.isArray(usuariosSalvos)) {
-      usuariosSalvos = [];
-    }
+ 
+    const compartilhaConta = authService.compartilhaConta({
+      body: {
+        email
+      },
+      idConta,
+    });
 
-    // Adiciona o novo usuário
-    const novaLista = [...usuariosSalvos, { email }];
+    PromiseNotification({
+      promise: compartilhaConta,
+      pendingMessage: "Cadastro...",
+      successMessage: "Login realizado com sucesso! Redirecionando...",
+      errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
+    });
 
-    // Atualiza o localStorage
-    localStorage.setItem("usuariosConta", JSON.stringify(novaLista));
 
-    // Atualiza o estado
-    setUsuariosConta(novaLista);
+
   };
 
   const handleSalvarEmpresa = () => {
-    const storedData = localStorage.getItem("empresas");
-    let empresas: Record<string, Empresa> = storedData ? JSON.parse(storedData) : {};
 
     const { razaoSocial } = formValues.novaEmpresa;
     const { novoCNPJ } = formValues.infoDados;
@@ -270,41 +266,8 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
       successMessage: "Login realizado com sucesso! Redirecionando...",
       errorMessage: "Ocorreu um erro ao realizar o login. Tente novamente.",
     });
-    localStorage.setItem("empresas", JSON.stringify(empresas));
-    alert("Empresa salva com sucesso!");
   };
 
-
-
-  const handleDelete = (empresaNome: string) => {
-    // Remove a empresa do objeto
-    const updatedEmpresas = { ...empresas };
-    delete updatedEmpresas[empresaNome];
-
-    // Atualiza o localStorage
-    localStorage.setItem("empresas", JSON.stringify(updatedEmpresas));
-
-    // Atualiza o estado imediatamente, forçando a re-renderização
-    setEmpresas(updatedEmpresas);
-  };
-
-
-  // const fetchEmpresaDetalhes = async (id: number) => {
-  //   // Evita chamadas desnecessárias se os dados já foram carregados
-  //   if (empresaDetalhes[id]) return;
-
-  //   setLoading((prev) => ({ ...prev, [id]: true }));
-
-  //   try {
-  //     const response = await authService.retornaDetalhesEmpresa()
-  //     const data = await response.json();
-  //     setEmpresaDetalhes((prev) => ({ ...prev, [id]: data }));
-  //   } catch (error) {
-  //     console.error("Erro ao buscar detalhes da empresa:", error);
-  //   } finally {
-  //     setLoading((prev) => ({ ...prev, [id]: false }));
-  //   }
-  // };
   return (
     <>
       <Head>
@@ -317,45 +280,94 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
         <Typography variant="body1" component='p'>Dados referente a minha conta</Typography>
 
         {/* Formulário de Nova Empresa */}
-        {/* adicionar novo usuario  a conta  */}
-        <Box display={openNovoUsuario ? "flex" : "none"} mt={2}>
 
-          <NovoUsuarioForm view={false} />
 
-          {/* <Button variant="contained" color="secondary" onClick={handleSalvarUsuario} sx={{ mt: 1 }}>
-        Salvar Usuário
-      </Button> */}
-          <IconButton aria-label="Cancelar" >
-            <CloseIcon color="error" onClick={() => setOpenNovoUsuario(!openNovoUsuario)} />
-          </IconButton>
-          <IconButton aria-label="Salvar" >
-            <CheckIcon color="success" onClick={() => handleSalvarUsuario()} />
-          </IconButton>
-        </Box>
-        <Box display={'flex'}>
+        {/* Botões para abrir os formulários */}
+
+
+
+        {/* Formulário de Novo Usuário */}
+        <Paper sx={{ padding: 5, gap: 2, backgroundColor: '' }} >
+          <Typography variant="h4" component='h3' sx={{ padding: 1 }}>Dados da conta</Typography>
           <Box display={openNovoUsuario ? "none" : "blcok"}>
             <Button variant="contained" color="primary" onClick={handleNovoUsuario} sx={{ mr: 1 }}>
               Adicionar novo Usuário
             </Button>
           </Box>
+          <Typography variant="body1" component='p'>plano assinado : {'planoAssinado'}</Typography>
+          <Typography variant="body1" component='p' color={'#0E87FE'}>Gostaria de fazer um upgrade?</Typography>
+          {/* adicionar novo usuario  a conta  */}
+          <Box display={openNovoUsuario ? "flex" : "none"} mt={2}>
 
-          {/* Botões para abrir os formulários */}
+            <NovoUsuarioForm view={false} />
 
-          <Button variant="contained" color="primary" onClick={handleNovaEmpresa}>
-            Adicionar nova Empresa
-          </Button>
-        </Box>
-        <Box display={openNovaEmpresa ? "block" : "none"} mt={2}>
-          <NovaEmpresaForm view={false} />
-          <Button variant="contained" color="secondary" onClick={handleSalvarEmpresa} sx={{ mt: 1 }}>
-            Salvar conta
-          </Button>
-        </Box>
+            {/* <Button variant="contained" color="secondary" onClick={handleSalvarUsuario} sx={{ mt: 1 }}>
+Salvar Usuário
+</Button> */}
+            <IconButton aria-label="Cancelar" >
+              <CloseIcon color="error" onClick={() => setOpenNovoUsuario(!openNovoUsuario)} />
+            </IconButton>
+            <IconButton aria-label="Salvar" >
+              <CheckIcon color="success" onClick={() => handleSalvarUsuario()} />
+            </IconButton>
+          </Box>
 
 
-        <Paper sx={{ padding: 5, gap: 2, }} >
+
+
+          <Accordion onChange={() => buscarEmailUsuarios()}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon color="action" />}>
+              <Typography variant="h6">usuário Cadastradas</Typography>
+              {/* Ícone de deletar */}
+
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="subtitle1">Emails Cadastrados:</Typography>
+              <List dense>
+                {contaCompartilhada?.length > 0 ? (
+                  contaCompartilhada?.map(({ email, permissao, permissao_id, index }) => (
+                    <Paper sx={{ m: 1, padding: 2, gap: 2 }}>
+                      <Box component={'span'} display={'flex'} alignItems={'flex-end'} padding={2}>
+                        <TextField key={index} fullWidth variant="standard" disabled value={email} />
+                        <DeleteOutlinedIcon color="action" onClick={() => handleOpenModal("deletar email", email, permissao_id)} />
+                      </Box>
+                      <Typography>Permissão : {permissao}</Typography>
+
+                    </Paper>
+
+                  ))
+                ) : (
+                  <Typography>Nenhum usuário salvo</Typography>
+                )}
+              </List>
+
+
+            </AccordionDetails>
+          </Accordion>
+        </Paper>
+
+        <Divider sx={{ m: '4vh 0' }} />
+
+        <Paper sx={{ padding: 5, gap: 2, backgroundColor: '' }} >
           <Typography variant="h4" component='h3' sx={{ padding: 2, }}>Empresas Cadastradas</Typography>
-          {empresasConta.map(({ id, razao_social }) => (
+          <Box display={openNovaEmpresa ? "none" : "blcok"}>
+            <Button variant="contained" color="primary" onClick={handleNovaEmpresa}>
+              Adicionar nova Empresa
+            </Button>
+          </Box>
+
+
+          <Box display={openNovaEmpresa ? "flex" : "none"} mt={2}>
+            <NovaEmpresaForm view={false} />
+            <IconButton aria-label="Cancelar" >
+              <CloseIcon color="error" onClick={() => setOpenNovaEmpresa(!openNovaEmpresa)} />
+            </IconButton>
+            <IconButton aria-label="Salvar" >
+              <CheckIcon color="success" onClick={() => handleSalvarEmpresa()} />
+            </IconButton>
+
+          </Box>
+          {empresasConta?.map(({ id, razao_social }) => (
             <Accordion key={id} onChange={() => buscarDetalhesEmpresa(id)}>
               <AccordionSummary expandIcon={<ExpandMoreIcon color="action" />}>
                 <Typography variant="h6">{razao_social}</Typography>
@@ -365,8 +377,8 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
                   <CircularProgress size={24} />
                 ) : detalhesEmpresa[id] ? (
                   <div>
-                    <p><strong>Nome:</strong> {detalhesEmpresa[id].nome}</p>
-                    <p><strong>Endereço:</strong> {detalhesEmpresa[id].endereco}</p>
+                    <p><strong>Nome:</strong> {detalhesEmpresa[id].razao_social}</p>
+                    <p><strong>CNPJ:</strong> {detalhesEmpresa[id].cnpj}</p>
                     {/* Adicione mais informações conforme necessário */}
                   </div>
                 ) : (
@@ -377,31 +389,7 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
           ))}
         </Paper>
 
-        <Accordion >
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">Contas Cadastradas</Typography>
-            {/* Ícone de deletar */}
 
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="subtitle1">Usuários:</Typography>
-            <List dense>
-              <Typography>{emailPrincipal}</Typography>
-              {usuariosConta.length > 0 ? (
-                usuariosConta.map((usuario, index) => (
-                  <Typography key={index}>{usuario.email}</Typography>
-                ))
-              ) : (
-                <Typography>Nenhum usuário salvo</Typography>
-              )}
-            </List>
-
-
-          </AccordionDetails>
-        </Accordion>
-
-
-        {/* Formulário de Novo Usuário */}
 
 
 
@@ -412,13 +400,13 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
               <Typography variant="h6">{nome}</Typography>
               <Typography sx={{ ml: 2, color: "text.secondary" }}>{formatCNPJ(empresa?.cnpj)}</Typography>
               {/* Ícone de deletar */}
-              <IconButton
+              {/* <IconButton
                 onClick={() => handleDelete(nome)}
                 sx={{ ml: 2 }}
                 color="error"
               >
                 <DeleteOutlinedIcon color="action" />
-              </IconButton>
+              </IconButton> */}
             </AccordionSummary>
             <AccordionDetails>
               <Typography variant="subtitle1">Usuários:</Typography>
@@ -467,12 +455,12 @@ export const getServerSideProps = requireAuthentication(async (ctx) => {
 
   const token = ctx.req.token;
   const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
-  console.log('idConta server', idConta)
   const retornaEmpresas = await authService.retornaEmpresas(token, { idConta });
   try {
     return {
       props: {
         retornaEmpresas,
+        idConta
       },
     };
   } catch (error) {

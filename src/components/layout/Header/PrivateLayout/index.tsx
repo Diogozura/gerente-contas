@@ -1,217 +1,196 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
-import Drawer from '@mui/material/Drawer';
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
+import React, { useEffect, useState } from 'react';
+import {
+  AppBar, Box, Container, Divider, Drawer, IconButton, List,
+  ListItem, ListItemButton, ListItemIcon, Menu, MenuItem, Toolbar,
+  Tooltip, Typography, Badge, Button,
+  Collapse
+} from '@mui/material';
+import {
+  AccountCircle, Contrast, ExitToApp, Settings, Notifications,
+  RadioButtonCheckedTwoTone, RadioButtonUnchecked, Work,
+  ExpandLess,
+  ExpandMore
+} from '@mui/icons-material';
 import Link from 'next/link';
-import Slide from '@mui/material/Slide';
-import useScrollTrigger from '@mui/material/useScrollTrigger';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useRouter } from "next/router"
-import ContrastIcon from '@mui/icons-material/Contrast';
-import ThemeToggle from '../../../common/ThemeToggle';
-import nookies from 'nookies';
-import WorkIcon from '@mui/icons-material/Work';
-import { ThemeProvider, useTheme } from '../../../../../styles/themes/themeContext';
-import { Avatar, Badge, Collapse, Container, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
-import { AccountCircle, DarkMode, ExitToApp, ExpandLess, ExpandMore } from '@mui/icons-material';
-import { themes } from '../../../../../styles/themes/themes';
-import SettingsIcon from '@mui/icons-material/Settings';
-import MailIcon from '@mui/icons-material/Mail';
-import RadioButtonCheckedTwoToneIcon from '@mui/icons-material/RadioButtonCheckedTwoTone';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-
-
-interface Props {
-  window?: () => Window;
-  children: React.ReactNode;
-}
+import { useRouter } from "next/router";
+import nookies, { parseCookies, setCookie } from 'nookies';
+import { useTheme } from '../../../../../styles/themes/themeContext';
 
 const drawerWidth = 240;
-
-
+// Defina seus itens de navegação, configurações e notificações
 const navItems = [
-  {
-    id: 5,
-    label: "Dashboard",
-    path: "/dashboard",
-  },
-  {
-    id: 1,
-    label: "Vendas",
-    path: "/vendas",
-  },
-  {
-    id: 2,
-    label: "Anuncios",
-    path: "/anuncios",
-  },
-  {
-    id: 3,
-    label: "Estoque",
-    path: "/estoque",
-  },
-  {
-    id: 4,
-    label: "Gerenciamento",
-    path: "/gerenciamento",
-  },
-
+  { id: 5, label: "Dashboard", path: "/dashboard" },
+  { id: 1, label: "Vendas", path: "/vendas" },
+  { id: 2, label: "Anúncios", path: "/anuncios" },
+  { id: 3, label: "Estoque", path: "/estoque" },
+  { id: 4, label: "Gerenciamento", path: "/gerenciamento" },
 ];
-
 const settings = [
   { label: 'Perfil', icon: <AccountCircle color='action' /> },
-  { label: 'Minha conta', icon: <SettingsIcon color='action' /> },
-  { label: 'Tema', icon: <ContrastIcon color='action' /> },
+  { label: 'Minha conta', icon: <Settings color='action' /> },
+  { label: 'Tema', icon: <Contrast color='action' /> },
   { label: 'Sair', icon: <ExitToApp color='action' /> },
 ];
 const notifications = ['Nova venda registrada', 'Atualizar estoque', 'Novo anúncio publicado'];
 
-
-export default function PrivateLayout({ currentPath = '' }: { currentPath?: string }) {
-  const router = useRouter()
+export default function PrivateLayout({ currentPath = '' }) {
+  const router = useRouter();
   const { currentTheme, toggleTheme } = useTheme();
-  const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [anchorElNotifications, setAnchorElNotifications] = React.useState<null | HTMLElement>(null);
-  const [anchorElSettings, setAnchorElSettings] = React.useState<null | HTMLElement>(null);
-  const [alertNotification, setAlertNotification] = React.useState<null | Number>(notifications.length);
-  const [userName, setUserName] = React.useState("");
-  const [empresas, setEmpresas] = React.useState<{ id: string; nome: string }[]>([]);
-  const [empresaAtiva, setEmpresaAtiva] = React.useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [anchorElNotifications, setAnchorElNotifications] = useState(null);
+  const [anchorElSettings, setAnchorElSettings] = useState(null);
+  const [alertNotification, setAlertNotification] = useState(notifications.length);
+  const [userName, setUserName] = useState("");
+  const [empresas, setEmpresas] = useState([]);
+  const [empresaAtiva, setEmpresaAtiva] = useState(null);
   const [openCompanies, setOpenCompanies] = React.useState(false);
 
-  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  // Estados para gerenciamento de contas
+  const [selectedContaId, setSelectedContaId] = useState(null);
+  const [acessoContaAlternativa, setAcessoContaAlternativa] = useState(false);
+  const [emailAlternativo, setEmailAlternativo] = useState<string | null>(null);
+  // Dados do usuário logado (incluindo contas)
 
-  const handleOpenNotifications = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorElNotifications(event.currentTarget);
+ 
 
-  const handleOpenSettings = (event: React.MouseEvent<HTMLElement>) =>
-    setAnchorElSettings(event.currentTarget);
 
-  const handleCloseNotifications = () => {
-    setAnchorElNotifications(null);
-    setAlertNotification(0)
-  }
-  const handleCloseSettings = () => {
-    setAnchorElSettings(null);
-  }
-  const handleSettingsAction = (setting: string) => {
-    handleCloseSettings(); // Fecha o menu primeiro
-
-    switch (setting) {
-      case 'Perfil':
-        router.push('/perfil'); // Redireciona para a página do perfil
-        break;
-      case 'Minha conta':
-        router.push('/minha-conta'); // Redireciona para a página da conta
-        break;
-      case 'Tema':
-        toggleTheme(currentTheme === 'light' ? 'dark1' : 'light');
-        break;
-      case 'Sair':
-        // Limpa cookies ou tokens e redireciona para a página de login
-        nookies.destroy(null, 'token');
-        router.push('/auth/logout');
-        break;
-      default:
-        console.warn('Ação desconhecida:', setting);
+  const [contas, setContas] = useState([]); // Inicialize com um valor padrão
+  const [usuarioLogado, setUsuarioLogado] = useState(null); // Inicialize com null ou o valor padrão desejado
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Só acessa o localStorage no lado do cliente
+      const usuario = JSON.parse(localStorage.getItem("dadosUsuarioLogado") || "{}");
+      setUsuarioLogado(usuario);
+      setSelectedContaId(usuario.contaAtiva || contas?.[0]?.id);
+      // Defina as contas após a recuperação do localStorage
+      const contasRecuperadas = usuario?.contas || [];
+      setContas(contasRecuperadas);
     }
-  };
+  }, []);
+  const emailPrincipal = usuarioLogado?.email || "";
+  // Ao carregar, seta usuário, empresas e a conta ativa
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("dadosUsuarioLogado") || "{}");
+    setUserName(usuario?.userName || "Usuário não encontrado");
+    setEmpresas(JSON.parse(localStorage.getItem("empresas") || "[]"));
+    setEmpresaAtiva(usuario?.empresaAtiva || null);
+    setAcessoContaAlternativa(usuario?.acessoContaAlternativa || false);
+    setEmailAlternativo(usuario?.emailOwner)
+    const contaSelecionada = contas?.find(conta => conta.id === selectedContaId);
+    if (contaSelecionada) {
+      setEmailAlternativo(contaSelecionada.email_owner);
+    }
 
-  const handleSelecionarEmpresa = (empresaId: string) => {
-    setEmpresaAtiva(empresaId);
-    const usuarioLogado = JSON.parse(localStorage.getItem("dadosUsuarioLogado") || "{}");
-    usuarioLogado.empresaAtiva = empresaId;
-    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(usuarioLogado));
-  };
-  React.useEffect(() => {
-    const usuarioLogado = JSON.parse(localStorage.getItem("dadosUsuarioLogado") || "{}");
-    const empresas = JSON.parse(localStorage.getItem("empresas") || "{}");
-    console.log('empresas', empresas)
-    setUserName(usuarioLogado?.userName || "Usuário não encontrado");
-    setEmpresas(empresas || []);
-    setEmpresaAtiva(usuarioLogado?.empresaAtiva || null);
   }, []);
 
-  const isActive = (path: string) => path === router.pathname;
+  useEffect(() => {
+   
+  }, [selectedContaId, contas]);
 
+  // Recupera o ID da conta armazenado nos cookies ou usa a primeira conta do usuário
+  useEffect(() => {
+    const cookies = parseCookies();
+    setSelectedContaId(cookies.idConta || contas?.[0]?.id);
+  }, [contas]);
+
+  // Função para alternar entre contas
+  const handleSwitchAccount = (idConta, emailOwner) => {
+    setSelectedContaId(idConta);
+  
+    // Atualiza o cookie com o novo ID da conta (válido por 7 dias)
+    setCookie(null, "idConta", idConta, {
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+  
+    setTimeout(() => {
+      window.location.reload();
+    }, 100); 
+    // Se o e-mail da conta selecionada for diferente do e-mail principal, ativa o acesso alternativo
+    setAcessoContaAlternativa(emailOwner !== emailPrincipal);
+
+    // Forçar a atualização dos dados do localStorage ao alternar a conta
+    const usuario = JSON.parse(localStorage.getItem("dadosUsuarioLogado") || "{}");
+  
+    // Atualizar o estado do usuário logado com os dados da conta alternada
+    usuario.acessoContaAlternativa = emailOwner !== emailPrincipal; // Atualiza a conta ativa no objeto do usuário
+    usuario.emailOwner = emailOwner; // Atualiza a conta ativa no objeto do usuário
+    localStorage.setItem("dadosUsuarioLogado", JSON.stringify(usuario)); // Salva no localStorage
+    router.replace(router.asPath);
+    // Atualize as contas para refletir as mudanças
+    const contasRecuperadas = usuario?.contas || [];
+    setContas(contasRecuperadas);
+    
+    // Atualiza outras informações relacionadas à conta
+    setUserName(usuario?.userName || "Usuário não encontrado");
+    setEmpresas(JSON.parse(localStorage.getItem("empresas") || "[]"));
+    setEmpresaAtiva(usuario?.empresaAtiva || null);
+
+  };
   const handleToggleCompanies = () => {
     setOpenCompanies((prev) => !prev);
   };
+  // Demais funções do layout (menu, navegação, etc.)
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
+  const handleMenuOpen = (setter) => (event) => setter(event.currentTarget);
+  const handleMenuClose = (setter) => () => setter(null);
+  const handleSettingsAction = (setting) => {
+    handleMenuClose(setAnchorElSettings)();
+    if (setting === 'Tema') toggleTheme(currentTheme === 'light' ? 'dark1' : 'light');
+    if (setting === 'Sair') {
+      nookies.destroy(null, 'token');
+      router.push('/auth/logout');
+    } else router.push(`/${setting.toLowerCase().replace(' ', '-')}`);
+  };
 
+  // Exemplo de drawer lateral
   const drawer = (
-    <Box onClick={handleDrawerToggle} component={"header"}>
-      <Box padding={1} color={"white"}>
-        <Link href={"/"}>
-          <Box component={"aside"} display={"flex"} alignItems={"center"}>
-            <Typography variant="h6" component={'h2'} fontWeight={'bold'} ml={1} color={'primary'}>
-              Hubeefive
-            </Typography>
-          </Box>
+    <Box onClick={handleDrawerToggle} component="nav">
+      <Box padding={1} color="white">
+        <Link href="/">
+          <Typography variant="h6" fontWeight='bold' ml={1} color='primary'>
+            Hubeefive
+          </Typography>
         </Link>
       </Box>
-      <Divider
-        sx={{
-          border: "1px solid #939393",
-        }}
-      />
-      <List component={"nav"}>
+      <Divider sx={{ border: "1px solid #939393" }} />
+      <List>
         {navItems.map((item) => (
-          <React.Fragment key={item.id}>
-            <ListItem disablePadding>
-              <ListItemButton sx={{ textAlign: "center" }}>
-                <Link href={item.path} style={{ textDecoration: "none", fontSize: "1.3rem" }}>
-                  {item.label}
-                </Link>
-              </ListItemButton>
-            </ListItem>
-            <Divider sx={{ border: "1px solid #939393" }} />
-          </React.Fragment>
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton>
+              <Link href={item.path} style={{ textDecoration: "none" }}>
+                {item.label}
+              </Link>
+            </ListItemButton>
+          </ListItem>
         ))}
-
-        {/* Menu de Empresas */}
+        <Divider sx={{ border: "1px solid #939393" }} />
         <ListItem>
           <ListItemButton>
-            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              Empresas
-            </Typography>
+            <Typography fontWeight="bold">Empresas</Typography>
           </ListItemButton>
         </ListItem>
-        {empresas.length > 0 ? (
-          empresas.map((empresa) => (
-            <ListItemButton
-              key={empresa.id}
-              selected={empresaAtiva === empresa.id}
-              onClick={() => handleSelecionarEmpresa(empresa.id)}
-              sx={{
-                pl: 4,
-                bgcolor: empresaAtiva === empresa.id ? "primary.main" : "inherit",
-                color: empresaAtiva === empresa.id ? "white" : "inherit",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 32 }}>
-                {empresaAtiva === empresa.id ? (
-                  <RadioButtonCheckedTwoToneIcon sx={{ color: "white" }} color='action' />
-                ) : (
-                  <RadioButtonUncheckedIcon color='action' />
-                )}
-              </ListItemIcon>
-              <Typography variant="body1">{empresa.nome}</Typography>
-            </ListItemButton>
-          ))
-        ) : (
+        {empresas.length ? empresas.map((empresa) => (
+          <ListItemButton
+            key={empresa.id}
+            selected={empresaAtiva === empresa.id}
+            onClick={() => setEmpresaAtiva(empresa.id)}
+            sx={{
+              bgcolor: empresaAtiva === empresa.id ? "primary.main" : "inherit",
+              color: empresaAtiva === empresa.id ? "white" : "inherit"
+            }}
+          >
+            <ListItemIcon>
+              {empresaAtiva === empresa.id ?
+                <RadioButtonCheckedTwoTone color='action' /> :
+                <RadioButtonUnchecked color='action' />}
+            </ListItemIcon>
+            <Typography>{empresa.nome}</Typography>
+          </ListItemButton>
+        )) : (
           <ListItem>
-            <Typography variant="body2" sx={{ pl: 4, color: "gray" }}>
+            <Typography sx={{ pl: 4, color: "gray" }}>
               Nenhuma empresa cadastrada
             </Typography>
           </ListItem>
@@ -220,174 +199,140 @@ export default function PrivateLayout({ currentPath = '' }: { currentPath?: stri
     </Box>
   );
 
-
-
-
-
   return (
     <>
-
-      <Box sx={{ display: "flex" }} component={"header"}>
-        <AppBar component="nav" position="static" color="default" enableColorOnDark>
+      <Box sx={{ display: "flex" }}>
+        <AppBar position="static" color="default">
           <Container>
-            <Toolbar disableGutters>
+            <Toolbar>
               <Link href='/home-hub' passHref>
-                <Box component={'span'} display={'flex'} >
-                  <Typography variant="h4" component={'h2'} fontWeight={'500'} noWrap color={'primary'}>
-                    Hubee
-                  </Typography>
-                  <Typography variant="h4" component={'h2'} fontWeight={'bold'} noWrap color={'primary'}>
-                    Five
-                  </Typography>
-                </Box>
-
+                <Typography variant="h4" fontWeight='bold' color='primary'>
+                  HubeeFive
+                </Typography>
               </Link>
               <Box
                 sx={{
-                  display: { xs: "none", md: "flex" },
                   flexGrow: 1,
-                  justifyContent: "center",
+                  display: { xs: "none", md: "flex" },
+                  justifyContent: "center"
                 }}
               >
-
-
-
                 {navItems.map((item) => (
-
-                  <Button
-                    key={item.id}
-                    sx={{
-                      color: 'primary',
-                      mx: 2,
-
-                    }}
-                  >
-
+                  <Button key={item.id} sx={{ color: 'primary', mx: 2 }}>
                     <Link href={item.path} passHref>
-                      <Typography component={'p'} sx={{
-                        fontWeight: '600',
-                        color: isActive(item.path) ? 'primary' : 'inherit', // Cor do texto (ajuste conforme o necessário)
-                        borderBottom: isActive(item.path) ? `2px solid #6A1B9A` : 'none', // Cor e espessura da borda inferior
-                        pb: 0.5, // Padding na parte inferior para dar um espaçamento visual mais agradável
-                      }}>{item.label}</Typography>
+                      <Typography
+                        fontWeight='600'
+                        sx={{
+                          color: router.pathname === item.path ? 'primary' : 'inherit',
+                          borderBottom: router.pathname === item.path ? `2px solid #6A1B9A` : 'none'
+                        }}
+                      >
+                        {item.label}
+                      </Typography>
                     </Link>
                   </Button>
-
                 ))}
-
               </Box>
-
-
-              <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Notificações">
-                  <IconButton onClick={handleOpenNotifications}>
-                    <Badge badgeContent={Number(alertNotification)} color="error">
-                      <NotificationsIcon color={'primary'} fontSize='medium' />
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-                <Menu
-
-                  anchorEl={anchorElNotifications}
-                  open={Boolean(anchorElNotifications)}
-                  onClose={handleCloseNotifications}
-                >
-                  {notifications.map((notification, index) => (
-                    <MenuItem key={index} onClick={handleCloseNotifications}>
-                      {notification}
-                    </MenuItem>
-                  ))}
-                </Menu>
-
-                <Tooltip title="Configurações">
-                  <IconButton onClick={handleOpenSettings}>
-                    <Avatar alt={userName} src="/static/images/avatar/2.jpg" color={'primary'} />
-                  </IconButton>
-
-                </Tooltip>
-
-                <Menu
-                  anchorEl={anchorElSettings}
-                  open={Boolean(anchorElSettings)}
-                  onClose={handleCloseSettings}
-                >
-                  {settings.map((setting, index) => (
-                    <ListItem key={index} disablePadding>
-                      <ListItemButton sx={{ textAlign: 'center' }} onClick={() => handleSettingsAction(setting.label)}>
-                        <ListItemIcon>{setting.icon}</ListItemIcon>
-                        <Typography>{setting.label}</Typography>
-                      </ListItemButton>
-                    </ListItem>
-                  ))}
-
-                  {/* Opção para Empresas */}
+              <Tooltip title="Notificações">
+                <IconButton onClick={handleMenuOpen(setAnchorElNotifications)}>
+                  <Badge badgeContent={alertNotification} color="error">
+                    <Notifications color='primary' />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <Menu
+                anchorEl={anchorElNotifications}
+                open={Boolean(anchorElNotifications)}
+                onClose={handleMenuClose(setAnchorElNotifications)}
+              >
+                {notifications.map((notification, index) => (
+                  <MenuItem key={index}>{notification}</MenuItem>
+                ))}
+              </Menu>
+              <Tooltip title="Configurações">
+                <IconButton onClick={handleMenuOpen(setAnchorElSettings)}>
+                  <Settings color="primary" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                anchorEl={anchorElSettings}
+                open={Boolean(anchorElSettings)}
+                onClose={handleMenuClose(setAnchorElSettings)}
+              >
+                {settings.map((setting, index) => (
+                  <MenuItem key={index} onClick={() => handleSettingsAction(setting.label)}>
+                    <ListItemIcon>{setting.icon}</ListItemIcon>
+                    <Typography>{setting.label}</Typography>
+                  </MenuItem>
+                ))}
+                {/* Se houver mais de uma conta, exibe o item para trocar de conta */}
+                {contas.length > 1 && (
                   <ListItem disablePadding>
-                    <ListItemButton sx={{ textAlign: 'center' }} onClick={handleToggleCompanies}>
+                    <ListItemButton onClick={handleToggleCompanies}>
                       <ListItemIcon>
-                        <WorkIcon color='action' /> {/* Ícone de empresa */}
+                        <Work color="action" />
                       </ListItemIcon>
                       <Typography>Contas</Typography>
                       {openCompanies ? <ExpandLess color='action' /> : <ExpandMore color='action' />}
                     </ListItemButton>
                   </ListItem>
+                )}
+                <Collapse in={openCompanies} timeout="auto" unmountOnExit>
+                  {/* Lista de contas */}
+                  {contas.length > 1 && contas.map((conta) => (
+                    <ListItem key={conta.id} disablePadding>
+                      <ListItemButton
+                        sx={{
+                          textAlign: "center",
+                          bgcolor: selectedContaId === conta.id ? "lightblue" : "inherit"
+                        }}
+                        onClick={() => handleSwitchAccount(conta.id, conta.email_owner)}
+                      >
+                        <Typography>{conta.first_name_owner}</Typography>
+                      </ListItemButton>
+                    </ListItem>
+                  ))}
+                </Collapse>
 
-                  {/* Lista de CONTAS aninhada */}
-                  <Collapse in={openCompanies} timeout="auto" unmountOnExit>
-                    {Object.entries(empresas).map(([nomeEmpresa, dados]) => (
-                      <ListItem key={dados.id} disablePadding>
-                        <ListItemButton
-                          key={nomeEmpresa}
-                          selected={empresaAtiva === nomeEmpresa}
-                          onClick={() => handleSelecionarEmpresa(nomeEmpresa)}
-                          sx={{
-                            pl: 4,
-                            bgcolor: empresaAtiva === nomeEmpresa ? "primary.main" : "inherit",
-                            color: empresaAtiva === nomeEmpresa ? "green" : "inherit",
-                            display: "flex",
-                            alignItems: "center",
-                          }}
-                        >
-                          <ListItemIcon sx={{ minWidth: 32 }}>
-                            {empresaAtiva === dados.id ? (
-                              <RadioButtonCheckedTwoToneIcon color='action' />
-                            ) : (
-                              <RadioButtonUncheckedIcon color='action' />
-                            )}
-                          </ListItemIcon>
-                          <Typography variant="body1">{nomeEmpresa}</Typography>
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </Collapse>
-                </Menu>
-              </Box>
-              <Typography component={'p'} variant='h5' fontWeight={'500'}>{userName}</Typography>
+              </Menu>
             </Toolbar>
           </Container>
-
         </AppBar>
-        <Box component="nav">
-          <Drawer
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-            ModalProps={{
-              keepMounted: true, // Better open performance on mobile.
-            }}
-            sx={{
-              display: { sm: "none" },
-              "& .MuiDrawer-paper": {
-                boxSizing: "border-box",
-                width: drawerWidth,
-              },
-            }}
-          >
-            {drawer}
-          </Drawer>
-        </Box>
       </Box>
 
+      {/* Drawer lateral para mobile */}
+      <Box component="nav">
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{ keepMounted: true }}
+          sx={{
+            display: { sm: "none" },
+            "& .MuiDrawer-paper": {
+              boxSizing: "border-box",
+              width: drawerWidth,
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      </Box>
+
+      {/* Alerta de conta alternativa */}
+      {acessoContaAlternativa && (
+        <Box sx={{ backgroundColor: "orange", display: "flex", justifyContent: "space-evenly", p: 1 }}>
+          <Typography textAlign="center" component="p" variant="body1">
+            Você está na conta alternativa {emailAlternativo}
+          </Typography>
+          <Button
+            color="inherit"
+            onClick={() => handleSwitchAccount(contas?.[0]?.id, emailPrincipal)}
+          >
+            Voltar para a conta principal
+          </Button>
+        </Box>
+      )}
     </>
   );
 }
-

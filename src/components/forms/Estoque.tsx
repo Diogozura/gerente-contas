@@ -19,7 +19,7 @@ export default function Estoque({ view }) {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={2}>
+        <Grid item xs={4}>
           <TextField
             label="Estoque Local"
             name='estoqueLocal'
@@ -34,7 +34,7 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={4}>
           <TextField
             label="Estoque minimo"
             name='estoqueMinimo'
@@ -49,7 +49,7 @@ export default function Estoque({ view }) {
             }}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={4}>
           <TextField
             label="Estoque Máximo"
             type="number"
