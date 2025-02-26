@@ -29,6 +29,8 @@ import EditarProdutoForm from "@/components/forms/EditarProdutoForm";
 import Head from "next/head";
 import { v4 as uuidv4 } from 'uuid';
 import { useFormContext } from "@/config/FormContext";
+import { requireAuthentication } from "@/helpers/auth";
+import { authService } from "@/services/auth/authService";
 interface Product {
   id: number;
   CadastroProdutos: { titulo: string };
@@ -68,7 +70,7 @@ const verificarDadosFaltantes = (product: Product): string[] => {
     .map(([key]) => key);
 };
 
-export default function Estoque() {
+export default function Estoque({idConta, retornaTodosProdutos}) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Produtos filtrados
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -76,7 +78,7 @@ export default function Estoque() {
   const [textoFiltro, setTextoFiltro] = useState("");
   const router = useRouter();
   const { formValues, setFormValues, resetFormValues } = useFormContext();
-
+  console.log('retornaTodosProdutos', retornaTodosProdutos)
   useEffect(() => {
     const storedProducts = localStorage.getItem("ProdutosCadastrados");
     resetFormValues()
@@ -97,7 +99,7 @@ export default function Estoque() {
       const matchText =
         product?.CadastroProdutos?.titulo?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
         product?.infoProdutos?.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
-      console.log('product', product)
+      
       const matchAdvanced =
         !filtroAvancado || product?.CadastroProdutos.titulo.toLowerCase().includes(filtroAvancado.toLowerCase());
       return matchText && matchAdvanced;
@@ -467,3 +469,24 @@ export default function Estoque() {
     </>
   );
 }
+
+
+export const getServerSideProps = requireAuthentication(async (ctx) => {
+
+  const token = ctx.req.token;
+  const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
+  const retornaTodosProdutos = await authService.retornaTodosProdutos(token, { idConta });
+  try {
+    return {
+      props: {
+        retornaTodosProdutos,
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: true,
+      },
+    };
+  }
+});

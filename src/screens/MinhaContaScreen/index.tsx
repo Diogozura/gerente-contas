@@ -35,7 +35,7 @@ const formatCNPJ = (cnpj: string) => {
   );
 };
 export default function CreateUser({ retornaEmpresas, idConta }) {
-
+console.log('retornaEmpresas', retornaEmpresas)
 
 
   const { formValues, setFormValues } = useFormContext();
