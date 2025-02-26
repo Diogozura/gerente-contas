@@ -22,22 +22,22 @@ import {
   Input,
   Chip,
 } from "@mui/material";
-import Bread from "../../components/ui/Breadcrumbs";
+
 // import Swiper from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import Head from "next/head";
 import Image from "next/image";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import InputMoney from "../../components/Inputs/InputMoney";
+
 import { TabPanelProps } from "@/types/tabPanelProps";
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
-import RemoveRedEyeOutlinedIcon from '@mui/icons-material/RemoveRedEyeOutlined';
+
 import CadastroProduto from "@/components/forms/CadastroProduto";
-import ListaPreco from "@/components/forms/ListaPreco";
+
 import CraicaoListaPreco from "@/components/forms/precificando";
 import DescricaoForm from "@/components/forms/DescricaoForm";
 import { useFormContext } from "@/config/FormContext";
@@ -46,6 +46,7 @@ import Estoque from "@/components/forms/Estoque";
 import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
+import { Console } from "console";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -66,7 +67,7 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
-export default function CriacaoEdicaoProduto() {
+export default function CriacaoProduto() {
   const router = useRouter();
   const [newProduct, setNewProduct] = useState({
     id: 0,
@@ -96,11 +97,19 @@ export default function CriacaoEdicaoProduto() {
   });
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [isValid, setIsValid] = useState(false);
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
+  const { id , mode } = router.query; // Recuperando o id da URL
 
-
+  React.useEffect(() => {
+    if (mode === 'edit' && id) {
+      setIsValid(false);
+    } else if (mode === 'view' && id) {
+      setIsValid(true);
+    }
+  }, [mode, id]);
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
@@ -115,10 +124,10 @@ export default function CriacaoEdicaoProduto() {
   // Campos obrigatórios
   const camposObrigatorios = ['titulo', 'sku'];
 
-  // Verifica se todos os campos obrigatórios estão preenchidos
-  const isFormValid = camposObrigatorios.every(
-    (campo) => newProduct[campo]?.toString().trim() !== ''
-  );
+  // // Verifica se todos os campos obrigatórios estão preenchidos
+  // const isFormValid = camposObrigatorios.every(
+  //   (campo) => newProduct[campo]?.toString().trim() !== ''
+  // );
 
   const handleGenerateDescription = () => {
     const { titulo, marca, modelo, altura, largura, profundidade, pesoLiquido } = newProduct;
@@ -143,24 +152,7 @@ export default function CriacaoEdicaoProduto() {
       estoque,
       dataCriacao: dataCriacao.format('YYYY-MM-DD HH:mm:ss'),  // formatação da data
     };
-    const body = {
-      nome: CadastroProdutos?.titulo,
-      sku: formValues.produto?.sku,
-      codigo_barras: formValues.produto?.codigoBarras,
-      ncm: formValues.produto?.ncm,
-      ean: formValues.produto?.ean,
-      height: formValues.produto?.altura,
-      length: formValues.produto?.largura,
-      width: formValues.produto?.profundidade,
-      weightKg: formValues.produto?.pesoBruto,
-      // MeasurementUnit,
-      // IsKit,
-      // CreationDate,
-      // CommercialConditionId,
-      // marca,
-      // modelo,
-      // produção
-    }
+
     // Recupera os produtos cadastrados ou um array vazio, caso não exista nenhum
     const produtosCadastrados = JSON.parse(localStorage.getItem('ProdutosCadastrados')) || [];
 
@@ -205,25 +197,164 @@ export default function CriacaoEdicaoProduto() {
   const handleCloseModal = () => {
     setSelectedImage(null);
   };
-
-
+  const handleDelete = () => {
+    const storedData = localStorage.getItem("ProdutosCadastrados");
+    const storedDataAnuncios = localStorage.getItem("anuncios");
+    const parsedData: { id: string;[key: string]: any }[] = JSON.parse(storedData);
+    const parsedDataAnuncios: { id: string;[key: string]: any }[] = JSON.parse(storedDataAnuncios);
+    // 3. Filtra os itens removendo o que tem o ID específico
+    const objetoEncontrado = parsedData.filter(item => item.id == id);
+  
+    
+    const skusProdutos = parsedDataAnuncios.flatMap(item =>
+      item.produto.map((p: any) => p.sku) // Obtém os SKUs dentro de `produto`
+    );
+    // 2. Verifica se algum SKU de `infoProdutos.sku` já existe em `skusProdutos`
+    const skuJaExiste = objetoEncontrado.some(item =>
+      skusProdutos.includes(item.infoProdutos.sku) // Verifica se já existe
+    );
+ 
+    if (skuJaExiste) {
+      console.error("Erro: SKU já cadastrado!");
+      showToast({
+        title: "Anuncio vinculado a um SKU",
+        status: "error",
+        position: "bottom-left",
+      });
+      return { success: false, message: "Anuncio vinculado a um SKU" };
+    } else {
+      const updatedData = parsedData.filter(item => item.id !== id);
+      showToast({
+        title: "Produto Deletado com sucesso!",
+        status: "success",
+        position: "bottom-left",
+      });
+          // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
+    setTimeout(() => {
+      localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
+      router.push('/estoque');
+    }, 1000); // 3 segundos de dela
+     
+    }
+  };
+  const saveOrUpdateItem = () => {
+    // Extrai os dados do formulário
+    const CadastroProdutos = formValues.CadastroProdutos;
+    const infoProdutos = formValues.produto;
+    const estoque = formValues.estoque;
+    const produtoDescricao = formValues.produtoDescricao;
+    const dataCriacao = moment();
+  
+    // Objeto do produto atualizado ou novo
+    const novoProduto = {
+      id,
+      CadastroProdutos,
+      infoProdutos,
+      produtoDescricao,
+      estoque,
+      dataCriacao: dataCriacao.format("YYYY-MM-DD HH:mm:ss"), // Formatação da data
+    };
+  
+    // Obtém os dados existentes no localStorage
+    const storedData = localStorage.getItem("ProdutosCadastrados");
+    const parsedData: { id: string; [key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
+  
+    // Verifica se já existe um item com o mesmo ID
+    const index = parsedData.findIndex(item => item.id === id);
+  
+    // if (index !== -1) {
+    //   // Se o item já existe, atualiza apenas os dados dele
+    //   parsedData[index] = { ...parsedData[index], ...novoProduto };
+    // } else {
+    //   // Se não existir, adiciona o novo item
+    //   parsedData.push(novoProduto);
+    // }
+  
+    // Salva os dados atualizados no localStorage
+    localStorage.setItem("ProdutosCadastrados", JSON.stringify(parsedData));
+  
+    console.log("LocalStorage atualizado:", parsedData);
+    
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormValues('CadastroProdutos', { [name]: value }); // Atualiza valores dinamicamente
   };
 
-  React.useEffect(() => {
-    const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
 
-    if (produtoSalvo) {
-      const dadosProduto = JSON.parse(produtoSalvo);
-      if (dadosProduto.dataCriacao) {
-        setDataAtualizada(dadosProduto.dataCriacao);
-      }
-    }
+  // React.useEffect(() => {
+  //   const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
 
-  },);
+  //   if (produtoSalvo) {
+  //     const produtos = JSON.parse(produtoSalvo);
+
+  //     const produtoEncontrado = produtos.find(produto => produto.id === id);
+
+  //     if (produtoEncontrado) {
+  //       const tituloAtual = formValues?.CadastroProdutos?.titulo || '';
+
+  //       // Evita atualizar se o valor já estiver correto
+  //       if (tituloAtual !== produtoEncontrado.CadastroProdutos.titulo) {
+  //         setFormValues("CadastroProdutos", {
+  //           titulo: produtoEncontrado.CadastroProdutos.titulo,
+  //         });
+  //         setFormValues("produtoDescricao", {
+  //           descricao: produtoEncontrado?.produtoDescricao?.descricao,
+  //         });
+  //         setFormValues("estoque", {
+  //           crossdocking: produtoEncontrado.estoque?.crossdocking,
+  //           estoqueCd: produtoEncontrado.estoque?.estoqueCd,
+  //           estoqueCdMax: produtoEncontrado.estoque?.estoqueCdMax,
+  //           estoqueCdMin: produtoEncontrado.estoque?.estoqueCdMin,
+  //           estoqueLocal: produtoEncontrado.estoque?.estoqueLocal,
+  //           estoqueMaximo: produtoEncontrado.estoque?.estoqueMaximo,
+  //           estoqueMinimo: produtoEncontrado.estoque?.estoqueMinimo,
+  //           localizao: produtoEncontrado.estoque?.localizao,
+  //         });
+  //         const setProdutos = produtoEncontrado.infoProdutos
+  //         setFormValues("produto", {
+  //           altura: setProdutos?.altura,
+  //           condicao: setProdutos?.condicao,
+  //           ean: setProdutos?.ean,
+  //           itensPorCaixa: setProdutos?.itensPorCaixa,
+  //           largura: setProdutos?.largura,
+  //           marca: setProdutos?.marca,
+  //           pesoBruto: setProdutos?.pesoBruto,
+  //           pesoLiquido: setProdutos?.pesoLiquido,
+  //           producao: setProdutos?.producao,
+  //           profundidade: setProdutos?.profundidade,
+  //           unidade: setProdutos?.unidade,
+  //           sku: produtoEncontrado?.infoProdutos?.sku
+  //         });
+  //       }
+       
+  //     }
+  //     if (produtoEncontrado?.dataCriacao) {
+  //       setDataAtualizada(produtoEncontrado.dataCriacao);
+  //     }
+  //   }
+  // }, [id, formValues, setFormValues]); // A
+
+  const body = {
+    nome: formValues.CadastroProdutos?.titulo,
+    sku: formValues.produto?.sku,
+    codigo_barras: formValues.produto?.codigoBarras,
+    ncm: formValues.produto?.ncm,
+    ean: formValues.produto?.ean,
+    height: formValues.produto?.altura,
+    length: formValues.produto?.largura,
+    width: formValues.produto?.profundidade,
+    weightKg: formValues.produto?.pesoBruto,
+    // MeasurementUnit,
+    // IsKit,
+    // CreationDate,
+    // CommercialConditionId,
+    // marca,
+    // modelo,
+    // produção
+  }
+
 
   return (
     <>
@@ -233,7 +364,10 @@ export default function CriacaoEdicaoProduto() {
 
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
-          <Button variant="contained" color="primary" id='estoque-header' onClick={() => router.push("/estoque/criacao-produto")}>
+          <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
+                      const productId = uuidv4(); // Gerando o UUID
+                      router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
+                    }}>
             Cadastro de Produto Individual
           </Button>
         </Grid>
@@ -292,16 +426,15 @@ export default function CriacaoEdicaoProduto() {
                   variant="standard"
                   label="Titulo"
                   name='titulo'
-                  required
                   value={formValues.CadastroProdutos?.titulo || ''}
-                  type="text"
                   onChange={handleInputChange}
+                  disabled={isValid}
                   fullWidth
                 />
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary" onClick={saveProduct} sx={{
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
                   m: 1
                 }}>
                   Salvar Produto
@@ -309,7 +442,8 @@ export default function CriacaoEdicaoProduto() {
                 <Button variant="contained" color="primary" id="Editor" sx={{
                   m: 1
                 }}
-                // onClick={() => handleOpenModal("Editor", product)}
+                onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
+
                 >
                   <ModeEditOutlineOutlinedIcon />
                 </Button>
@@ -324,6 +458,7 @@ export default function CriacaoEdicaoProduto() {
                   sx={{
                     m: 1
                   }}
+                  onClick={handleDelete}
                   id="delelete"
                 // onClick={() =>
                 //   handleOpenModal("Deletar", product)
@@ -342,9 +477,10 @@ export default function CriacaoEdicaoProduto() {
             </Grid>
 
           </Grid>
-          <Grid xs={2}>
+          <Grid xs={2} textAlign={'center'}>
+             <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
             {/* Carrossel de pré-visualização */}
-            {newProduct.imagens.length > 0 && (
+            {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
                   spaceBetween={10}
@@ -377,9 +513,9 @@ export default function CriacaoEdicaoProduto() {
                   ))}
                 </Swiper>
               </Grid>
-            )}
+            )} */}
             {/* Modal para exibir a imagem em tamanho grande */}
-            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+            {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
               <Box
                 sx={{
                   position: "absolute",
@@ -400,8 +536,8 @@ export default function CriacaoEdicaoProduto() {
                   />
                 )}
               </Box>
-            </Modal>
-            <Grid item >
+            </Modal> */}
+            {/* <Grid item >
 
               <FormHelperText>
                 {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
@@ -421,12 +557,12 @@ export default function CriacaoEdicaoProduto() {
                   onChange={handleImageUpload}
                 />
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid >
           {/* Informações do produto  */}
 
           <Grid xs={10}  >
-            <CadastroProduto view={false} />
+            <CadastroProduto view={isValid} />
           </Grid>
           <Grid xs={12} mb={2}>
             <Accordion defaultExpanded>
@@ -466,7 +602,7 @@ export default function CriacaoEdicaoProduto() {
                   </Button>
                 </Box>
 
-                <DescricaoForm view={false} />
+                <DescricaoForm view={isValid} />
               </AccordionDetails>
             </Accordion>
 
@@ -535,7 +671,8 @@ export default function CriacaoEdicaoProduto() {
           </Grid>
           <Grid xs={2}>
             {/* Carrossel de pré-visualização */}
-            {newProduct.imagens.length > 0 && (
+              <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+            {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
                   spaceBetween={10}
@@ -568,9 +705,9 @@ export default function CriacaoEdicaoProduto() {
                   ))}
                 </Swiper>
               </Grid>
-            )}
+            )} */}
             {/* Modal para exibir a imagem em tamanho grande */}
-            <Modal open={!!selectedImage} onClose={handleCloseModal}>
+            {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
               <Box
                 sx={{
                   position: "absolute",
@@ -612,10 +749,10 @@ export default function CriacaoEdicaoProduto() {
                   onChange={handleImageUpload}
                 />
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid >
           <Grid xs={10}>
-            <Estoque view={false} />
+            <Estoque view={isValid} />
           </Grid>
 
         </Grid>
