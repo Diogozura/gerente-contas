@@ -60,6 +60,7 @@ export default function CadastroProduto({ view }) {
             label="Código SKU"
             name="sku"
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.sku || ''}
             onChange={handleInputChange}
@@ -70,6 +71,7 @@ export default function CadastroProduto({ view }) {
             label="Código EAN"
             name="ean"
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.ean || ''}
             onChange={handleInputChange}
@@ -102,6 +104,7 @@ export default function CadastroProduto({ view }) {
             type="number"
             name='altura'
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.altura || ''}
             onChange={handleInputChange}
@@ -113,6 +116,7 @@ export default function CadastroProduto({ view }) {
             type="number"
             name='largura'
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.largura || ''}
             onChange={handleInputChange}
@@ -124,6 +128,7 @@ export default function CadastroProduto({ view }) {
             type="number"
             name='profundidade'
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.profundidade || ''}
             onChange={handleInputChange}
@@ -178,8 +183,33 @@ export default function CadastroProduto({ view }) {
             name='pesoBruto'
             type="number"
             fullWidth
+            required
             disabled={view}
             value={formValues.produto?.pesoBruto || ''}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="NCM"
+            name='ncm'
+            type="number"
+            fullWidth
+            required
+            disabled={view}
+            value={formValues.produto?.ncm || ''}
+            onChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label="Código de barras"
+            name='codigoBarras'
+            type="text"
+            fullWidth
+            required
+            disabled={view}
+            value={formValues.produto?.codigoBarras || ''}
             onChange={handleInputChange}
           />
         </Grid>

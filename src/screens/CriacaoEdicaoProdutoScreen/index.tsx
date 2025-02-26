@@ -94,7 +94,7 @@ export default function CriacaoEdicaoProduto() {
     imagens: [] as File[],
     listaPrecos: [] as { variacao: string; precoMinimo: number }[],
   });
- 
+
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
@@ -134,7 +134,7 @@ export default function CriacaoEdicaoProduto() {
     const produtoDescricao = formValues.produtoDescricao;
     const id = formValues?.id || uuidv4();
     const dataCriacao = moment();
-  
+
     const CriaçaoProduto = {
       id,
       CadastroProdutos,
@@ -143,25 +143,42 @@ export default function CriacaoEdicaoProduto() {
       estoque,
       dataCriacao: dataCriacao.format('YYYY-MM-DD HH:mm:ss'),  // formatação da data
     };
-  
+    const body = {
+      nome: CadastroProdutos?.titulo,
+      sku: formValues.produto?.sku,
+      codigo_barras: formValues.produto?.codigoBarras,
+      ncm: formValues.produto?.ncm,
+      ean: formValues.produto?.ean,
+      height: formValues.produto?.altura,
+      length: formValues.produto?.largura,
+      width: formValues.produto?.profundidade,
+      weightKg: formValues.produto?.pesoBruto,
+      // MeasurementUnit,
+      // IsKit,
+      // CreationDate,
+      // CommercialConditionId,
+      // marca,
+      // modelo,
+      // produção
+    }
     // Recupera os produtos cadastrados ou um array vazio, caso não exista nenhum
     const produtosCadastrados = JSON.parse(localStorage.getItem('ProdutosCadastrados')) || [];
-  
+
     // Adiciona o novo produto ao array
     produtosCadastrados.push(CriaçaoProduto);
-  
+
     // Salva o array de volta no localStorage
     localStorage.setItem('ProdutosCadastrados', JSON.stringify(produtosCadastrados));
-  
 
-  
+
+
     showToast({
       title: "Produto salvo com sucesso!",
       status: "success",
       position: "bottom-left",
     });
   };
-  
+
 
   // Upload de imagens corrigido
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -205,9 +222,9 @@ export default function CriacaoEdicaoProduto() {
         setDataAtualizada(dadosProduto.dataCriacao);
       }
     }
-   
+
   },);
-  
+
   return (
     <>
       <Head>
@@ -275,6 +292,7 @@ export default function CriacaoEdicaoProduto() {
                   variant="standard"
                   label="Titulo"
                   name='titulo'
+                  required
                   value={formValues.CadastroProdutos?.titulo || ''}
                   type="text"
                   onChange={handleInputChange}
@@ -283,7 +301,7 @@ export default function CriacaoEdicaoProduto() {
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary"  onClick={saveProduct} sx={{
+                <Button id="produtos-criar" variant="contained" color="primary" onClick={saveProduct} sx={{
                   m: 1
                 }}>
                   Salvar Produto
@@ -597,9 +615,9 @@ export default function CriacaoEdicaoProduto() {
             </Grid>
           </Grid >
           <Grid xs={10}>
-          <Estoque view={false}/>
+            <Estoque view={false} />
           </Grid>
-         
+
         </Grid>
       </TabPanel>
       {/*controle tributação do produto  */}

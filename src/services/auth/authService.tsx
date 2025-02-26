@@ -254,6 +254,55 @@ async confirmarPagamento( {id} ) {
       });
 
   },
+  async criaProduto({idConta, body}) {
+    const token = tokenService.get();
+  
+      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body
+      }
+      )
+        .then(response => {
+          if (!response.ok) throw new Error(response.body.mensagem)
+          return response.body;
+        });
+  
+    },
+  async retornaTodosProdutos({contaId}) {
+      const token = tokenService.get();
+      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${contaId}/retorna_todos_produtos_filho`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        refresh : true
+      }
+      )
+        .then(response => {
+          // if (!response.ok) throw new Error('Não autorizado');
+          return response.body.dados;
+        });
+  
+    },
+  async retornaProduto({contaId, idProduto}) {
+      const token = tokenService.get();
+      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${contaId}/produto_filho/${idProduto}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        refresh : true
+      }
+      )
+        .then(response => {
+          // if (!response.ok) throw new Error('Não autorizado');
+          return response.body.dados;
+        });
+  
+    },
   async authIntegracaoML(token) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
     // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
