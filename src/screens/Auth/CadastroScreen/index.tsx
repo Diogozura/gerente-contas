@@ -48,8 +48,7 @@ export default function CadastroScreen() {
     event.preventDefault();
 
     if (validateForm()) {
-      console.log("Dados enviados:", formValues.cadastroConta);
-      console.log("Dados enviados infoDados:", formValues.infoDados);
+  
 
       const loginPromise = authService.cadastroConta({
         body: {

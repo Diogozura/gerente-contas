@@ -46,6 +46,7 @@ import Estoque from "@/components/forms/Estoque";
 import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
+import Estoque2 from "@/components/forms/Estoque2";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -615,7 +616,8 @@ export default function CriacaoEdicaoProduto() {
             </Grid>
           </Grid >
           <Grid xs={10}>
-            <Estoque view={false} />
+            {/* <Estoque view={false} /> */}
+            {/* <Estoque2 view={false} /> */}
           </Grid>
 
         </Grid>

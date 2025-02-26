@@ -47,6 +47,7 @@ import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
 import { Console } from "console";
+import Estoque2 from "@/components/forms/Estoque2";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -101,7 +102,7 @@ export default function CriacaoProduto() {
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
-  const { id , mode } = router.query; // Recuperando o id da URL
+  const { id, mode } = router.query; // Recuperando o id da URL
 
   React.useEffect(() => {
     if (mode === 'edit' && id) {
@@ -204,8 +205,8 @@ export default function CriacaoProduto() {
     const parsedDataAnuncios: { id: string;[key: string]: any }[] = JSON.parse(storedDataAnuncios);
     // 3. Filtra os itens removendo o que tem o ID específico
     const objetoEncontrado = parsedData.filter(item => item.id == id);
-  
-    
+
+
     const skusProdutos = parsedDataAnuncios.flatMap(item =>
       item.produto.map((p: any) => p.sku) // Obtém os SKUs dentro de `produto`
     );
@@ -213,7 +214,7 @@ export default function CriacaoProduto() {
     const skuJaExiste = objetoEncontrado.some(item =>
       skusProdutos.includes(item.infoProdutos.sku) // Verifica se já existe
     );
- 
+
     if (skuJaExiste) {
       console.error("Erro: SKU já cadastrado!");
       showToast({
@@ -229,12 +230,12 @@ export default function CriacaoProduto() {
         status: "success",
         position: "bottom-left",
       });
-          // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
-    setTimeout(() => {
-      localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
-      router.push('/estoque');
-    }, 1000); // 3 segundos de dela
-     
+      // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
+      setTimeout(() => {
+        localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
+        router.push('/estoque');
+      }, 1000); // 3 segundos de dela
+
     }
   };
   const saveOrUpdateItem = () => {
@@ -244,7 +245,7 @@ export default function CriacaoProduto() {
     const estoque = formValues.estoque;
     const produtoDescricao = formValues.produtoDescricao;
     const dataCriacao = moment();
-  
+
     // Objeto do produto atualizado ou novo
     const novoProduto = {
       id,
@@ -254,14 +255,14 @@ export default function CriacaoProduto() {
       estoque,
       dataCriacao: dataCriacao.format("YYYY-MM-DD HH:mm:ss"), // Formatação da data
     };
-  
+
     // Obtém os dados existentes no localStorage
     const storedData = localStorage.getItem("ProdutosCadastrados");
-    const parsedData: { id: string; [key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
-  
+    const parsedData: { id: string;[key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
+
     // Verifica se já existe um item com o mesmo ID
     const index = parsedData.findIndex(item => item.id === id);
-  
+
     if (index !== -1) {
       // Se o item já existe, atualiza apenas os dados dele
       parsedData[index] = { ...parsedData[index], ...novoProduto };
@@ -269,12 +270,12 @@ export default function CriacaoProduto() {
       // Se não existir, adiciona o novo item
       parsedData.push(novoProduto);
     }
-  
+
     // Salva os dados atualizados no localStorage
     localStorage.setItem("ProdutosCadastrados", JSON.stringify(parsedData));
-  
+
     console.log("LocalStorage atualizado:", parsedData);
-    
+
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -328,7 +329,7 @@ export default function CriacaoProduto() {
             sku: produtoEncontrado?.infoProdutos?.sku
           });
         }
-       
+
       }
       if (produtoEncontrado?.dataCriacao) {
         setDataAtualizada(produtoEncontrado.dataCriacao);
@@ -337,7 +338,39 @@ export default function CriacaoProduto() {
   }, [id, formValues, setFormValues]); // A
 
 
+  const [estoqueLista, setEstoqueLista] = useState<any[]>([]);
 
+  // Carrega o estoque salvo no localStorage ao montar o componente
+  React.useEffect(() => {
+    const estoqueSalvo = localStorage.getItem('estoque');
+    if (estoqueSalvo) {
+      setEstoqueLista(JSON.parse(estoqueSalvo));
+    }
+  }, []);
+
+  // Atualiza o localStorage sempre que estoqueLista mudar
+  React.useEffect(() => {
+    localStorage.setItem('estoque', JSON.stringify(estoqueLista));
+  }, [estoqueLista]);
+
+  // Adiciona o item atual do formValues.estoque à lista
+  const handleAdicionarItem = () => {
+    if (!formValues.estoque?.local || !formValues.estoque?.estoque || !formValues.precos?.precoPago) {
+      alert('Preencha os campos obrigatórios no formulário!');
+      return;
+    }
+    const estoqueStorageSave = {
+     'local': formValues.estoque?.local,
+     'estoque':formValues.estoque?.estoque,
+     'estoqueMin':formValues.estoque?.estoqueMin,
+     'preco': formValues.precos?.precoPago,
+     'data': formValues.estoque?.dataCompra
+    }
+    const novoItem = estoqueStorageSave;
+    const novaLista = [novoItem, ...estoqueLista]; // Mantém o mais recente no topo
+
+    setEstoqueLista(novaLista);
+  };
 
   return (
     <>
@@ -348,9 +381,9 @@ export default function CriacaoProduto() {
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
           <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
-                      const productId = uuidv4(); // Gerando o UUID
-                      router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
-                    }}>
+            const productId = uuidv4(); // Gerando o UUID
+            router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
+          }}>
             Cadastro de Produto Individual
           </Button>
         </Grid>
@@ -425,7 +458,7 @@ export default function CriacaoProduto() {
                 <Button variant="contained" color="primary" id="Editor" sx={{
                   m: 1
                 }}
-                onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
+                  onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
 
                 >
                   <ModeEditOutlineOutlinedIcon />
@@ -461,7 +494,7 @@ export default function CriacaoProduto() {
 
           </Grid>
           <Grid xs={2} textAlign={'center'}>
-             <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+            <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
             {/* Carrossel de pré-visualização */}
             {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
@@ -654,7 +687,7 @@ export default function CriacaoProduto() {
           </Grid>
           <Grid xs={2}>
             {/* Carrossel de pré-visualização */}
-              <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+            <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
             {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
@@ -736,6 +769,35 @@ export default function CriacaoProduto() {
           </Grid >
           <Grid xs={10}>
             <Estoque view={isValid} />
+            <Estoque2 view={false} />
+
+            <Box sx={{ mt: 3 }}>
+              {/* Botão para adicionar item à lista */}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAdicionarItem}
+                sx={{ mb: 2 }}
+              >
+                + Adicionar ao Estoque
+              </Button>
+
+              {/* Lista de Itens Adicionados */}
+              {estoqueLista.length > 0 && (
+                <Box>
+                  <Typography variant="h6">Itens adicionados:</Typography>
+                  {estoqueLista.map((item, index) => (
+                    <Box key={index} sx={{ p: 1, border: '1px solid #ddd', mt: 1 }}>
+                      <Typography><strong>Local:</strong> {item.local}</Typography>
+                      <Typography><strong>Estoque:</strong> {item.estoque}</Typography>
+                      <Typography><strong>Estoque Mínimo:</strong> {item.estoqueMin}</Typography>
+                      <Typography><strong>Preço Pago:</strong> {item.preco}</Typography>
+                      <Typography><strong>Data da Compra:</strong> {item.data}</Typography>
+                    </Box>
+                  ))}
+                </Box>
+              )}
+            </Box>
           </Grid>
 
         </Grid>
