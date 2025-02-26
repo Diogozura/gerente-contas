@@ -60,7 +60,7 @@ async confirmarPagamento( {id} ) {
 //Cadastro
   async cadastroConta({ body, id }) {
 
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastro/`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastrar_usuario?token=${id}`, {
       method: 'POST',
       body
     })

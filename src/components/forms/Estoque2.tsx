@@ -8,8 +8,8 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { useFormContext } from '@/config/FormContext';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import moment from 'moment';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 type EstoqueItem = {
   local: string;
   estoque: number;
@@ -24,7 +24,7 @@ export default function ListaEstoque({ view }: { view: boolean }) {
   const [listaEstoque, setListaEstoque] = React.useState<EstoqueItem[]>([]);
   const [editIndex, setEditIndex] = React.useState<number | null>(null);
   const { formValues, setFormValues } = useFormContext();
-console.log('listaEstoque', listaEstoque)
+  console.log('listaEstoque', listaEstoque)
   React.useEffect(() => {
     const savedList = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (savedList) {
@@ -65,12 +65,7 @@ console.log('listaEstoque', listaEstoque)
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" p={1}>
-        <Typography variant="body1">Gerencie os estoques de seus produtos</Typography>
-        <Button variant="contained" onClick={() => setEditIndex(listaEstoque.length)}>
-          + Adicionar Estoque
-        </Button>
-      </Box>
+      
 
       {editIndex !== null && (
         <Grid container spacing={2} alignItems="center" mt={1} sx={{ borderBottom: '1px solid #ccc', pb: 1 }}>
@@ -87,8 +82,16 @@ console.log('listaEstoque', listaEstoque)
             <MoneyInput label="Preço Pago" variant="outlined" name="precoPago" />
           </Grid>
           <Grid item xs={2}>
-          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
-            <DatePicker label="Data de Compra" value={moment(formValues?.estoque?.dataCompra)} onChange={(newValue) => setFormValues('estoque', { ...formValues.estoque, dataCompra: moment(newValue).format('YYYY-MM-DD') })} />
+            <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="pt-br">
+              <DatePicker label="Data de Compra"
+               slots={{ openPickerIcon:  AddShoppingCartIcon}}
+              slotProps={{
+                openPickerIcon: {
+                  color: 'active',
+                },
+              }}
+               value={moment(formValues?.estoque?.dataCompra)} 
+               onChange={(newValue) => setFormValues('estoque', { ...formValues.estoque, dataCompra: moment(newValue).format('YYYY-MM-DD') })} />
             </LocalizationProvider>
           </Grid>
           <Grid item xs={1}>
@@ -134,6 +137,12 @@ console.log('listaEstoque', listaEstoque)
       ))}
 
       {listaEstoque.length === 0 && <Typography variant="body1" sx={{ mt: 2 }}>Nenhum estoque cadastrado.</Typography>}
+      <Box display="flex" justifyContent="space-between" p={1}>
+        
+        <Button variant="contained" fullWidth onClick={() => setEditIndex(listaEstoque.length)}>
+          + Adicionar Estoque
+        </Button>
+      </Box>
     </>
   );
 }

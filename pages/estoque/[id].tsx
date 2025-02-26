@@ -771,33 +771,7 @@ export default function CriacaoProduto() {
             <Estoque view={isValid} />
             <Estoque2 view={false} />
 
-            <Box sx={{ mt: 3 }}>
-              {/* Botão para adicionar item à lista */}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAdicionarItem}
-                sx={{ mb: 2 }}
-              >
-                + Adicionar ao Estoque
-              </Button>
-
-              {/* Lista de Itens Adicionados */}
-              {estoqueLista.length > 0 && (
-                <Box>
-                  <Typography variant="h6">Itens adicionados:</Typography>
-                  {estoqueLista.map((item, index) => (
-                    <Box key={index} sx={{ p: 1, border: '1px solid #ddd', mt: 1 }}>
-                      <Typography><strong>Local:</strong> {item.local}</Typography>
-                      <Typography><strong>Estoque:</strong> {item.estoque}</Typography>
-                      <Typography><strong>Estoque Mínimo:</strong> {item.estoqueMin}</Typography>
-                      <Typography><strong>Preço Pago:</strong> {item.preco}</Typography>
-                      <Typography><strong>Data da Compra:</strong> {item.data}</Typography>
-                    </Box>
-                  ))}
-                </Box>
-              )}
-            </Box>
+           
           </Grid>
 
         </Grid>
