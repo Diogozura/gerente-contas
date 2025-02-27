@@ -3,7 +3,8 @@ import {
   AppBar, Box, Container, Divider, Drawer, IconButton, List,
   ListItem, ListItemButton, ListItemIcon, Menu, MenuItem, Toolbar,
   Tooltip, Typography, Badge, Button,
-  Collapse
+  Collapse,
+  LinearProgress
 } from '@mui/material';
 import {
   AccountCircle, Contrast, ExitToApp, Settings, Notifications,
@@ -143,6 +144,47 @@ export default function PrivateLayout({ currentPath = '' }) {
       router.push('/auth/logout');
     } else router.push(`/${setting.toLowerCase().replace(' ', '-')}`);
   };
+
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [buffer, setBuffer] = useState(10);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    const handleStart = () => {
+      setLoading(true);
+      setProgress(10); // Começa em 10% para um efeito mais natural
+      setBuffer(20);
+
+      timer = setInterval(() => {
+        setProgress((oldProgress) => (oldProgress >= 90 ? oldProgress : oldProgress + Math.random() * 10));
+        setBuffer((oldBuffer) => Math.min(oldBuffer + Math.random() * 15, 100));
+      }, 300);
+    };
+
+    const handleComplete = () => {
+      setProgress(100);
+      setBuffer(100);
+      setTimeout(() => {
+        setLoading(false);
+        setProgress(0);
+        setBuffer(10);
+      }, 400);
+      clearInterval(timer);
+    };
+
+    router.events.on("routeChangeStart", handleStart);
+    router.events.on("routeChangeComplete", handleComplete);
+    router.events.on("routeChangeError", handleComplete);
+
+    return () => {
+      router.events.off("routeChangeStart", handleStart);
+      router.events.off("routeChangeComplete", handleComplete);
+      router.events.off("routeChangeError", handleComplete);
+      clearInterval(timer);
+    };
+  }, [router]);
 
   // Exemplo de drawer lateral
   const drawer = (
@@ -318,7 +360,7 @@ export default function PrivateLayout({ currentPath = '' }) {
           {drawer}
         </Drawer>
       </Box>
-
+      {loading && <LinearProgress variant="buffer" value={progress} valueBuffer={buffer} />}
       {/* Alerta de conta alternativa */}
       {acessoContaAlternativa && (
         <Box sx={{ backgroundColor: "orange", display: "flex", justifyContent: "space-evenly", p: 1 }}>
