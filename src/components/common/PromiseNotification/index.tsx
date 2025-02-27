@@ -5,7 +5,7 @@ interface PromiseNotificationProps {
     promise: Promise<any>;
     pendingMessage: string;
     successMessage: string;
-    errorMessage: string;
+    errorMessage?: string;
     successCallback?: () => void;
     errorCallback?: (error: any) => void;
 }

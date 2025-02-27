@@ -35,7 +35,7 @@ const formatCNPJ = (cnpj: string) => {
   );
 };
 export default function CreateUser({ retornaEmpresas, idConta }) {
-
+console.log('retornaEmpresas', retornaEmpresas)
 
 
   const { formValues, setFormValues } = useFormContext();
@@ -63,7 +63,7 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
 
     setLoading(idEmpresa); // Define qual empresa está carregando
     try {
-      const detalhes = await authService.retornaDetalhesEmpresa({ contaId, idEmpresa });
+      const detalhes = await authService.retornaDetalhesEmpresa({ idConta, idEmpresa });
       console.log('detalhes', detalhes)
       setDetalhesEmpresa((prev) => ({
         ...prev,
@@ -80,7 +80,7 @@ export default function CreateUser({ retornaEmpresas, idConta }) {
 
 
     try {
-      const detalhes = await authService.listaCompartilhamentoConta({ contaId });
+      const detalhes = await authService.listaCompartilhamentoConta({ idConta });
       console.log('detalhes emails', detalhes)
       setContaCompartilhada(detalhes)
 

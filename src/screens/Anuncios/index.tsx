@@ -7,6 +7,8 @@ import { Box, Button, Chip, Container, Grid, Modal, Paper, Typography } from "@m
 import { Delete } from "@mui/icons-material";
 import FiltroTexto from "../../components/common/FiltroText";
 import { Anuncio } from "@/types/anuncio";
+import { requireAuthentication } from "@/helpers/auth";
+import { authService } from "@/services/auth/authService";
 
 interface ProdutoLocalStorage {
   sku: string;
@@ -23,12 +25,12 @@ interface ProdutoLocalStorage {
 //   });
 // };
 
-export default function Anuncios() {
+export default function Anuncios({idConta, retornaEmpresas}) {
   const [openModal, setOpenModal] = React.useState(false);
   const [storedAnuncios, setStoredAnuncios] = React.useState<Anuncio[]>([]);
   const [textoFiltro, setTextoFiltro] = React.useState("");
   const router = useRouter();
-
+console.log('retornaEmpresas', retornaEmpresas)
   React.useEffect(() => {
     const stored = localStorage.getItem("anuncios");
     if (stored && stored !== "[]") {
@@ -46,7 +48,7 @@ export default function Anuncios() {
     localStorage.setItem("anuncios", JSON.stringify(updatedAnuncios));
   };
   const quantideAnuncios = storedAnuncios.length
-  console.log(quantideAnuncios)
+  
   return (
     <>
       <Head>
@@ -106,3 +108,23 @@ export default function Anuncios() {
     </>
   );
 }
+export const getServerSideProps = requireAuthentication(async (ctx) => {
+
+  const token = ctx.req.token;
+  const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
+  const retornaEmpresas = await authService.retornaEmpresas(token, { idConta });
+  try {
+    return {
+      props: {
+        retornaEmpresas,
+        idConta
+      },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        permanent: true,
+      },
+    };
+  }
+});

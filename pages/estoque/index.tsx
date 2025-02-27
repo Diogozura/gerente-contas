@@ -1,1 +1,1 @@
-export { default } from "../../src/screens/EstoqueScreen";
+export { default, getServerSideProps } from "../../src/screens/EstoqueScreen";

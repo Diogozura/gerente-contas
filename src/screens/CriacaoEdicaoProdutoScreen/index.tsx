@@ -47,6 +47,9 @@ import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
 import { Console } from "console";
+import { authService } from "@/services/auth/authService";
+import { PromiseNotification } from "@/components/common/PromiseNotification";
+import { parseCookies } from "nookies";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -102,6 +105,14 @@ export default function CriacaoProduto() {
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
   const { id , mode } = router.query; // Recuperando o id da URL
+
+  const [idConta, setIdConta] = useState(null);
+
+
+  React.useEffect(() => {
+    const cookies = parseCookies();
+    setIdConta(cookies.idConta);
+  }, []);
 
   React.useEffect(() => {
     if (mode === 'edit' && id) {
@@ -336,25 +347,44 @@ export default function CriacaoProduto() {
   //   }
   // }, [id, formValues, setFormValues]); // A
 
-  const body = {
-    nome: formValues.CadastroProdutos?.titulo,
-    sku: formValues.produto?.sku,
-    codigo_barras: formValues.produto?.codigoBarras,
-    ncm: formValues.produto?.ncm,
-    ean: formValues.produto?.ean,
-    height: formValues.produto?.altura,
-    length: formValues.produto?.largura,
-    width: formValues.produto?.profundidade,
-    weightKg: formValues.produto?.pesoBruto,
-    // MeasurementUnit,
-    // IsKit,
-    // CreationDate,
-    // CommercialConditionId,
-    // marca,
-    // modelo,
-    // produção
-  }
 
+
+  const handleEnter = async (event: React.FormEvent) => {
+      event.preventDefault();
+
+      console.log('salve', idConta)
+     
+      // // Lógica de envio caso não haja erros
+  
+        // const loginPromise = authService.criaProduto({
+        //    body:{
+        //     nome: formValues.CadastroProdutos?.titulo,
+        //     sku: formValues.produto?.sku,
+        //     codigo_barras: formValues.produto?.codigoBarras,
+        //     ncm: formValues.produto?.ncm,
+        //     ean: formValues.produto?.ean,
+        //     height: formValues.produto?.altura,
+        //     length: formValues.produto?.largura,
+        //     width: formValues.produto?.profundidade,
+        //     weightKg: formValues.produto?.pesoBruto,
+        //     // MeasurementUnit,
+        //     // IsKit,
+        //     // CreationDate,
+        //     // CommercialConditionId,
+        //     // marca,
+        //     // modelo,
+        //     // produção
+        //   },
+        //   idConta
+        // });
+  
+        // PromiseNotification({
+        //   promise: loginPromise,
+        //   pendingMessage: "Salvando...",
+        //   successMessage: "Produto salvo  com sucesso!",
+         
+        // });
+    };
 
   return (
     <>
@@ -418,14 +448,17 @@ export default function CriacaoProduto() {
       {/* Ficha tecnina com produto  */}
       <TabPanel value={tab} index={0}>
         {/* Imagens upload  */}
+        <form action="" onSubmit={handleEnter}>
         <Grid container spacing={2}>
           <Grid xs={12}>
+            
             <Grid container padding={3} spacing={2}>
               <Grid xs={9}>
                 <TextField
                   variant="standard"
                   label="Titulo"
                   name='titulo'
+                  required
                   value={formValues.CadastroProdutos?.titulo || ''}
                   onChange={handleInputChange}
                   disabled={isValid}
@@ -434,10 +467,15 @@ export default function CriacaoProduto() {
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
+                {/* <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
                   m: 1
                 }}>
                   Salvar Produto
+                </Button> */}
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} type='submit' sx={{
+                  m: 1
+                }}>
+                  Salvar Produto API
                 </Button>
                 <Button variant="contained" color="primary" id="Editor" sx={{
                   m: 1
@@ -608,7 +646,7 @@ export default function CriacaoProduto() {
 
           </Grid>
         </Grid>
-
+        </form>
 
 
       </TabPanel>
