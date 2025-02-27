@@ -174,7 +174,7 @@ async confirmarPagamento( {id} ) {
   },
   async retornaDetalhesEmpresa({idConta, idEmpresa}) {
     const token = tokenService.get();
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${contaId}/empresa/${idEmpresa}`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idConta}/empresa/${idEmpresa}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -240,7 +240,7 @@ async confirmarPagamento( {id} ) {
   },
   async listaCompartilhamentoConta({idConta}) {
     const token = tokenService.get();
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${contaId}/compartilhamento_conta`, {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -282,14 +282,14 @@ async confirmarPagamento( {id} ) {
       }
       )
         .then(response => {
-          if (!response.ok) throw new Error('Não autorizado');
+          if (!response.ok) throw new Error(response.body.detail)
           return response.body.dados;
         });
   
     },
   async retornaProduto({idConta, idProduto}) {
       const token = tokenService.get();
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${contaId}/produto_filho/${idProduto}`, {
+      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho/${idProduto}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -298,7 +298,7 @@ async confirmarPagamento( {id} ) {
       }
       )
         .then(response => {
-          // if (!response.ok) throw new Error('Não autorizado');
+          if (!response.ok) throw new Error(response.body.detail)
           return response.body.dados;
         });
   

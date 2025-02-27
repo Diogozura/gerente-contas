@@ -63,7 +63,7 @@ console.log('retornaEmpresas', retornaEmpresas)
 
     setLoading(idEmpresa); // Define qual empresa está carregando
     try {
-      const detalhes = await authService.retornaDetalhesEmpresa({ contaId, idEmpresa });
+      const detalhes = await authService.retornaDetalhesEmpresa({ idConta, idEmpresa });
       console.log('detalhes', detalhes)
       setDetalhesEmpresa((prev) => ({
         ...prev,
@@ -80,7 +80,7 @@ console.log('retornaEmpresas', retornaEmpresas)
 
 
     try {
-      const detalhes = await authService.listaCompartilhamentoConta({ contaId });
+      const detalhes = await authService.listaCompartilhamentoConta({ idConta });
       console.log('detalhes emails', detalhes)
       setContaCompartilhada(detalhes)
 

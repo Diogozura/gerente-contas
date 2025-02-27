@@ -356,34 +356,34 @@ export default function CriacaoProduto() {
      
       // // Lógica de envio caso não haja erros
   
-        const loginPromise = authService.criaProduto({
-           body:{
-            nome: formValues.CadastroProdutos?.titulo,
-            sku: formValues.produto?.sku,
-            codigo_barras: formValues.produto?.codigoBarras,
-            ncm: formValues.produto?.ncm,
-            ean: formValues.produto?.ean,
-            height: formValues.produto?.altura,
-            length: formValues.produto?.largura,
-            width: formValues.produto?.profundidade,
-            weightKg: formValues.produto?.pesoBruto,
-            // MeasurementUnit,
-            // IsKit,
-            // CreationDate,
-            // CommercialConditionId,
-            // marca,
-            // modelo,
-            // produção
-          },
-          idConta
-        });
+        // const loginPromise = authService.criaProduto({
+        //    body:{
+        //     nome: formValues.CadastroProdutos?.titulo,
+        //     sku: formValues.produto?.sku,
+        //     codigo_barras: formValues.produto?.codigoBarras,
+        //     ncm: formValues.produto?.ncm,
+        //     ean: formValues.produto?.ean,
+        //     height: formValues.produto?.altura,
+        //     length: formValues.produto?.largura,
+        //     width: formValues.produto?.profundidade,
+        //     weightKg: formValues.produto?.pesoBruto,
+        //     // MeasurementUnit,
+        //     // IsKit,
+        //     // CreationDate,
+        //     // CommercialConditionId,
+        //     // marca,
+        //     // modelo,
+        //     // produção
+        //   },
+        //   idConta
+        // });
   
-        PromiseNotification({
-          promise: loginPromise,
-          pendingMessage: "Salvando...",
-          successMessage: "Produto salvo  com sucesso!",
+        // PromiseNotification({
+        //   promise: loginPromise,
+        //   pendingMessage: "Salvando...",
+        //   successMessage: "Produto salvo  com sucesso!",
          
-        });
+        // });
     };
 
   return (
@@ -448,14 +448,17 @@ export default function CriacaoProduto() {
       {/* Ficha tecnina com produto  */}
       <TabPanel value={tab} index={0}>
         {/* Imagens upload  */}
+        <form action="" onSubmit={handleEnter}>
         <Grid container spacing={2}>
           <Grid xs={12}>
+            
             <Grid container padding={3} spacing={2}>
               <Grid xs={9}>
                 <TextField
                   variant="standard"
                   label="Titulo"
                   name='titulo'
+                  required
                   value={formValues.CadastroProdutos?.titulo || ''}
                   onChange={handleInputChange}
                   disabled={isValid}
@@ -464,12 +467,12 @@ export default function CriacaoProduto() {
               </Grid>
 
               <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
+                {/* <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
                   m: 1
                 }}>
                   Salvar Produto
-                </Button>
-                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={handleEnter} sx={{
+                </Button> */}
+                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} type='submit' sx={{
                   m: 1
                 }}>
                   Salvar Produto API
@@ -643,7 +646,7 @@ export default function CriacaoProduto() {
 
           </Grid>
         </Grid>
-
+        </form>
 
 
       </TabPanel>

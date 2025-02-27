@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
 import {
-
   Button,
-
   Typography,
-
   Input,
   Grid,
   Checkbox,
@@ -241,9 +238,9 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
         return null;
     }
   };
-  const renderModalContent = (data: Product | null = null) => {
-    const { tipo } = modalState;
-
+  const renderModalContent = () => {
+    const { tipo,data } = modalState;
+console.log('data', data)
     switch (tipo) {
       case "Configuração":
         return (
@@ -256,7 +253,7 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
 
         return (
           <Typography>
-            Tem certeza que deseja deleter?
+            Tem certeza que deseja deleter? <strong>{data.CadastroProdutos.titulo}</strong>
           </Typography>
         );
       case "Editor":
@@ -308,6 +305,13 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
             indeterminate={selectedIds.length > 0 && selectedIds.length < products.length}
             checked={selectedIds.length === products.length}
             onChange={handleSelectAll}
+            color="success" 
+            sx={{
+              "& .MuiSvgIcon-root": {
+                color: "black", // Cor do ícone do checkbox
+              
+              },
+            }}
           />
           <FiltroTexto
             label="Filtrar por título ou SKU"
@@ -354,7 +358,14 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
               <Grid container spacing={2} alignItems="center">
                 {/* Checkbox */}
                 <Grid item xs={0.3}>
-                  <Checkbox color="secondary" checked={selectedIds.includes(product.id)}
+                  <Checkbox color="secondary"
+                   sx={{
+                    "& .MuiSvgIcon-root": {
+                      color: "black", // Cor do ícone do checkbox
+                    
+                    },
+                  }}
+                  checked={selectedIds.includes(product.id)}
                     onChange={() => handleSelectOne(product.id)} />
                 </Grid>
 
