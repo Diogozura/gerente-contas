@@ -46,10 +46,9 @@ import Estoque from "@/components/forms/Estoque";
 import { showToast } from "@/components/common/AlertToast";
 import moment from "moment";
 import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
-import { Console } from "console";
-import { authService } from "@/services/auth/authService";
-import { PromiseNotification } from "@/components/common/PromiseNotification";
 import { parseCookies } from "nookies";
+import { PromiseNotification } from "@/components/common/PromiseNotification";
+import { authService } from "@/services/auth/authService";
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -132,13 +131,6 @@ export default function CriacaoProduto() {
     }));
 
   };
-  // Campos obrigatórios
-  const camposObrigatorios = ['titulo', 'sku'];
-
-  // // Verifica se todos os campos obrigatórios estão preenchidos
-  // const isFormValid = camposObrigatorios.every(
-  //   (campo) => newProduct[campo]?.toString().trim() !== ''
-  // );
 
   const handleGenerateDescription = () => {
     const { titulo, marca, modelo, altura, largura, profundidade, pesoLiquido } = newProduct;
@@ -356,34 +348,34 @@ export default function CriacaoProduto() {
      
       // // Lógica de envio caso não haja erros
   
-        // const loginPromise = authService.criaProduto({
-        //    body:{
-        //     nome: formValues.CadastroProdutos?.titulo,
-        //     sku: formValues.produto?.sku,
-        //     codigo_barras: formValues.produto?.codigoBarras,
-        //     ncm: formValues.produto?.ncm,
-        //     ean: formValues.produto?.ean,
-        //     height: formValues.produto?.altura,
-        //     length: formValues.produto?.largura,
-        //     width: formValues.produto?.profundidade,
-        //     weightKg: formValues.produto?.pesoBruto,
-        //     // MeasurementUnit,
-        //     // IsKit,
-        //     // CreationDate,
-        //     // CommercialConditionId,
-        //     // marca,
-        //     // modelo,
-        //     // produção
-        //   },
-        //   idConta
-        // });
+        const criaProdutoPromise = authService.criaProduto({
+           body:{
+            nome: formValues.CadastroProdutos?.titulo,
+            sku: formValues.produto?.sku,
+            codigo_barras: formValues.produto?.codigoBarras,
+            ncm: formValues.produto?.ncm,
+            ean: formValues.produto?.ean,
+            height: formValues.produto?.altura,
+            length: formValues.produto?.largura,
+            width: formValues.produto?.profundidade,
+            weightKg: formValues.produto?.pesoBruto,
+            // MeasurementUnit,
+            // IsKit,
+            // CreationDate,
+            // CommercialConditionId,
+            // marca,
+            // modelo,
+            // produção
+          },
+          idConta
+        });
   
-        // PromiseNotification({
-        //   promise: loginPromise,
-        //   pendingMessage: "Salvando...",
-        //   successMessage: "Produto salvo  com sucesso!",
+        PromiseNotification({
+          promise: criaProdutoPromise,
+          pendingMessage: "Salvando...",
+          successMessage: "Produto salvo  com sucesso!",
          
-        // });
+        });
     };
 
   return (

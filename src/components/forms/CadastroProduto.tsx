@@ -1,4 +1,4 @@
-import { Autocomplete, createFilterOptions, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from '@mui/material';
+import { Autocomplete, createFilterOptions, FormControl, FormControlLabel, Grid, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material';
 import React from 'react';
 import MoneyInput from '../Inputs/InputMoney';
 import { FormProvider, useFormContext } from '../../config/FormContext';
@@ -89,13 +89,17 @@ export default function CadastroProduto({ view }) {
         </Grid>
         <Grid item xs={3}>
           <TextField
-            label="Condição"
-            name='condicao'
-            fullWidth
-            disabled={view}
+            select
+            name="condicao"
             value={formValues.produto?.condicao || ''}
             onChange={handleInputChange}
-          />
+            variant="outlined"
+            disabled={view}
+            fullWidth
+          >
+            <MenuItem value="1">Novo</MenuItem>
+            <MenuItem value="2">Usado</MenuItem>
+          </TextField>
         </Grid>
 
         <Grid item xs={3}>
@@ -165,7 +169,7 @@ export default function CadastroProduto({ view }) {
             onChange={handleInputChange}
           />
         </Grid>
-       
+
         <Grid item xs={3}>
           <TextField
             label="Peso Líquido (g)"

@@ -6,6 +6,8 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { useFormContext } from '@/config/FormContext';
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 type PrecificacaoItem = {
   variacao: string;
@@ -19,7 +21,7 @@ export default function ListaPreco({ view }: { view: boolean }) {
   const [variacao, setVariacao] = React.useState('');
   const [editIndex, setEditIndex] = React.useState<number | null>(null);
   const { formValues, setFormValues } = useFormContext();
-  
+
   // Carregar dados do localStorage na inicialização
   React.useEffect(() => {
     const savedList = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -103,7 +105,7 @@ export default function ListaPreco({ view }: { view: boolean }) {
               <Grid item xs={4}>
                 <TextField
                   fullWidth
-                  variant="standard"
+                  variant="outlined"
                   label="Variação"
                   value={variacao}
                   onChange={(e) => setVariacao(e.target.value)}
@@ -112,16 +114,18 @@ export default function ListaPreco({ view }: { view: boolean }) {
               <Grid item xs={4}>
                 <MoneyInput
                   label="Valor Mínimo"
-                  variant="standard"
+                  variant="outlined"
                   name="valorMinimo"
                 />
               </Grid>
               <Grid item xs={2}>
                 <IconButton onClick={adicionarOuEditarListaPreco}>
-                  <SaveOutlinedIcon color="action" />
+                  <CheckIcon color="success" />
+                  
                 </IconButton>
                 <IconButton onClick={() => setEditIndex(null)}>
-                  <CloseOutlinedIcon color="action" />
+                  <CloseIcon color="error" />
+                 
                 </IconButton>
               </Grid>
             </>
