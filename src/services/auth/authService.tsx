@@ -150,7 +150,6 @@ async confirmarPagamento( {id} ) {
     }
     )
       .then(response => {
-        console.log('response', response.body.dados.contas[0].id)
         // if (!response.ok) throw new Error('Não autorizado');
         return response.body;
       });
@@ -272,7 +271,6 @@ async confirmarPagamento( {id} ) {
   
     },
   async retornaTodosProdutos(token,{idConta}) {
-     
       return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/retorna_todos_produtos_filho`, {
         method: 'GET',
         headers: {
@@ -282,7 +280,7 @@ async confirmarPagamento( {id} ) {
       }
       )
         .then(response => {
-          if (!response.ok) throw new Error(response.body.detail)
+          if (!response.ok) throw new Error(response.body?.detail || "Erro inesperado na requisição");
           return response.body.dados;
         });
   

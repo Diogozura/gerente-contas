@@ -35,13 +35,15 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
       const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
 
         // tentar rodar o request anterior 
+
+        console.log('currentRefreshToken', currentRefreshToken)
       try {
         const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
         method: isServer ? 'PUT' : 'GET',
         body: isServer? {refreshToken : currentRefreshToken} : undefined
       });
      // Guardar os token 
-    //  console.log('tenta' , refreshResponse.body.data)
+     console.log('tenta' , refreshResponse.body)
       const newAccessToken = refreshResponse.body.data.access;
       const newRefreshToken = refreshResponse.body.data.refresh;
    
@@ -63,14 +65,14 @@ export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
     
     const retryResponse = await HttpClient(fetchUrl, {
       ...options,
-      refresh: false,
+      refresh: true,
       headers: {
         'Content-Type': 'application/json'
       },
       body: { token: newAccessToken },
     })
-
     return retryResponse
+
   }catch(err){
     
     return response
