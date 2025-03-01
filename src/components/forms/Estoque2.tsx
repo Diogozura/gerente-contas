@@ -7,9 +7,15 @@ import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import { useFormContext } from '@/config/FormContext';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import moment from 'moment';
+import moment from "moment";
+import "moment/locale/pt-br"; // Importa o idioma PT-BR
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import CloseIcon from '@mui/icons-material/Close';
+import CheckIcon from '@mui/icons-material/Check';
+
+moment.locale("pt-br"); // Define o idioma globalmente
+
 type EstoqueItem = {
   local: string;
   estoque: number;
@@ -65,7 +71,7 @@ export default function ListaEstoque({ view }: { view: boolean }) {
 
   return (
     <>
-      
+
 
       {editIndex !== null && (
         <Grid container spacing={2} alignItems="center" mt={1} sx={{ borderBottom: '1px solid #ccc', pb: 1 }}>
@@ -83,23 +89,26 @@ export default function ListaEstoque({ view }: { view: boolean }) {
           </Grid>
           <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterMoment} adapterLocale="pt-br">
-              <DatePicker label="Data de Compra"
-               slots={{ openPickerIcon:  AddShoppingCartIcon}}
-              slotProps={{
-                openPickerIcon: {
-                  color: 'active',
-                },
-              }}
-               value={moment(formValues?.estoque?.dataCompra)} 
-               onChange={(newValue) => setFormValues('estoque', { ...formValues.estoque, dataCompra: moment(newValue).format('YYYY-MM-DD') })} />
+              <DatePicker
+                label="Data de Compra"
+                views={["year", "month", "day"]} // Permite seleção de ano e mês
+                format="DD/MM/YYYY" // Formato da data exibida
+                slots={{ openPickerIcon: AddShoppingCartIcon }}
+                slotProps={{
+                  openPickerIcon: {
+                    color: 'active',
+                  },
+                }}
+                value={moment(formValues?.estoque?.dataCompra)}
+                onChange={(newValue) => setFormValues('estoque', { ...formValues.estoque, dataCompra: moment(newValue).format('YYYY-MM-DD') })} />
             </LocalizationProvider>
           </Grid>
           <Grid item xs={1}>
             <IconButton onClick={adicionarOuEditarEstoque}>
-              <SaveOutlinedIcon color="action" />
+            <CheckIcon color="success" />
             </IconButton>
             <IconButton onClick={() => setEditIndex(null)}>
-              <CloseOutlinedIcon color="action" />
+            <CloseIcon color="error" />
             </IconButton>
           </Grid>
         </Grid>
@@ -138,7 +147,7 @@ export default function ListaEstoque({ view }: { view: boolean }) {
 
       {listaEstoque.length === 0 && <Typography variant="body1" sx={{ mt: 2 }}>Nenhum estoque cadastrado.</Typography>}
       <Box display="flex" justifyContent="space-between" p={1}>
-        
+
         <Button variant="contained" fullWidth onClick={() => setEditIndex(listaEstoque.length)}>
           + Adicionar Estoque
         </Button>
