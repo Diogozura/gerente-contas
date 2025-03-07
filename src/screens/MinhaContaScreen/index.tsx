@@ -18,6 +18,8 @@ import { showToast } from "@/components/common/AlertToast";
 import { ModalVinculo } from "@/components/ui/Modal";
 import { PromiseNotification } from "@/components/common/PromiseNotification";
 import { parseCookies } from "nookies";
+import { getSession } from "next-auth/react";
+import nookies from 'nookies';
 
 interface Empresa {
   razao_social: string;
@@ -451,23 +453,27 @@ Salvar Usuário
   );
 }
 
-export const getServerSideProps = requireAuthentication(async (ctx) => {
 
-  const token = ctx.req.token;
-  const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
-  const retornaEmpresas = await authService.retornaEmpresas(token, { idConta });
-  try {
-    return {
-      props: {
-        retornaEmpresas,
-        idConta
-      },
-    };
-  } catch (error) {
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  const cookies = nookies.get(ctx); // Pegando os cookies do request
+
+  const idConta = cookies.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
+  console.log('idConta', idConta)
+  if (!session) {
     return {
       redirect: {
-        permanent: true,
+        destination: "/auth/login",
+        permanent: false,
       },
     };
   }
-});
+  try {
+    const retornaEmpresas = await authService.retornaEmpresas(session.accessToken, {idConta});
+    return { props: { retornaEmpresas , idConta  } };
+  } catch (error) {
+    console.error("Erro ao buscar dadosSala:", error);
+    return { props: { retornaEmpresas: null  } };
+  }
+}
+

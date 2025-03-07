@@ -1,35 +1,38 @@
+import { getToken } from "next-auth/jwt";
 import { parseCookies } from "nookies";
-import { authService } from "./authService";
-import { tokenService } from "./tokenService";
 
-export function withSession(fucao) {
-
+export function withSession(handler) {
   return async (ctx) => {
     try {
       const cookies = parseCookies(ctx);
-      const session = await authService.getSession(ctx)
-      const token = tokenService.get(ctx); // Pegando o token do contexto
-      const idConta = cookies.idConta; // Pegando o token do contexto
+      const token = await getToken({ req: ctx.req }); // Obtém o token do NextAuth.js
+
+      if (!token) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/auth/login",
+          },
+        };
+      }
+
       const modifiedCtx = {
         ...ctx,
         req: {
           ...ctx.req,
-          session,
-          token,
-          idConta
-        }
-      }
-   
-      return fucao(modifiedCtx)
+          token: token.accessToken, // Passa o accessToken do NextAuth.js
+          idConta: cookies.idConta, // Mantém o idConta dos cookies
+        },
+      };
 
+      return handler(modifiedCtx);
     } catch (err) {
       return {
-              redirect: {
-                permanent: false,
-                destination: '/?error=401'
-             }
-        }
+        redirect: {
+          permanent: false,
+          destination: "/?error=401",
+        },
+      };
     }
-  }
-    
+  };
 }
