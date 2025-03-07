@@ -1,14 +1,15 @@
+import { getSession } from "next-auth/react";
 import { HttpClient } from '../../infra/HttpClient/HttpClient';
 import { tokenService } from './tokenService';
 import axios from 'axios';
 
-interface Props {
-  data: {
-    refreshToken: string;
-    token: string
-  }
 
-}
+// Helper para obter headers com autenticação
+const getAuthHeaders = async (token?: string) => {
+  const session = token ? { accessToken: token } : await getSession();
+  if (!session?.accessToken) throw new Error("Usuário não autenticado");
+  return { Authorization: `Bearer ${session.accessToken}` };
+};
 
 export const authService = {
   //Planos hub
@@ -25,39 +26,39 @@ export const authService = {
     }
   },
 
-//Primeiro contato
-async primeiroContato({ body }) {
+  //Primeiro contato
+  async primeiroContato({ body }) {
 
-  return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/primeiro_contato`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    } ,
-    body,
-  })
-    .then((response) => {
-      tokenService.savePay(response.body.dados.token);
-      if (!response.ok) throw new Error(response.body.mensagem)
-     return response.body.mensagem;
-    }
-  )
-},
-  
-//Primeiro contato
-async confirmarPagamento( {id} ) {
-
-  return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/confirmar_pagamento?token=${id}`, {
-    method: 'POST',
-    body:{}
-  })
-    .then((response) => {
-      tokenService.savePay(response.body);
-  
-     return response;
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/primeiro_contato`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body,
     })
-},
-  
-//Cadastro
+      .then((response) => {
+        tokenService.savePay(response.body.dados.token);
+        if (!response.ok) throw new Error(response.body.mensagem)
+        return response.body.mensagem;
+      }
+      )
+  },
+
+  //Primeiro contato
+  async confirmarPagamento({ id }) {
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/confirmar_pagamento?token=${id}`, {
+      method: 'POST',
+      body: {}
+    })
+      .then((response) => {
+        tokenService.savePay(response.body);
+
+        return response;
+      })
+  },
+
+  //Cadastro
   async cadastroConta({ body, id }) {
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/cadastrar_usuario?token=${id}`, {
@@ -66,7 +67,7 @@ async confirmarPagamento( {id} ) {
     })
       .then((res) => {
         if (!res.ok) throw new Error(res.body.mensagem)
-       return res
+        return res
       })
   },
 
@@ -76,21 +77,21 @@ async confirmarPagamento( {id} ) {
     // myHeaders.append('Authorization', 'Basic ' + Buffer.from(`${username}:${password}`, 'binary').toString('base64'))
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          } ,
-          body
-        })
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body
+    })
       .then(response => {
-      
+
         tokenService.save(response.body.access);
         const body = response.body
         if (!response.ok) throw new Error(response.body.detail)
         return body;
-      
+
       })
-      .then(async({refresh}) => {
+      .then(async ({ refresh }) => {
         await HttpClient('/api/refresh', {
           method: 'POST',
           body: {
@@ -99,24 +100,6 @@ async confirmarPagamento( {id} ) {
         })
 
       })
-},
-  // Session
-  async getSession(ctx) {
-    const token = tokenService.get(ctx);
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/token/verify/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: { token },
-      ctx,
-      refresh: true,
-    }
-    )
-      .then(response => {
-        if (!response.ok) throw new Error('Não autorizado');
-        return response;
-      });
   },
 
   /* Troca Senha*/
@@ -140,29 +123,20 @@ async confirmarPagamento( {id} ) {
         if (!res.ok) throw new Error(res.body.txt)
       })
   },
-  async dadosSala(token) {
-    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      refresh : true
-    }
-    )
-      .then(response => {
-        // if (!response.ok) throw new Error('Não autorizado');
-        return response.body;
-      });
-
+  async dadosSala(token?: string) {
+    const headers = await getAuthHeaders(token);
+    const response = await HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/user_info`, {
+      method: "GET",
+      headers,
+    });
+    return response.body;
   },
-  async retornaEmpresas(token, {idConta}) {
-    console.log('idConta', idConta)
+  async retornaEmpresas(token, { idConta }) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idConta}/empresa`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
       },
-      refresh : true
     }
     )
       .then(response => {
@@ -171,14 +145,12 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async retornaDetalhesEmpresa({idConta, idEmpresa}) {
-    const token = tokenService.get();
+  async retornaDetalhesEmpresa({ idConta, idEmpresa }) {
+    const headers = await getAuthHeaders();
+
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idConta}/empresa/${idEmpresa}`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      refresh : true
+      headers
     }
     )
       .then(response => {
@@ -187,8 +159,8 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async cadastroEmpresa({idEmpresa, body}, ctx) {
-  const token = tokenService.get(ctx);
+  async cadastroEmpresa({ idEmpresa, body }, ctx) {
+    const token = tokenService.get(ctx);
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/hub/${idEmpresa}/empresa`, {
       method: 'POST',
@@ -204,8 +176,8 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async compartilhaConta({idConta, body}) {
-  const token = tokenService.get();
+  async compartilhaConta({ idConta, body }) {
+    const token = tokenService.get();
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta`, {
       method: 'POST',
@@ -221,8 +193,8 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async deletaCompartilhaConta({idConta, permissao_id}) {
-  const token = tokenService.get();
+  async deletaCompartilhaConta({ idConta, permissao_id }) {
+    const token = tokenService.get();
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta/${permissao_id}`, {
       method: 'DELETE',
@@ -237,14 +209,11 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async listaCompartilhamentoConta({idConta}) {
-    const token = tokenService.get();
+  async listaCompartilhamentoConta({ idConta }) {
+    const headers = await getAuthHeaders();
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}api/users/${idConta}/compartilhamento_conta`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      refresh : true
+      headers
     }
     )
       .then(response => {
@@ -253,57 +222,55 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async criaProduto({idConta, body}) {
+  async criaProduto({ idConta, body }) {
     const token = tokenService.get();
-  
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body
-      }
-      )
-        .then(response => {
-          if (!response.ok) throw new Error(response.body.mensagem)
-          return response.body;
-        });
-  
-    },
-  async retornaTodosProdutos(token,{idConta}) {
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/retorna_todos_produtos_filho`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        refresh : true
-      }
-      )
-        .then(response => {
-          if (!response.ok) throw new Error(response.body?.detail || "Erro inesperado na requisição");
-          return response.body.dados;
-        });
-  
-    },
-  async retornaProduto({idConta, idProduto}) {
-      const token = tokenService.get();
-      return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho/${idProduto}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        refresh : true
-      }
-      )
-        .then(response => {
-          if (!response.ok) throw new Error(response.body.detail)
-          return response.body.dados;
-        });
-  
-    },
+
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body.mensagem)
+        return response.body;
+      });
+
+  },
+  async retornaTodosProdutos(token, { idConta }) {
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/retorna_todos_produtos_filho`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body?.detail || "Erro inesperado na requisição");
+        return response.body.dados;
+      });
+
+  },
+  async retornaProduto({ idConta, idProduto }) {
+    const token = tokenService.get();
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho/${idProduto}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body.detail)
+        return response.body.dados;
+      });
+
+  },
   async authIntegracaoML(token) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
-    // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
+      // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -316,9 +283,9 @@ async confirmarPagamento( {id} ) {
       });
 
   },
-  async authRetornoML({code, token}) {
+  async authRetornoML({ code, token }) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/return_auth?code=${code}`, {
-    // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
+      // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/return_auth?code=${code}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`
@@ -330,5 +297,5 @@ async confirmarPagamento( {id} ) {
         return response;
       });
 
-  }, 
+  },
 };

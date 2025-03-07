@@ -482,22 +482,22 @@ console.log('data', data)
 }
 
 
-export const getServerSideProps = requireAuthentication(async (ctx) => {
+// export const getServerSideProps = requireAuthentication(async (ctx) => {
 
-  const token = ctx.req.token;
-  const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
-  const retornaTodosProdutos = await authService.retornaTodosProdutos(token, { idConta });
-  try {
-    return {
-      props: {
-        retornaTodosProdutos,
-      },
-    };
-  } catch (error) {
-    return {
-      redirect: {
-        permanent: true,
-      },
-    };
-  }
-});
+//   const token = ctx.req.token;
+//   const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
+//   const retornaTodosProdutos = await authService.retornaTodosProdutos(token, { idConta });
+//   try {
+//     return {
+//       props: {
+//         retornaTodosProdutos,
+//       },
+//     };
+//   } catch (error) {
+//     return {
+//       redirect: {
+//         permanent: true,
+//       },
+//     };
+//   }
+// });

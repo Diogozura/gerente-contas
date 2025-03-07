@@ -13,11 +13,16 @@ import {
 import { Container } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
 import { Venda } from "@/types/Venda";
+import { requireAuthentication } from "@/helpers/auth";
+import { authService } from "@/services/auth/authService";
+import { getToken } from "next-auth/jwt";
+import { getSession } from "next-auth/react";
+import Head from "next/head";
 
 // Registra os elementos necessários para os gráficos
 ChartJS.register(CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend, Title);
 
-const Dashboards: React.FC = () => {
+const Dashboards: React.FC = (dadosSala) => {
   const [marketplacesData, setMarketplacesData] = useState<{ labels: string[]; values: number[] }>({
     labels: [],
     values: [],
@@ -32,7 +37,7 @@ const Dashboards: React.FC = () => {
     labels: [],
     values: [],
   });
-
+  console.log('dadosSala', dadosSala)
   useEffect(() => {
     const carregarVendas = () => {
       const vendas: Venda[] = JSON.parse(localStorage.getItem("vendas") || "[]");
@@ -92,63 +97,110 @@ const Dashboards: React.FC = () => {
   }, []);
 
   return (
-    <Container>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px", padding: "20px" }}>
-        {/* Marketplaces Mais Utilizados */}
-        <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
-          <h2>Marketplaces Mais Utilizados</h2>
-          <PieChart
-            series={[
-              {
-                data: marketplacesData.labels.map((label, index) => ({
-                  id: index,
-                  value: marketplacesData.values[index],
-                  label,
-                })),
-              },
-            ]}
-            width={400}
-            height={300}
-          />
-        </div>
-
-        {/* Vendas por Dia na Última Semana */}
-        <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
-          <h2>Vendas por Dia na Última Semana</h2>
-          <Bar
-            data={{
-              labels: vendasPorSemana.labels,
-              datasets: [
+    <>
+      <Head>
+        <title>Dashboard - hubeefive</title>
+      </Head>
+      <Container>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px", padding: "20px" }}>
+          {/* Marketplaces Mais Utilizados */}
+          <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
+            <h2>Marketplaces Mais Utilizados</h2>
+            <PieChart
+              series={[
                 {
-                  label: "Vendas",
-                  data: vendasPorSemana.values,
-                  backgroundColor: "#4CAF50",
+                  data: marketplacesData.labels.map((label, index) => ({
+                    id: index,
+                    value: marketplacesData.values[index],
+                    label,
+                  })),
                 },
-              ],
-            }}
-            options={{ responsive: true }}
-          />
-        </div>
+              ]}
+              width={400}
+              height={300}
+            />
+          </div>
 
-        {/* Títulos Mais Vendidos */}
-        <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
-          <h2>Títulos Mais Vendidos</h2>
-          <Doughnut
-            data={{
-              labels: titulosVendidos.labels,
-              datasets: [
-                {
-                  data: titulosVendidos.values,
-                  backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-                },
-              ],
-            }}
-            options={{ responsive: true }}
-          />
+          {/* Vendas por Dia na Última Semana */}
+          <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
+            <h2>Vendas por Dia na Última Semana</h2>
+            <Bar
+              data={{
+                labels: vendasPorSemana.labels,
+                datasets: [
+                  {
+                    label: "Vendas",
+                    data: vendasPorSemana.values,
+                    backgroundColor: "#4CAF50",
+                  },
+                ],
+              }}
+              options={{ responsive: true }}
+            />
+          </div>
+
+          {/* Títulos Mais Vendidos */}
+          <div style={{ backgroundColor: "#fff", padding: "20px", borderRadius: "8px" }}>
+            <h2>Títulos Mais Vendidos</h2>
+            <Doughnut
+              data={{
+                labels: titulosVendidos.labels,
+                datasets: [
+                  {
+                    data: titulosVendidos.values,
+                    backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+                  },
+                ],
+              }}
+              options={{ responsive: true }}
+            />
+          </div>
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   );
 };
 
 export default Dashboards;
+
+
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+  try {
+    const dadosSala = await authService.dadosSala(session.accessToken);
+    return { props: { dadosSala } };
+  } catch (error) {
+    console.error("Erro ao buscar dadosSala:", error);
+    return { props: { dadosSala: null } };
+  }
+}
+
+
+// export const getServerSideProps = requireAuthentication(async (ctx) => {
+//   const token = await getToken({ req: ctx.req });
+//   console.log('token', token)
+//   try {
+//     const dadosSala = await authService.dadosSala(token.accessToken);
+
+//     return {
+//       props: {
+//         dadosSala,
+//       },
+//     };
+//   } catch (error) {
+//     return {
+//       redirect: {
+//         permanent: true,
+//       },
+//     };
+//   }
+// });

@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { Backdrop, CircularProgress, Container, Typography, Stack } from "@mui/material";
 import { useRouter } from "next/router";
-import { requireAuthentication } from "@/helpers/auth";
+import { getSession } from "next-auth/react";
 import { authService } from "@/services/auth/authService";
-import { parseCookies, setCookie } from "nookies";
+import { setCookie } from "nookies";
 import { useFormContext } from "@/config/FormContext";
 
-export default function Verificacao({dadosSala}) {
-  const [open, setOpen] = useState(false);
+export default function Verificacao({ dadosSala }) {
+  const [open, setOpen] = useState(true);
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const router = useRouter();
-const {  setFormValues } = useFormContext();
-  const messages = [
-    "Carregando...",
-    "Verificando...",
-    "Autenticando...",
-  ];
-  
+  const { setFormValues } = useFormContext();
+
+  const messages = ["Carregando...", "Verificando...", "Autenticando..."];
+
   useEffect(() => {
     if (dadosSala?.dados) {
       const usuarioLogado = {
@@ -25,38 +22,32 @@ const {  setFormValues } = useFormContext();
         plano: dadosSala.dados.planos_contratados || "Nenhum plano",
         contas: dadosSala.dados.contas,
       };
-      const idConta = dadosSala.dados.contas[0].id
-      console.log('contas', dadosSala.dados.contas[0].id)
+
+      const idConta = dadosSala.dados.contas[0]?.id;
       localStorage.setItem("dadosUsuarioLogado", JSON.stringify(usuarioLogado));
-      setFormValues('IdDaConta', { idConta: idConta }); // Atualiza valores dinamicamente
+      setFormValues("IdDaConta", { idConta });
+
       if (idConta) {
         setCookie(null, "idConta", idConta, {
           maxAge: 60 * 60 * 24 * 7, // 7 dias
           path: "/",
         });
       }
-      
+
+      // 🔹 Redirecionar imediatamente após processar os dados
+      router.replace("/dashboard");
+    } else {
+      // 🔹 Se não houver dados, redireciona para cadastro
+      router.replace("/dashboard/cadastroUser");
     }
   }, [dadosSala]);
-  
 
   useEffect(() => {
-    const userData = localStorage.getItem("dadosUsuarioLogado");
-    setOpen(true);
     const interval = setInterval(() => {
-      setCurrentMessageIndex((prevIndex) => prevIndex + 1);
-    }, 3000); // Troca de mensagem a cada 3 segundos
+      setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
+    }, 3000);
 
-    setTimeout(() => {
-      clearInterval(interval);
-      if (!userData) {
-        router.push("/dashboard/cadastroUser"); // Redireciona para cadastro se não houver dados
-      } else {
-        router.push("/dashboard"); // Redireciona para dashboard se houver dados
-      }
-    }, messages.length * 1000); // Espera o tempo total das mensagens antes de redirecionar
-
-    return () => clearInterval(interval); // Limpa o intervalo ao desmontar o componente
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -72,41 +63,33 @@ const {  setFormValues } = useFormContext();
         sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
         open={open}
       >
-        <Stack
-          direction="column"
-          spacing={2}
-          alignItems="center"
-          justifyContent="center"
-        >
+        <Stack direction="column" spacing={2} alignItems="center" justifyContent="center">
           <CircularProgress color="inherit" />
-          <Typography
-            sx={{
-              fontSize: "1.2rem",
-              textAlign: "center",
-            }}
-          >
-            {messages[currentMessageIndex] || "Finalizando..."}
+          <Typography sx={{ fontSize: "1.2rem", textAlign: "center" }}>
+            {messages[currentMessageIndex]}
           </Typography>
         </Stack>
       </Backdrop>
     </Container>
   );
 }
-export const getServerSideProps = requireAuthentication(async (ctx) => {
-  const token = ctx.req.token;
-  try {
-    const dadosSala = await authService.dadosSala(token);
 
-    return {
-      props: {
-        dadosSala,
-      },
-    };
-  } catch (error) {
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  console.log('session', session)
+  if (!session) {
     return {
       redirect: {
-        permanent: true,
+        destination: "/auth/login",
+        permanent: false,
       },
     };
   }
-});
+  try {
+    const dadosSala = await authService.dadosSala(session.accessToken);
+    return { props: { dadosSala } };
+  } catch (error) {
+    console.error("Erro ao buscar dadosSala:", error);
+    return { props: { dadosSala: null } };
+  }
+}

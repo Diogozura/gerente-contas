@@ -1,85 +1,27 @@
-import { tokenService } from './../../services/auth/tokenService';
-import nookies from 'nookies'
-export async function HttpClient(fetchUrl: RequestInfo | URL, fetchOptions: {
-  ctx?: any;
-  refresh?: any;
-  method?: string;
-  body?: any;
-  headers?: any 
-} = {}) {
-  const defaultHeaders = fetchOptions.headers || {}
+export async function HttpClient(
+  fetchUrl: RequestInfo | URL,
+  fetchOptions: {
+    method?: string;
+    body?: any;
+    headers?: any;
+  } = {}
+) {
   const options = {
     ...fetchOptions,
-    headers:{
-      'Content-Type': 'application/json',
-      ...defaultHeaders,
+    headers: {
+      "Content-Type": "application/json",
+      ...fetchOptions.headers,
     },
     body: fetchOptions.body ? JSON.stringify(fetchOptions.body) : null,
-  
-  }
-  return fetch(fetchUrl, options)
-    .then(async (respostaDoServidor) => {
-      return {
-        ok: respostaDoServidor.ok,
-        status: respostaDoServidor.status,
-        statusText: respostaDoServidor.statusText,
-        body: await respostaDoServidor.json(),
-      }
-    })
-    .then(async (response) => {
-      if (!fetchOptions.refresh) return response;
-      
-      if (response.status !== 401) return response;
+  };
 
-      const isServer = true
-      const currentRefreshToken = fetchOptions?.ctx?.req?.cookies['REFRESH_TOKEN_NAME'];
+  const respostaDoServidor = await fetch(fetchUrl, options);
+  const responseBody = await respostaDoServidor.json();
 
-        // tentar rodar o request anterior 
-
-        console.log('currentRefreshToken', currentRefreshToken)
-      try {
-        const refreshResponse = await HttpClient(`${process.env.NEXT_PUBLIC_API_URL}/refresh`, {
-        method: isServer ? 'PUT' : 'GET',
-        body: isServer? {refreshToken : currentRefreshToken} : undefined
-      });
-     // Guardar os token 
-     console.log('tenta' , refreshResponse.body)
-      const newAccessToken = refreshResponse.body.data.access;
-      const newRefreshToken = refreshResponse.body.data.refresh;
-   
-    
-  if (isServer) {
-    nookies.set( fetchOptions.ctx  ,'REFRESH_TOKEN_NAME', newRefreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-    })
-    tokenService.save(newAccessToken)
-    nookies.set( fetchOptions.ctx, 'ACCESS_TOKEN_KEY', newAccessToken, {
- 
-      path: '/',
-    })
-  }
-  
-    tokenService.save(newAccessToken)
-    
-    const retryResponse = await HttpClient(fetchUrl, {
-      ...options,
-      refresh: true,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: { token: newAccessToken },
-    })
-    return retryResponse
-
-  }catch(err){
-    
-    return response
-  }
-      
-    });
-  
-  
+  return {
+    ok: respostaDoServidor.ok,
+    status: respostaDoServidor.status,
+    statusText: respostaDoServidor.statusText,
+    body: responseBody,
+  };
 }
-

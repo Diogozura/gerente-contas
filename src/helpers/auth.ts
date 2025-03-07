@@ -1,13 +1,13 @@
-import { withSession } from "../services/auth/session";
+import { withSession } from "@/services/auth/session";
 
 export const requireAuthentication = (getServerSidePropsFunc) => {
   return withSession(async (ctx) => {
-    const session = ctx.req.session;
+    const { token } = ctx.req; // Agora o token vem do NextAuth.js
 
-    if (!session) {
+    if (!token) {
       return {
         redirect: {
-          destination: '/auth/login',
+          destination: "/auth/login",
           permanent: false,
         },
       };
@@ -19,7 +19,6 @@ export const requireAuthentication = (getServerSidePropsFunc) => {
       ...props,
       props: {
         ...props.props,
-        session,
       },
     };
   });

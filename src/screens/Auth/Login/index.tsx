@@ -25,7 +25,7 @@ import { useRouter } from "next/router";
 import TituloHub from "@/components/common/HubfiveName";
 import { CheckBox } from "@mui/icons-material";
 import { authService } from "@/services/auth/authService";
-
+import { signIn } from "next-auth/react";
 
 export function Login() {
   const { formValues } = useFormContext();
@@ -79,13 +79,13 @@ export function Login() {
    
     // Lógica de envio caso não haja erros
 
-      const loginPromise = authService.login({
-        body: {
-          username: formValues?.login?.email,
-          password: formValues?.login?.senha,
-        },
-      });
-
+    
+    const loginPromise = signIn("credentials", {
+      username: formValues?.login?.email,
+      password: formValues?.login?.senha,
+      redirect: false,
+    });
+console.log('loginPromise', loginPromise)
       PromiseNotification({
         promise: loginPromise,
         pendingMessage: "Entrando...",
