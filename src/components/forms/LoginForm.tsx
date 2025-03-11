@@ -33,7 +33,7 @@ export default function LoginForm() {
                         type="email"
                         name='email'
                         fullWidth
-                       
+
                         value={formValues.login?.email || ''}
                         onChange={handleInputChange}
                         InputProps={{
@@ -43,7 +43,7 @@ export default function LoginForm() {
                     />
                 </Grid>
                 <Grid item xs={12}>
-                    <FormControl  variant="outlined" fullWidth>
+                    <FormControl variant="outlined" fullWidth>
                         <InputLabel htmlFor="outlined-adornment-password">Senha</InputLabel>
                         <OutlinedInput
                             name='senha'
@@ -52,6 +52,7 @@ export default function LoginForm() {
                             onChange={handleInputChange}
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
+                            
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -62,8 +63,9 @@ export default function LoginForm() {
                                         onMouseDown={handleMouseDownPassword}
                                         onMouseUp={handleMouseUpPassword}
                                         edge="end"
+                                       
                                     >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        {showPassword ? <VisibilityOff color='action'/> : <Visibility color='action'/>}
                                     </IconButton>
                                 </InputAdornment>
                             }

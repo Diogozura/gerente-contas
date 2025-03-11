@@ -223,13 +223,11 @@ export const authService = {
 
   },
   async criaProduto({ idConta, body }) {
-    const token = tokenService.get();
+    const headers = await getAuthHeaders();
 
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
+      headers,
       body
     }
     )
@@ -254,12 +252,10 @@ export const authService = {
 
   },
   async retornaProduto({ idConta, idProduto }) {
-    const token = tokenService.get();
+    const headers = await getAuthHeaders();
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho/${idProduto}`, {
       method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
+      headers
     }
     )
       .then(response => {

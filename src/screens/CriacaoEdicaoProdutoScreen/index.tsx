@@ -21,6 +21,9 @@ import {
   IconButton,
   Input,
   Chip,
+  MenuItem,
+  Tooltip,
+  Autocomplete,
 } from "@mui/material";
 
 // import Swiper from "swiper";
@@ -49,6 +52,9 @@ import { v4 as uuidv4 } from 'uuid'; // Importa o UUID
 import { parseCookies } from "nookies";
 import { PromiseNotification } from "@/components/common/PromiseNotification";
 import { authService } from "@/services/auth/authService";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { getSession } from "next-auth/react";
+import nookies from 'nookies';
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -68,7 +74,11 @@ function TabPanel(props: TabPanelProps) {
     </div>
   );
 }
-
+interface Empresa {
+  razao_social: string;
+  cpf_cnpj: string;
+  id: string;
+}
 export default function CriacaoProduto() {
   const router = useRouter();
   const [newProduct, setNewProduct] = useState({
@@ -103,23 +113,65 @@ export default function CriacaoProduto() {
   const [tab, setTab] = useState(0);
   const { formValues, setFormValues } = useFormContext();
   const [dataAtualizada, setDataAtualizada] = useState<string | null>(null);
-  const { id , mode } = router.query; // Recuperando o id da URL
+  const { idProduto, mode } = router.query; // Recuperando o id da URL
 
   const [idConta, setIdConta] = useState(null);
-
-
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [empresasSelecionadas, setEmpresasSelecionadas] = useState<Empresa[]>([]);
+console.log('id url', idProduto)
   React.useEffect(() => {
     const cookies = parseCookies();
+    const storedEmpresas: Empresa[] = JSON.parse(localStorage.getItem("empresas") || "[]");
+    const idConta = cookies.idConta
     setIdConta(cookies.idConta);
+
+    if (storedEmpresas.length === 1) {
+      setEmpresasSelecionadas(storedEmpresas);
+      console.log('empresas', empresas)
+    } else {
+      setEmpresas(storedEmpresas);
+    }
   }, []);
+  console.log(empresasSelecionadas.map((empresa) => empresa.id));
 
   React.useEffect(() => {
-    if (mode === 'edit' && id) {
+    if (mode === 'edit' && idProduto) {
       setIsValid(false);
-    } else if (mode === 'view' && id) {
+    } else if (mode === 'view' && idProduto) {
       setIsValid(true);
     }
-  }, [mode, id]);
+   
+  }, [mode, idProduto]);
+
+  React.useEffect(() => {
+    const fetchProduto = async () => {
+      if ((mode === "edit" || mode === "view") && idProduto && idConta) {
+        try {
+          const produto = await authService.retornaProduto({ idConta, idProduto });
+          console.log("produto", produto);
+  
+          // Atualiza o estado do formulário com os dados do produto
+          setFormValues("CadastroProdutos", { titulo: produto?.nome });
+          setFormValues("produto", {
+                      altura: produto?.height,
+                      condicao: produto?.condicao,
+                      ean: produto?.ean,
+                      ncm:produto.ncm,
+                      codigoBarras:produto.codigo_barras,
+                      largura: produto?.width,
+                      pesoBruto: produto?.weightKg,
+                      unidade: produto?.unidade,
+                      sku: produto?.sku
+                    });
+        } catch (error) {
+          console.error("Erro ao buscar produto:", error);
+        }
+      }
+    };
+  
+    fetchProduto(); // Chama a função assíncrona
+  }, [idProduto, mode, idConta]); // Reexecuta quando esses valores mudam
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
   };
@@ -207,8 +259,8 @@ export default function CriacaoProduto() {
     const parsedDataAnuncios: { id: string;[key: string]: any }[] = JSON.parse(storedDataAnuncios);
     // 3. Filtra os itens removendo o que tem o ID específico
     const objetoEncontrado = parsedData.filter(item => item.id == id);
-  
-    
+
+
     const skusProdutos = parsedDataAnuncios.flatMap(item =>
       item.produto.map((p: any) => p.sku) // Obtém os SKUs dentro de `produto`
     );
@@ -216,7 +268,7 @@ export default function CriacaoProduto() {
     const skuJaExiste = objetoEncontrado.some(item =>
       skusProdutos.includes(item.infoProdutos.sku) // Verifica se já existe
     );
- 
+
     if (skuJaExiste) {
       console.error("Erro: SKU já cadastrado!");
       showToast({
@@ -232,12 +284,12 @@ export default function CriacaoProduto() {
         status: "success",
         position: "bottom-left",
       });
-          // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
-    setTimeout(() => {
-      localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
-      router.push('/estoque');
-    }, 1000); // 3 segundos de dela
-     
+      // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
+      setTimeout(() => {
+        localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
+        router.push('/estoque');
+      }, 1000); // 3 segundos de dela
+
     }
   };
   const saveOrUpdateItem = () => {
@@ -247,7 +299,7 @@ export default function CriacaoProduto() {
     const estoque = formValues.estoque;
     const produtoDescricao = formValues.produtoDescricao;
     const dataCriacao = moment();
-  
+
     // Objeto do produto atualizado ou novo
     const novoProduto = {
       id,
@@ -257,14 +309,14 @@ export default function CriacaoProduto() {
       estoque,
       dataCriacao: dataCriacao.format("YYYY-MM-DD HH:mm:ss"), // Formatação da data
     };
-  
+
     // Obtém os dados existentes no localStorage
     const storedData = localStorage.getItem("ProdutosCadastrados");
-    const parsedData: { id: string; [key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
-  
+    const parsedData: { id: string;[key: string]: any }[] = storedData ? JSON.parse(storedData) : [];
+
     // Verifica se já existe um item com o mesmo ID
     const index = parsedData.findIndex(item => item.id === id);
-  
+
     // if (index !== -1) {
     //   // Se o item já existe, atualiza apenas os dados dele
     //   parsedData[index] = { ...parsedData[index], ...novoProduto };
@@ -272,12 +324,12 @@ export default function CriacaoProduto() {
     //   // Se não existir, adiciona o novo item
     //   parsedData.push(novoProduto);
     // }
-  
+
     // Salva os dados atualizados no localStorage
     localStorage.setItem("ProdutosCadastrados", JSON.stringify(parsedData));
-  
+
     console.log("LocalStorage atualizado:", parsedData);
-    
+
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,7 +337,9 @@ export default function CriacaoProduto() {
     setFormValues('CadastroProdutos', { [name]: value }); // Atualiza valores dinamicamente
   };
 
+React.useEffect(()=>{
 
+},[])
   // React.useEffect(() => {
   //   const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
 
@@ -331,7 +385,7 @@ export default function CriacaoProduto() {
   //           sku: produtoEncontrado?.infoProdutos?.sku
   //         });
   //       }
-       
+
   //     }
   //     if (produtoEncontrado?.dataCriacao) {
   //       setDataAtualizada(produtoEncontrado.dataCriacao);
@@ -342,41 +396,41 @@ export default function CriacaoProduto() {
 
 
   const handleEnter = async (event: React.FormEvent) => {
-      event.preventDefault();
+    event.preventDefault();
 
-      console.log('salve', idConta)
-     
-      // // Lógica de envio caso não haja erros
-  
-        const criaProdutoPromise = authService.criaProduto({
-           body:{
-            nome: formValues.CadastroProdutos?.titulo,
-            sku: formValues.produto?.sku,
-            codigo_barras: formValues.produto?.codigoBarras,
-            ncm: formValues.produto?.ncm,
-            ean: formValues.produto?.ean,
-            height: formValues.produto?.altura,
-            length: formValues.produto?.largura,
-            width: formValues.produto?.profundidade,
-            weightKg: formValues.produto?.pesoBruto,
-            // MeasurementUnit,
-            // IsKit,
-            // CreationDate,
-            // CommercialConditionId,
-            // marca,
-            // modelo,
-            // produção
-          },
-          idConta
-        });
-  
-        PromiseNotification({
-          promise: criaProdutoPromise,
-          pendingMessage: "Salvando...",
-          successMessage: "Produto salvo  com sucesso!",
-         
-        });
-    };
+    console.log('salve', idConta)
+
+    // // Lógica de envio caso não haja erros
+
+    const criaProdutoPromise = authService.criaProduto({
+      body: {
+        nome: formValues.CadastroProdutos?.titulo,
+        sku: formValues.produto?.sku,
+        codigo_barras: formValues.produto?.codigoBarras,
+        ncm: formValues.produto?.ncm,
+        ean: formValues.produto?.ean,
+        height: formValues.produto?.altura,
+        length: formValues.produto?.largura,
+        width: formValues.produto?.profundidade,
+        weightKg: formValues.produto?.pesoBruto,
+        empresas: empresasSelecionadas.map((empresa) => empresa.id),
+        // MeasurementUnit,
+        // IsKit,
+        // CreationDate,
+        // CommercialConditionId,
+        // marca,
+        // modelo,
+        // produção
+      },
+      idConta
+    });
+
+    PromiseNotification({
+      promise: criaProdutoPromise,
+      pendingMessage: "Salvando...",
+      successMessage: "Produto salvo  com sucesso!",
+    });
+  };
 
   return (
     <>
@@ -387,9 +441,9 @@ export default function CriacaoProduto() {
       <Grid container justifyContent="flex-end" alignItems="center" spacing={2} padding={2} sx={{ mb: 4 }}>
         <Grid item>
           <Button variant="contained" color="primary" id='estoque-header' onClick={() => {
-                      const productId = uuidv4(); // Gerando o UUID
-                      router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
-                    }}>
+            const productId = uuidv4(); // Gerando o UUID
+            router.push(`/estoque/${productId}?mode=create`); // Passando o id na URL
+          }}>
             Cadastro de Produto Individual
           </Button>
         </Grid>
@@ -441,76 +495,102 @@ export default function CriacaoProduto() {
       <TabPanel value={tab} index={0}>
         {/* Imagens upload  */}
         <form action="" onSubmit={handleEnter}>
-        <Grid container spacing={2}>
-          <Grid xs={12}>
-            
-            <Grid container padding={3} spacing={2}>
-              <Grid xs={9}>
-                <TextField
-                  variant="standard"
-                  label="Titulo"
-                  name='titulo'
-                  required
-                  value={formValues.CadastroProdutos?.titulo || ''}
-                  onChange={handleInputChange}
-                  disabled={isValid}
-                  fullWidth
-                />
-              </Grid>
+          <Grid container spacing={2}>
+            <Grid xs={12}>
 
-              <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
-                {/* <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
+              <Grid container padding={3} spacing={2}>
+                <Grid xs={6}>
+                  <TextField
+                    variant="standard"
+                    label="Titulo"
+                    name='titulo'
+                    required
+                    value={formValues.CadastroProdutos?.titulo || ''}
+                    onChange={handleInputChange}
+                    disabled={isValid}
+                    fullWidth
+                  />
+                </Grid>
+                <Grid item xs={3} display={empresas.length > 1 ? "flex" : "none"} alignItems="center" gap={1}>
+                  <Autocomplete
+                    multiple
+                    fullWidth
+                    
+                    options={empresas}
+                    getOptionLabel={(option) => option.razao_social} // Garante que apenas a string do nome seja exibida
+                    value={empresasSelecionadas}
+                    color="action"
+                    onChange={(event, newValue) => {
+                      setEmpresasSelecionadas(newValue);
+                      handleInputChange({ 
+                        target: { 
+                          name: "empresas", 
+                          value: newValue.map((empresa) => empresa.id) // 🔹 Extrai apenas os IDs
+                        } 
+                      });;
+                    }}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Empresas" variant="outlined"  fullWidth />
+                    )}
+                  />
+                  <Tooltip title="Empresas/lojas que compartilham desse mesmo produto." arrow>
+                    <InfoOutlinedIcon style={{ cursor: "pointer" }} color="action" />
+                  </Tooltip>
+                </Grid>
+
+                <Grid xs={3} display={'flex'} justifyContent={'flex-end'}>
+                  {/* <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} onClick={saveOrUpdateItem} sx={{
                   m: 1
                 }}>
                   Salvar Produto
                 </Button> */}
-                <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} type='submit' sx={{
-                  m: 1
-                }}>
-                  Salvar Produto API
-                </Button>
-                <Button variant="contained" color="primary" id="Editor" sx={{
-                  m: 1
-                }}
-                onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
-
-                >
-                  <ModeEditOutlineOutlinedIcon />
-                </Button>
-                <Button variant="contained" color="primary" disabled
-                  sx={{
+                  <Button id="produtos-criar" variant="contained" color="primary" disabled={isValid} type='submit' sx={{
+                    m: 1
+                  }}>
+                    Salvar Produto API
+                  </Button>
+                  <Button variant="contained" color="primary" id="Editor" sx={{
                     m: 1
                   }}
-                >
-                  <ContentCopyIcon />
-                </Button>
-                <Button variant="contained" color="primary"
-                  sx={{
-                    m: 1
-                  }}
-                  onClick={handleDelete}
-                  id="delelete"
-                // onClick={() =>
-                //   handleOpenModal("Deletar", product)
-                // }
+                    onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
 
-                >
-                  <DeleteOutlineOutlinedIcon />
-                </Button>
+                  >
+                    <ModeEditOutlineOutlinedIcon />
+                  </Button>
+                  <Button variant="contained" color="primary" disabled
+                    sx={{
+                      m: 1
+                    }}
+                  >
+                    <ContentCopyIcon />
+                  </Button>
+                  <Button variant="contained" color="primary"
+                    sx={{
+                      m: 1
+                    }}
+                    onClick={handleDelete}
+                    id="delelete"
+                  // onClick={() =>
+                  //   handleOpenModal("Deletar", product)
+                  // }
+
+                  >
+                    <DeleteOutlineOutlinedIcon />
+                  </Button>
+
+                </Grid>
+
+                <Typography> Última alteração em: {dataAtualizada ? moment(dataAtualizada).format('DD/MM/YYYY [às] HH:mm') : 'Nunca alterado'} </Typography>
+                <Chip color="error" label="Estoque   Baixo" sx={{ borderRadius: '5px', ml: 1 }} variant="filled" size="small" />
+
 
               </Grid>
 
-              <Typography> Última alteração em: {dataAtualizada ? moment(dataAtualizada).format('DD/MM/YYYY [às] HH:mm') : 'Nunca alterado'} </Typography>
-              <Chip color="error" label="Estoque   Baixo" sx={{ borderRadius: '5px', ml: 1 }} variant="filled" size="small" />
-
-
             </Grid>
-
-          </Grid>
-          <Grid xs={2} textAlign={'center'}>
-             <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
-            {/* Carrossel de pré-visualização */}
-            {/* {newProduct.imagens.length > 0 && (
+            <Grid xs={2} textAlign={'center'}>
+              <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+              {/* Carrossel de pré-visualização */}
+              {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
                   spaceBetween={10}
@@ -544,8 +624,8 @@ export default function CriacaoProduto() {
                 </Swiper>
               </Grid>
             )} */}
-            {/* Modal para exibir a imagem em tamanho grande */}
-            {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
+              {/* Modal para exibir a imagem em tamanho grande */}
+              {/* <Modal open={!!selectedImage} onClose={handleCloseModal}>
               <Box
                 sx={{
                   position: "absolute",
@@ -567,7 +647,7 @@ export default function CriacaoProduto() {
                 )}
               </Box>
             </Modal> */}
-            {/* <Grid item >
+              {/* <Grid item >
 
               <FormHelperText>
                 {`Imagens selecionadas: ${newProduct.imagens.length}/6`}
@@ -588,56 +668,56 @@ export default function CriacaoProduto() {
                 />
               </Button>
             </Grid> */}
-          </Grid >
-          {/* Informações do produto  */}
+            </Grid >
+            {/* Informações do produto  */}
 
-          <Grid xs={10}  >
-            <CadastroProduto view={isValid} />
+            <Grid xs={10}  >
+              <CadastroProduto view={isValid} />
+            </Grid>
+            <Grid xs={12} mb={2}>
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  <Typography variant="h5" component={'h2'} color={'primary'} display={'flex'} fontWeight="bold" alignItems={'center'}>Lista de preços <ArrowDropDownIcon color="primary" /> </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails>
+
+
+                  <CraicaoListaPreco view={false} />
+                </AccordionDetails>
+              </Accordion>
+
+            </Grid>
+            <Grid xs={12}  >
+              <Accordion defaultExpanded>
+                <AccordionSummary
+                  aria-controls="panel3-content"
+                  id="panel3-header"
+                >
+                  <Typography variant="h5" component={'h2'} color={'primary'} display={'flex'} fontWeight="bold" alignItems={'center'}>Descrição <ArrowDropDownIcon color="primary" /> </Typography>
+                </AccordionSummary>
+
+                <AccordionDetails>
+                  <Box display={'flex'} justifyContent={'space-between'} p={1}>
+                    <Typography variant="body1" component={'p'}>Principal descrição do produto</Typography>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleGenerateDescription}
+                    >
+                      Gerar Descrição
+                    </Button>
+                  </Box>
+
+                  <DescricaoForm view={isValid} />
+                </AccordionDetails>
+              </Accordion>
+
+            </Grid>
           </Grid>
-          <Grid xs={12} mb={2}>
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                aria-controls="panel3-content"
-                id="panel3-header"
-              >
-                <Typography variant="h5" component={'h2'} color={'primary'} display={'flex'} fontWeight="bold" alignItems={'center'}>Lista de preços <ArrowDropDownIcon color="primary" /> </Typography>
-              </AccordionSummary>
-
-              <AccordionDetails>
-
-
-                <CraicaoListaPreco view={false} />
-              </AccordionDetails>
-            </Accordion>
-
-          </Grid>
-          <Grid xs={12}  >
-            <Accordion defaultExpanded>
-              <AccordionSummary
-                aria-controls="panel3-content"
-                id="panel3-header"
-              >
-                <Typography variant="h5" component={'h2'} color={'primary'} display={'flex'} fontWeight="bold" alignItems={'center'}>Descrição <ArrowDropDownIcon color="primary" /> </Typography>
-              </AccordionSummary>
-
-              <AccordionDetails>
-                <Box display={'flex'} justifyContent={'space-between'} p={1}>
-                  <Typography variant="body1" component={'p'}>Principal descrição do produto</Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleGenerateDescription}
-                  >
-                    Gerar Descrição
-                  </Button>
-                </Box>
-
-                <DescricaoForm view={isValid} />
-              </AccordionDetails>
-            </Accordion>
-
-          </Grid>
-        </Grid>
         </form>
 
 
@@ -701,7 +781,7 @@ export default function CriacaoProduto() {
           </Grid>
           <Grid xs={2}>
             {/* Carrossel de pré-visualização */}
-              <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
+            <Image width={200} height={200} src={'/defaultImage.png'} alt={"image default"} />
             {/* {newProduct.imagens.length > 0 && (
               <Grid item xs={12}>
                 <Swiper
@@ -809,9 +889,27 @@ export default function CriacaoProduto() {
           </Grid>
         </Grid>
       </TabPanel>
-
-
-
     </>
   );
+}
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+
+  if (!session) {
+    console.log("🚨 Sessão inválida, redirecionando para login...");
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+
+  try {
+  
+    return { props: { session } };
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    return { props: { retornaTodosProdutos: null } };
+  }
 }

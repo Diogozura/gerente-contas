@@ -38,31 +38,41 @@ export const authOptions = {
   ],
 
   callbacks: {
-    // Callback de JWT, chamado sempre que a JWT é gerada ou atualizada
     async jwt({ token, user }) {
-      // Se houver um "user" novo, significa que a autenticação foi bem-sucedida
+      // 🔹 Se houver um novo usuário (login), salva os tokens
       if (user) {
         return {
           accessToken: user.accessToken,
           refreshToken: user.refreshToken,
-          accessTokenExpires: user.accessTokenExpires,
+          accessTokenExpires: Date.now() + 5 * 60 * 1000, // 🔥 Expiração em 5 min
         };
       }
-
-      // Verifique se o token ainda é válido. Se o token tiver expirado ou estiver prestes a expirar, vamos renová-lo.
+  
+      // 🔹 Se o token estiver prestes a expirar, renova antes
       if (Date.now() > token.accessTokenExpires - 2 * 60 * 1000) {
-        // O token vai expirar em menos de 2 minutos, então vamos renová-lo
-        return await refreshAccessToken(token);
+        console.log("🔄 Token expirando, tentando renovar...");
+        const newToken = await refreshAccessToken(token);
+  
+        if (newToken.error) {
+          console.log("🚨 Falha ao renovar token, removendo sessão...");
+          return {}; // 🔥 Remove a sessão
+        }
+  
+        return newToken;
       }
-
-      // Retorne o token sem alterações, caso ele ainda seja válido
+  
       return token;
     },
-
-    // Callback de Sessão, atualizado com os dados do token
+  
     async session({ session, token }) {
+      if (!token.accessToken) {
+        console.log("🚫 Sem accessToken, removendo sessão...");
+        return null; // 🔥 Se o token estiver inválido, a sessão some
+      }
+  
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
+      session.accessTokenExpires = token.accessTokenExpires;
       return session;
     },
   },
@@ -78,6 +88,8 @@ export const authOptions = {
 // Função para renovar o token
 async function refreshAccessToken(token) {
   try {
+    console.log("🔄 Tentando renovar token...");
+
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/token/refresh/`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -87,15 +99,16 @@ async function refreshAccessToken(token) {
     const refreshedTokens = await res.json();
     if (!res.ok) throw new Error("Erro ao renovar token");
 
-    // Retorna o novo token e o tempo de expiração renovado
+    console.log("✅ Token renovado com sucesso!");
+
     return {
       ...token,
       accessToken: refreshedTokens.access,
-      accessTokenExpires: Date.now() + 15 * 60 * 1000, // Atualiza expiração para mais 15 minutos
+      accessTokenExpires: Date.now() + 5 * 60 * 1000, // 🔥 Expiração em 5 minutos
     };
   } catch (error) {
-    console.error("Erro ao renovar token:", error);
-    return { ...token, error: "RefreshTokenError" };
+    console.error("❌ Erro ao renovar token:", error);
+    return { error: "RefreshTokenError" };
   }
 }
 

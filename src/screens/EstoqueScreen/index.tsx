@@ -28,6 +28,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useFormContext } from "@/config/FormContext";
 import { requireAuthentication } from "@/helpers/auth";
 import { authService } from "@/services/auth/authService";
+import { getSession } from "next-auth/react";
+import nookies from 'nookies';
 interface Product {
   id: number;
   CadastroProdutos: { titulo: string };
@@ -67,7 +69,7 @@ const verificarDadosFaltantes = (product: Product): string[] => {
     .map(([key]) => key);
 };
 
-export default function Estoque({idConta, retornaTodosProdutos}) {
+export default function Estoque({idConta, retornaTodosProdutos, session }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]); // Produtos filtrados
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -75,7 +77,7 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
   const [textoFiltro, setTextoFiltro] = useState("");
   const router = useRouter();
   const { formValues, setFormValues, resetFormValues } = useFormContext();
-  console.log('retornaTodosProdutos', retornaTodosProdutos)
+  console.log('session', session)
   useEffect(() => {
     const storedProducts = localStorage.getItem("ProdutosCadastrados");
     resetFormValues()
@@ -92,13 +94,13 @@ export default function Estoque({idConta, retornaTodosProdutos}) {
 
   useEffect(() => {
     // Atualiza os produtos filtrados sempre que os filtros ou os produtos mudarem
-    const filtered = products?.filter((product) => {
+    const filtered = retornaTodosProdutos?.filter((product) => {
       const matchText =
-        product?.CadastroProdutos?.titulo?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
-        product?.infoProdutos?.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
+        retornaTodosProdutos?.nome?.toLowerCase().includes(textoFiltro.toLowerCase()) ||
+        product?.sku?.toLowerCase().includes(textoFiltro.toLowerCase());
       
       const matchAdvanced =
-        !filtroAvancado || product?.CadastroProdutos.titulo.toLowerCase().includes(filtroAvancado.toLowerCase());
+        !filtroAvancado || product?.retornaTodosProdutos.nome.toLowerCase().includes(filtroAvancado.toLowerCase());
       return matchText && matchAdvanced;
     });
     setFilteredProducts(filtered);
@@ -343,7 +345,7 @@ console.log('data', data)
           </Button>
         </Grid>
       </Grid>
-      {filteredProducts.map((product, index) => {
+      {filteredProducts?.map((product, index) => {
         const dadosFaltantes = verificarDadosFaltantes(product);
         return (
           <>
@@ -375,7 +377,7 @@ console.log('data', data)
                     src={'/defaultImage.png'}
                     width={100}
                     height={100}
-                    alt={`Imagem de ${product?.CadastroProdutos?.titulo}`}
+                    alt={`Imagem de ${product?.nome}`}
                     style={{ borderRadius: 4 }}
                   />
                 </Grid>
@@ -383,13 +385,13 @@ console.log('data', data)
                 <Grid item xs={6}>
                   <Link href={`/estoque/${product?.id}?mode=view`} passHref>
                     <Typography style={{ cursor: "pointer" }} fontWeight={'600'} component="h3">
-                      {product?.CadastroProdutos?.titulo}
+                      {product?.nome}
                     </Typography>
 
 
                   </Link>
                   <Typography component="p">
-                    SKU : <b>{product?.infoProdutos?.sku}</b>
+                    SKU : <b>{product?.sku}</b>
                   </Typography>
                   <Typography component="p">
                     Estoque : <b>{product?.estoque?.estoqueLocal}</b>
@@ -480,24 +482,28 @@ console.log('data', data)
     </>
   );
 }
+export async function getServerSideProps(ctx) {
+  const session = await getSession(ctx);
+  const cookies = nookies.get(ctx);
+  const idConta = cookies.idConta;
 
+  if (!session) {
+    console.log("🚨 Sessão inválida, redirecionando para login...");
 
-// export const getServerSideProps = requireAuthentication(async (ctx) => {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
 
-//   const token = ctx.req.token;
-//   const idConta = ctx.req.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
-//   const retornaTodosProdutos = await authService.retornaTodosProdutos(token, { idConta });
-//   try {
-//     return {
-//       props: {
-//         retornaTodosProdutos,
-//       },
-//     };
-//   } catch (error) {
-//     return {
-//       redirect: {
-//         permanent: true,
-//       },
-//     };
-//   }
-// });
+  try {
+    const retornaTodosProdutos = await authService.retornaTodosProdutos(session.accessToken, { idConta });
+    return { props: { retornaTodosProdutos, idConta, session } };
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    return { props: { retornaTodosProdutos: null } };
+  }
+}
+
