@@ -253,44 +253,19 @@ console.log('id url', idProduto)
     setSelectedImage(null);
   };
   const handleDelete = () => {
-    const storedData = localStorage.getItem("ProdutosCadastrados");
-    const storedDataAnuncios = localStorage.getItem("anuncios");
-    const parsedData: { id: string;[key: string]: any }[] = JSON.parse(storedData);
-    const parsedDataAnuncios: { id: string;[key: string]: any }[] = JSON.parse(storedDataAnuncios);
-    // 3. Filtra os itens removendo o que tem o ID específico
-    const objetoEncontrado = parsedData.filter(item => item.id == id);
-
-
-    const skusProdutos = parsedDataAnuncios.flatMap(item =>
-      item.produto.map((p: any) => p.sku) // Obtém os SKUs dentro de `produto`
-    );
-    // 2. Verifica se algum SKU de `infoProdutos.sku` já existe em `skusProdutos`
-    const skuJaExiste = objetoEncontrado.some(item =>
-      skusProdutos.includes(item.infoProdutos.sku) // Verifica se já existe
-    );
-
-    if (skuJaExiste) {
-      console.error("Erro: SKU já cadastrado!");
-      showToast({
-        title: "Anuncio vinculado a um SKU",
-        status: "error",
-        position: "bottom-left",
+console.log('deleta', idProduto , "da conta : " , idConta )
+const deletePromise = authService.deletaProduto({idConta, idProduto})
+ PromiseNotification({
+        promise: deletePromise,
+        pendingMessage: "Deletando...",
+        successMessage: "Produto deletado com sucesso! Redirecionando...",
+        errorMessage: "Ocorreu um erro ao deletar produto. Tente novamente.",
+        successCallback: () => {
+          setTimeout(() => {
+            router.push("/estoque");
+          }, 300);
+        },
       });
-      return { success: false, message: "Anuncio vinculado a um SKU" };
-    } else {
-      const updatedData = parsedData.filter(item => item.id !== id);
-      showToast({
-        title: "Produto Deletado com sucesso!",
-        status: "success",
-        position: "bottom-left",
-      });
-      // ⏳ Adicionando um delay antes de redirecionar e atualizar o localStorage
-      setTimeout(() => {
-        localStorage.setItem("ProdutosCadastrados", JSON.stringify(updatedData));
-        router.push('/estoque');
-      }, 1000); // 3 segundos de dela
-
-    }
   };
   const saveOrUpdateItem = () => {
     // Extrai os dados do formulário
