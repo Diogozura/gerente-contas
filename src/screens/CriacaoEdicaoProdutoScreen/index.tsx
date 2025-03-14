@@ -118,7 +118,7 @@ export default function CriacaoProduto() {
   const [idConta, setIdConta] = useState(null);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [empresasSelecionadas, setEmpresasSelecionadas] = useState<Empresa[]>([]);
-console.log('id url', idProduto)
+  console.log('id url', idProduto)
   React.useEffect(() => {
     const cookies = parseCookies();
     const storedEmpresas: Empresa[] = JSON.parse(localStorage.getItem("empresas") || "[]");
@@ -140,7 +140,7 @@ console.log('id url', idProduto)
     } else if (mode === 'view' && idProduto) {
       setIsValid(true);
     }
-   
+
   }, [mode, idProduto]);
 
   React.useEffect(() => {
@@ -149,26 +149,27 @@ console.log('id url', idProduto)
         try {
           const produto = await authService.retornaProduto({ idConta, idProduto });
           console.log("produto", produto);
-  
+
           // Atualiza o estado do formulário com os dados do produto
           setFormValues("CadastroProdutos", { titulo: produto?.nome });
           setFormValues("produto", {
-                      altura: produto?.height,
-                      condicao: produto?.condicao,
-                      ean: produto?.ean,
-                      ncm:produto.ncm,
-                      codigoBarras:produto.codigo_barras,
-                      largura: produto?.width,
-                      pesoBruto: produto?.weightKg,
-                      unidade: produto?.unidade,
-                      sku: produto?.sku
-                    });
+            altura: produto?.height,
+            largura: produto?.length,
+            profundidade:produto.width,
+            condicao: produto?.condicao,
+            ean: produto?.ean,
+            ncm: produto.ncm,
+            codigoBarras: produto.codigo_barras,
+            pesoBruto: produto?.weightKg,
+            unidade: produto?.unidade,
+            sku: produto?.sku
+          });
         } catch (error) {
           console.error("Erro ao buscar produto:", error);
         }
       }
     };
-  
+
     fetchProduto(); // Chama a função assíncrona
   }, [idProduto, mode, idConta]); // Reexecuta quando esses valores mudam
 
@@ -253,19 +254,19 @@ console.log('id url', idProduto)
     setSelectedImage(null);
   };
   const handleDelete = () => {
-console.log('deleta', idProduto , "da conta : " , idConta )
-const deletePromise = authService.deletaProduto({idConta, idProduto})
- PromiseNotification({
-        promise: deletePromise,
-        pendingMessage: "Deletando...",
-        successMessage: "Produto deletado com sucesso! Redirecionando...",
-        errorMessage: "Ocorreu um erro ao deletar produto. Tente novamente.",
-        successCallback: () => {
-          setTimeout(() => {
-            router.push("/estoque");
-          }, 300);
-        },
-      });
+    console.log('deleta', idProduto, "da conta : ", idConta)
+    const deletePromise = authService.deletaProduto({ idConta, idProduto })
+    PromiseNotification({
+      promise: deletePromise,
+      pendingMessage: "Deletando...",
+      successMessage: "Produto deletado com sucesso! Redirecionando...",
+      errorMessage: "Ocorreu um erro ao deletar produto. Tente novamente.",
+      successCallback: () => {
+        setTimeout(() => {
+          router.push("/estoque");
+        }, 300);
+      },
+    });
   };
   const saveOrUpdateItem = () => {
     // Extrai os dados do formulário
@@ -312,9 +313,9 @@ const deletePromise = authService.deletaProduto({idConta, idProduto})
     setFormValues('CadastroProdutos', { [name]: value }); // Atualiza valores dinamicamente
   };
 
-React.useEffect(()=>{
+  React.useEffect(() => {
 
-},[])
+  }, [])
   // React.useEffect(() => {
   //   const produtoSalvo = localStorage.getItem('ProdutosCadastrados');
 
@@ -373,11 +374,44 @@ React.useEffect(()=>{
   const handleEnter = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    console.log('salve', idConta)
-
-    // // Lógica de envio caso não haja erros
-
-    const criaProdutoPromise = authService.criaProduto({
+    console.log('salve', idConta, 'edit ou create?', mode)
+    if (mode === 'edit') {
+      console.log('edita')
+      const editaProdutoPromise = authService.editaProduto({
+        body: {
+          nome: formValues.CadastroProdutos?.titulo,
+          sku: formValues.produto?.sku,
+          codigo_barras: formValues.produto?.codigoBarras,
+          ncm: formValues.produto?.ncm,
+          ean: formValues.produto?.ean,
+          height: formValues.produto?.altura,
+          length: formValues.produto?.largura,
+          width: formValues.produto?.profundidade,
+          weightKg: formValues.produto?.pesoBruto,
+          empresas: empresasSelecionadas.map((empresa) => empresa.id),
+          // MeasurementUnit,
+          // IsKit,
+          // CreationDate,
+          // CommercialConditionId,
+          // marca,
+          // modelo,
+          // produção
+        },
+        idConta,
+        idProduto
+      });
+      PromiseNotification({
+        promise: editaProdutoPromise,
+        pendingMessage: "Salvando...",
+        successMessage: "Produto salvo  com sucesso!",
+        successCallback: () => {
+          setTimeout(() => {
+            router.push("/estoque");
+          }, 300);
+        },
+      });
+    }else {
+       const criaProdutoPromise = authService.criaProduto({
       body: {
         nome: formValues.CadastroProdutos?.titulo,
         sku: formValues.produto?.sku,
@@ -404,7 +438,43 @@ React.useEffect(()=>{
       promise: criaProdutoPromise,
       pendingMessage: "Salvando...",
       successMessage: "Produto salvo  com sucesso!",
+      successCallback: () => {
+        setTimeout(() => {
+          router.push("/estoque");
+        }, 300);
+      },
     });
+    }
+    // // Lógica de envio caso não haja erros
+
+    // const criaProdutoPromise = authService.criaProduto({
+    //   body: {
+    //     nome: formValues.CadastroProdutos?.titulo,
+    //     sku: formValues.produto?.sku,
+    //     codigo_barras: formValues.produto?.codigoBarras,
+    //     ncm: formValues.produto?.ncm,
+    //     ean: formValues.produto?.ean,
+    //     height: formValues.produto?.altura,
+    //     length: formValues.produto?.largura,
+    //     width: formValues.produto?.profundidade,
+    //     weightKg: formValues.produto?.pesoBruto,
+    //     empresas: empresasSelecionadas.map((empresa) => empresa.id),
+    //     // MeasurementUnit,
+    //     // IsKit,
+    //     // CreationDate,
+    //     // CommercialConditionId,
+    //     // marca,
+    //     // modelo,
+    //     // produção
+    //   },
+    //   idConta
+    // });
+
+    // PromiseNotification({
+    //   promise: criaProdutoPromise,
+    //   pendingMessage: "Salvando...",
+    //   successMessage: "Produto salvo  com sucesso!",
+    // });
   };
 
   return (
@@ -490,22 +560,22 @@ React.useEffect(()=>{
                   <Autocomplete
                     multiple
                     fullWidth
-                    
+
                     options={empresas}
                     getOptionLabel={(option) => option.razao_social} // Garante que apenas a string do nome seja exibida
                     value={empresasSelecionadas}
                     color="action"
                     onChange={(event, newValue) => {
                       setEmpresasSelecionadas(newValue);
-                      handleInputChange({ 
-                        target: { 
-                          name: "empresas", 
+                      handleInputChange({
+                        target: {
+                          name: "empresas",
                           value: newValue.map((empresa) => empresa.id) // 🔹 Extrai apenas os IDs
-                        } 
+                        }
                       });;
                     }}
                     renderInput={(params) => (
-                      <TextField {...params} label="Empresas" variant="outlined"  fullWidth />
+                      <TextField {...params} label="Empresas" variant="outlined" fullWidth />
                     )}
                   />
                   <Tooltip title="Empresas/lojas que compartilham desse mesmo produto." arrow>
@@ -527,7 +597,7 @@ React.useEffect(()=>{
                   <Button variant="contained" color="primary" id="Editor" sx={{
                     m: 1
                   }}
-                    onClick={() => router.push(`/estoque/${id}?mode=edit`)} // Define isValid para false para liberar a edição
+                    onClick={() => router.push(`/estoque/${idProduto}?mode=edit`)} // Define isValid para false para liberar a edição
 
                   >
                     <ModeEditOutlineOutlinedIcon />
@@ -881,7 +951,7 @@ export async function getServerSideProps(ctx) {
   }
 
   try {
-  
+
     return { props: { session } };
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);

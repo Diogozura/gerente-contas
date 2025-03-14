@@ -277,6 +277,20 @@ export const authService = {
       });
 
   },
+  async editaProduto({ idConta,idProduto, body }) {
+    const headers = await getAuthHeaders();
+    return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}loja/api/${idConta}/produto_filho/${idProduto}`, {
+      method: 'PUT',
+      headers,
+      body
+    }
+    )
+      .then(response => {
+        if (!response.ok) throw new Error(response.body.detail)
+        return response.body.dados;
+      });
+
+  },
   async authIntegracaoML(token) {
     return HttpClient(`${process.env.NEXT_PUBLIC_BACKEND_URL}mercadolivre/api/auth/`, {
       // return HttpClient(`http://192.168.0.109:8000/mercadolivre/api/auth`, {
