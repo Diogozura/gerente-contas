@@ -268,6 +268,41 @@ export default function CriacaoProduto() {
       },
     });
   };
+  const handleCopy = () => {
+    const criaProdutoPromise = authService.criaProduto({
+      body: {
+        nome: `${formValues.CadastroProdutos?.titulo} (copy)`,
+        sku: formValues.produto?.sku,
+        codigo_barras: formValues.produto?.codigoBarras,
+        ncm: formValues.produto?.ncm,
+        ean: formValues.produto?.ean,
+        height: formValues.produto?.altura,
+        length: formValues.produto?.largura,
+        width: formValues.produto?.profundidade,
+        weightKg: formValues.produto?.pesoBruto,
+        empresas: empresasSelecionadas.map((empresa) => empresa.id),
+        // MeasurementUnit,
+        // IsKit,
+        // CreationDate,
+        // CommercialConditionId,
+        // marca,
+        // modelo,
+        // produção
+      },
+      idConta
+    });
+
+    PromiseNotification({
+      promise: criaProdutoPromise,
+      pendingMessage: "Salvando...",
+      successMessage: "Produto salvo  com sucesso!",
+      successCallback: () => {
+        setTimeout(() => {
+          router.push("/estoque");
+        }, 300);
+      },
+    });
+  };
   const saveOrUpdateItem = () => {
     // Extrai os dados do formulário
     const CadastroProdutos = formValues.CadastroProdutos;
@@ -602,7 +637,7 @@ export default function CriacaoProduto() {
                   >
                     <ModeEditOutlineOutlinedIcon />
                   </Button>
-                  <Button variant="contained" color="primary" disabled
+                  <Button variant="contained" color="primary"  onClick={handleCopy}
                     sx={{
                       m: 1
                     }}
