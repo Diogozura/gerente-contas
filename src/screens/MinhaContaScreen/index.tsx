@@ -37,9 +37,6 @@ const formatCNPJ = (cnpj: string) => {
   );
 };
 export default function CreateUser({ retornaEmpresas, idConta }) {
-console.log('retornaEmpresas', retornaEmpresas)
-
-
   const { formValues, setFormValues } = useFormContext();
   const [openNovoUsuario, setOpenNovoUsuario] = useState(false);
   const [openNovaEmpresa, setOpenNovaEmpresa] = useState(false);
@@ -66,7 +63,6 @@ console.log('retornaEmpresas', retornaEmpresas)
     setLoading(idEmpresa); // Define qual empresa está carregando
     try {
       const detalhes = await authService.retornaDetalhesEmpresa({ idConta, idEmpresa });
-      console.log('detalhes', detalhes)
       setDetalhesEmpresa((prev) => ({
         ...prev,
         [idEmpresa]: detalhes,
@@ -83,7 +79,6 @@ console.log('retornaEmpresas', retornaEmpresas)
 
     try {
       const detalhes = await authService.listaCompartilhamentoConta({ idConta });
-      console.log('detalhes emails', detalhes)
       setContaCompartilhada(detalhes)
 
     } catch (error) {
@@ -100,7 +95,7 @@ console.log('retornaEmpresas', retornaEmpresas)
     email: "",
     permissao_id: '',
   });
-  console.log('contaCompartilhada', contaCompartilhada)
+
 
   const handleOpenModal = (tipo: string, empresaNome?: string, email?: string, permissao_id?: string) => {
     setModalState({
@@ -205,9 +200,9 @@ console.log('retornaEmpresas', retornaEmpresas)
       return;
     }
 
- 
 
- 
+
+
     const compartilhaConta = authService.compartilhaConta({
       body: {
         email
@@ -259,7 +254,7 @@ console.log('retornaEmpresas', retornaEmpresas)
         cnpj: novoCNPJ,
         razao_social: razaoSocial,
       },
-      id: 1
+      id: idConta
     });
 
     PromiseNotification({
@@ -459,7 +454,6 @@ export async function getServerSideProps(ctx) {
   const cookies = nookies.get(ctx); // Pegando os cookies do request
 
   const idConta = cookies.idConta; // 🔥 Corrigido: Pegamos o valor correto do cookie
-  console.log('idConta', idConta)
   if (!session) {
     return {
       redirect: {
@@ -469,11 +463,11 @@ export async function getServerSideProps(ctx) {
     };
   }
   try {
-    const retornaEmpresas = await authService.retornaEmpresas(session.accessToken, {idConta});
-    return { props: { retornaEmpresas , idConta  } };
+    const retornaEmpresas = await authService.retornaEmpresas(session.accessToken, { idConta });
+    return { props: { retornaEmpresas, idConta } };
   } catch (error) {
     console.error("Erro ao buscar dadosSala:", error);
-    return { props: { retornaEmpresas: null  } };
+    return { props: { retornaEmpresas: null } };
   }
 }
 

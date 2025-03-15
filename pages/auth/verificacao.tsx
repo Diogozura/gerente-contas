@@ -22,15 +22,16 @@ export default function Verificacao({ dadosSala }) {
         plano: dadosSala.dados.planos_contratados || "Nenhum plano",
         contas: dadosSala.dados.contas,
       };
-      console.log('empresas_listadas', dadosSala.dados.empresas_listadas)
-      console.log('dadosSala.dados', dadosSala.dados)
-      const idConta = dadosSala.dados.contas[0]?.id;
+      const contas = dadosSala.dados.contas;
+      const loggedEmail = dadosSala.dados.email;
       localStorage.setItem("dadosUsuarioLogado", JSON.stringify(usuarioLogado));
       localStorage.setItem("empresas", JSON.stringify(dadosSala.dados.empresas_listadas));
+      
+      const user = contas.find(user => user.email_owner === loggedEmail);
+      const idConta = user.id
       setFormValues("IdDaConta", { idConta });
-
       if (idConta) {
-        setCookie(null, "idConta", idConta, {
+        setCookie(null, "idConta", user.id, {
           maxAge: 60 * 60 * 24 * 7, // 7 dias
           path: "/",
         });
